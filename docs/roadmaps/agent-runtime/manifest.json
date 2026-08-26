@@ -860,6 +860,23 @@
       "content_sha256": "00570e14be120666d40c62ed1cc86e73ceb5355f8db9d78814339ea0e0cb8866"
     }
   ],
+  "operational_records": [
+    {
+      "path": "BACKLOG.md",
+      "role": "operational-priority",
+      "sha256": "10079069bf834df0c53fabd6f0b682d9fe81a71f1415a4efa5167b2bef1588a8"
+    },
+    {
+      "path": "DECISIONS.md",
+      "role": "durable-decision-log",
+      "sha256": "14410cb67e7983ac8023af2bee453a5c35825cfd35435dc9e2fc4588b2ce1b30"
+    },
+    {
+      "path": "HANDOFF.md",
+      "role": "operational-resume-card",
+      "sha256": "f2a2d60d241fff057a71fa400578a4e5fb6c5f328eb7b559fe94dbaf376af6fe"
+    }
+  ],
   "expected_counts": {
     "parents": 3,
     "active": 30,
@@ -871,7 +888,8 @@
     "normalization_files": 2,
     "historical_snapshot_files": 2,
     "whitespace_exception_files": 1,
-    "total_files": 70
+    "operational_files": 3,
+    "total_files": 73
   },
   "whitespace_exceptions": [
     {
