@@ -1,0 +1,1 @@
+feat(agents): add an optional managed mode for delegated work

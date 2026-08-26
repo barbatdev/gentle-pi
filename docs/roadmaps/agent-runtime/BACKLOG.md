@@ -6,7 +6,7 @@ Operational priority is not canonical inventory or state. `manifest.json` and `T
 
 | ID | Parent | Current state | Dependencies or gate | Next observable exit condition |
 | --- | --- | --- | --- | --- |
-| A1 | #419 | draft | #419 is OPEN `status:needs-review`; #379 is OPEN `status:approved` and not evidenced as delivered or merged. | Prepare and audit the A1 issue draft only. Stop for separate explicit publication authorization. |
+| A1 | #419 | ready | #419 is OPEN `status:needs-review`; #379 is OPEN `status:approved` and not evidenced as delivered or merged. | Wait for separate explicit publication authorization. |
 
 ## Next
 

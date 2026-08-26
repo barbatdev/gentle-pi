@@ -1,10 +1,10 @@
 97d823d709d7ba3de7201ac04b09e948444056b9bfc21d679360557575a779d7  ./.gitattributes
-10079069bf834df0c53fabd6f0b682d9fe81a71f1415a4efa5167b2bef1588a8  ./BACKLOG.md
+4445f314963bb1ec0e07fcae2c03337a16d3a1445616d6d6bb8fcc6ae195f2bc  ./BACKLOG.md
 14410cb67e7983ac8023af2bee453a5c35825cfd35435dc9e2fc4588b2ce1b30  ./DECISIONS.md
-f2a2d60d241fff057a71fa400578a4e5fb6c5f328eb7b559fe94dbaf376af6fe  ./HANDOFF.md
+4b8aa1e1c566064a240e50264d176e1ede40424b151f688e821d603b2138865d  ./HANDOFF.md
 028490d819273960c9806c770f72af735f32a2b4111824dbd076e31d27c9b135  ./NORMALIZATION.md
-6962c706fc6d503ad203d51de4d87bdd30ae555d782083998ff1822789589528  ./README.md
-279d6c619d341806bc5ee7894709e5fb2c9513fe05bc8898938fa092dffd5192  ./TRACKER.md
+b241b7b941cda23441838824a3d7eaed2133e327045e756011fa651fdb11a846  ./README.md
+f24ffe4cfe69e6047f666ba6931fbd1b25a5fab7ab762939f2017bcd4ba667e6  ./TRACKER.md
 11188daa54a564e3dc1e9acef6a25acaf6489e1ef2535bc7ddd7c2c2221f9669  ./linked-worktrees/active/A5b-managed-target-cwd-integration.md
 00ec7ea59e6154a7a53c710e4dbb576384477b2d2be8dd7cb23ae29a5fd694d6  ./linked-worktrees/forecast.md
 f6a3c6067a01a2f411ef93ef58abd00173437633a154df7303070de703b733dc  ./linked-worktrees/index.md
@@ -28,7 +28,7 @@ e019099e24349cf882535447f24ab06c2944070297725adcb5d3e998c85f600f  ./managed-exec
 ec060a6982754499ef82f0a2c00070b6e86e41aea85eedc89842ac4f7f02914c  ./managed-execution/tombstones/A7a-packed-install-readiness-compatibility-proof.md
 a9bafa34658bdf33816685cddacf588995f98a8fe8f7c984ee16e6ec698bb7b0  ./managed-execution/tombstones/A7b-quiescent-production-cutover-rollback.md
 33b8ac6ec174ff20e0de1d81f2619fbd7646a5911ec21963d647a6b52499c7b8  ./managed-execution/tombstones/A7c-external-coupling-removal-provenance.md
-d3cf1f25f527909a0db4c2c7e220eb0ef2b12516f042c1bd79c9cd0aa49872a1  ./manifest.json
+489edf97cf7fbd82270f862654f5d1763d4a7786c9041d12c77daef44b5750f5  ./manifest.json
 9f0e042875ee328e837cd418b00109f23d929272666aebb6113f90840d224181  ./normalization.json
 bb98cc211fa0b378b0657c62f477cb10c728fdd65091b9ea64ef1ad74df8e23e  ./parents/376/body.md
 e287efe41692b062973a4db78e4767ab73b323f4838e2f97c3725bc4d1e183e6  ./parents/376/previous-body.md
@@ -70,3 +70,6 @@ f44eccc62c83fd349f6536b84d1b8a4c6a2fd5cd8bd2c249b0e8d20e79b29cb3  ./peer-messagi
 bd5de2b47f4f3bc213c884828b3c6b339cac091beec447a5da3fba8bf8e8928f  ./peer-messaging/tombstones/B6b-peer-posix-windows-bounded-delivery-integration.md
 72bf37028eea590e1a1dc7d7441de85db74043688c30812c5cce70d84301aec6  ./peer-messaging/tombstones/B6b2-posix-windows-bounded-delivery-integration.md
 00570e14be120666d40c62ed1cc86e73ceb5355f8db9d78814339ea0e0cb8866  ./peer-messaging/tombstones/B7-peer-human-ux-autonomous-tools.md
+9b8aee31cfac3e3cc3d575d4922aac8aecd5f53fa8b653c0327773626ddc005d  ./publication-drafts/A1/body.md
+36e0aebd77e659f5209f6aa30b896f44a41301896874dc1e4ed92a211122cfec  ./publication-drafts/A1/metadata.json
+bd0e51e6d8c196f50f2e2b4bc83987f9c9f47a763435492446e2478b04506846  ./publication-drafts/A1/title.txt

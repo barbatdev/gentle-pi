@@ -5,7 +5,7 @@
 | #419 | - | published-needs-review | - | `parents/419/body.md` | https://github.com/Gentleman-Programming/gentle-pi/issues/419 | - | - | `2a3c348584a00791329eaded4dfe0f3e896b7407d104d9e48cd6f46f4bf20910` |
 | #376 | - | published-needs-review | - | `parents/376/body.md` | https://github.com/Gentleman-Programming/gentle-pi/issues/376 | - | - | `bb98cc211fa0b378b0657c62f477cb10c728fdd65091b9ea64ef1ad74df8e23e` |
 | #442 | - | published-needs-review | - | `parents/442/body.md` | https://github.com/Gentleman-Programming/gentle-pi/issues/442 | - | - | `6a378023ebbd003f48d3a50fd4bd1d1a1a51f55f83fadc74eda672b1dcb97490` |
-| A1 | #419 | draft | issue:379 | `managed-execution/active/A1-managed-execution-compatibility-seam.md` | - | - | - | `31ef50d862257cd77a4426d82a4741dbdceab52fb10ba005d27c97fc1ebd195f` |
+| A1 | #419 | ready | issue:379 | `managed-execution/active/A1-managed-execution-compatibility-seam.md` | - | - | - | `31ef50d862257cd77a4426d82a4741dbdceab52fb10ba005d27c97fc1ebd195f` |
 | A2 | #419 | draft | issue:379, issue:354, issue:327, issue:381, issue:382, A1 | `managed-execution/active/A2-agent-definition-resolution-validation.md` | - | - | - | `aa6e07c2c7e77f5c64be52b5e3cf36f78b45659bb3ee1ba1db9d167327c404ac` |
 | A3 | #419 | draft | A1, A2 | `managed-execution/active/A3-task-record-lifecycle-directory-projection.md` | - | - | - | `6e348795bc50ce9fc76ebd2efaf2993bebd17c3959965cf29dd46e1a4f734c02` |
 | A4 | #419 | draft | A3 | `managed-execution/active/A4-cancellation-concurrency-ancestry-shutdown.md` | - | - | - | `020a49c23b4800f304dcd9e723c048a01c224f553a795bf84d0d42a8a7866fb2` |
@@ -57,15 +57,18 @@
 
 ## Auxiliary integrity records
 
-The core inventory remains 3 parents, 30 active units, 18 tombstones, and 1 metadata unit. With the 65 prior files plus two normalization records, two historical snapshots, one Git whitespace exception, and three operational records, the expected durable file total is 73.
+The core inventory remains 3 parents, 30 active units (29 draft and 1 ready), 18 tombstones, and 1 metadata unit. With the 65 prior files plus two normalization records, two historical snapshots, one Git whitespace exception, three operational records, and three publication-draft records, the expected durable file total is 76.
 
 | Artifact | Status | SHA-256 |
 | --- | --- | --- |
 | `NORMALIZATION.md` | normalization rules | `028490d819273960c9806c770f72af735f32a2b4111824dbd076e31d27c9b135` |
 | `normalization.json` | machine-readable normalization record | `9f0e042875ee328e837cd418b00109f23d929272666aebb6113f90840d224181` |
-| `BACKLOG.md` | operational priority and observable exits | `10079069bf834df0c53fabd6f0b682d9fe81a71f1415a4efa5167b2bef1588a8` |
+| `BACKLOG.md` | operational priority and observable exits | `4445f314963bb1ec0e07fcae2c03337a16d3a1445616d6d6bb8fcc6ae195f2bc` |
 | `DECISIONS.md` | append-only durable decision log | `14410cb67e7983ac8023af2bee453a5c35825cfd35435dc9e2fc4588b2ce1b30` |
-| `HANDOFF.md` | operational resume card | `f2a2d60d241fff057a71fa400578a4e5fb6c5f328eb7b559fe94dbaf376af6fe` |
+| `HANDOFF.md` | operational resume card | `4b8aa1e1c566064a240e50264d176e1ede40424b151f688e821d603b2138865d` |
 | `.gitattributes` | disables only `blank-at-eof` for the two exact historical snapshots | `97d823d709d7ba3de7201ac04b09e948444056b9bfc21d679360557575a779d7` |
 | `parents/419/previous-body.md` | historical-not-current | `21b4fb59a2da686ba75af45355ecd8568fa40fcd18c23ea8a5bb990bb32a6931` |
 | `parents/376/previous-body.md` | historical-not-current | `e287efe41692b062973a4db78e4767ab73b323f4838e2f97c3725bc4d1e183e6` |
+| `publication-drafts/A1/title.txt` | audited publication title | `bd0e51e6d8c196f50f2e2b4bc83987f9c9f47a763435492446e2478b04506846` |
+| `publication-drafts/A1/body.md` | audited publication body | `9b8aee31cfac3e3cc3d575d4922aac8aecd5f53fa8b653c0327773626ddc005d` |
+| `publication-drafts/A1/metadata.json` | audited publication metadata; publication unauthorized | `36e0aebd77e659f5209f6aa30b896f44a41301896874dc1e4ed92a211122cfec` |

@@ -73,7 +73,7 @@
     {
       "id": "A1",
       "parent": "419",
-      "state": "draft",
+      "state": "ready",
       "dependencies": [
         "issue:379"
       ],
@@ -864,7 +864,7 @@
     {
       "path": "BACKLOG.md",
       "role": "operational-priority",
-      "sha256": "10079069bf834df0c53fabd6f0b682d9fe81a71f1415a4efa5167b2bef1588a8"
+      "sha256": "4445f314963bb1ec0e07fcae2c03337a16d3a1445616d6d6bb8fcc6ae195f2bc"
     },
     {
       "path": "DECISIONS.md",
@@ -874,10 +874,30 @@
     {
       "path": "HANDOFF.md",
       "role": "operational-resume-card",
-      "sha256": "f2a2d60d241fff057a71fa400578a4e5fb6c5f328eb7b559fe94dbaf376af6fe"
+      "sha256": "4b8aa1e1c566064a240e50264d176e1ede40424b151f688e821d603b2138865d"
     }
-  ],
-  "expected_counts": {
+      ],
+      "auxiliary_publication_records": [
+        {
+          "unit_id": "A1",
+          "path": "publication-drafts/A1/title.txt",
+          "role": "audited-publication-title",
+          "sha256": "bd0e51e6d8c196f50f2e2b4bc83987f9c9f47a763435492446e2478b04506846"
+        },
+        {
+          "unit_id": "A1",
+          "path": "publication-drafts/A1/body.md",
+          "role": "audited-publication-body",
+          "sha256": "9b8aee31cfac3e3cc3d575d4922aac8aecd5f53fa8b653c0327773626ddc005d"
+        },
+        {
+          "unit_id": "A1",
+          "path": "publication-drafts/A1/metadata.json",
+          "role": "audited-publication-metadata",
+          "sha256": "36e0aebd77e659f5209f6aa30b896f44a41301896874dc1e4ed92a211122cfec"
+        }
+      ],
+      "expected_counts": {
     "parents": 3,
     "active": 30,
     "tombstones": 18,
@@ -889,7 +909,8 @@
     "historical_snapshot_files": 2,
     "whitespace_exception_files": 1,
     "operational_files": 3,
-    "total_files": 73
+    "publication_draft_files": 3,
+    "total_files": 76
   },
   "whitespace_exceptions": [
     {

@@ -1,0 +1,178 @@
+{
+  "schema_version": "1.0",
+  "unit_id": "A1",
+  "target_repository": "Gentleman-Programming/gentle-pi",
+  "repository_context": {
+    "issues_enabled": true,
+    "blank_issues_enabled": true,
+    "discussions_enabled": false,
+    "issue_templates": [],
+    "authenticated": true,
+    "label_catalog": [
+      "bug",
+      "documentation",
+      "duplicate",
+      "enhancement",
+      "good first issue",
+      "help wanted",
+      "invalid",
+      "priority:high",
+      "question",
+      "size:exception",
+      "slop",
+      "status:approved",
+      "status:needs-review",
+      "type:bug",
+      "type:chore",
+      "type:feature",
+      "type:refactor",
+      "wontfix"
+    ]
+  },
+  "parent": {
+    "issue_number": 419,
+    "issue_url": "https://github.com/Gentleman-Programming/gentle-pi/issues/419",
+    "state": "OPEN",
+    "title": "feat(agents): add same-cwd managed execution",
+    "labels": [
+      "status:needs-review",
+      "type:feature"
+    ]
+  },
+  "dependency_snapshots": [
+    {
+      "issue_number": 379,
+      "issue_url": "https://github.com/Gentleman-Programming/gentle-pi/issues/379",
+      "state": "OPEN",
+      "title": "fix(orchestrator): prevent unauthorized execution-surface escalation",
+      "labels": [
+        "status:approved",
+        "type:bug",
+        "priority:high"
+      ],
+      "relationship": "Unsupported managed selection must fail closed before alternate work starts."
+    }
+  ],
+  "intended_labels": [
+    "status:needs-review",
+    "type:feature"
+  ],
+  "source": {
+    "relative_path": "docs/roadmaps/agent-runtime/managed-execution/active/A1-managed-execution-compatibility-seam.md",
+    "sha256": "31ef50d862257cd77a4426d82a4741dbdceab52fb10ba005d27c97fc1ebd195f"
+  },
+  "draft": {
+    "title_sha256": "bd0e51e6d8c196f50f2e2b4bc83987f9c9f47a763435492446e2478b04506846",
+    "body_sha256": "9b8aee31cfac3e3cc3d575d4922aac8aecd5f53fa8b653c0327773626ddc005d",
+    "body_line_count": 33
+  },
+  "duplicate_search": {
+    "timestamp_utc": "2026-08-26T22:41:33Z",
+    "scope": "all issues, open and closed, maximum 1000 results per query",
+    "queries": [
+      {
+        "query": "\"managed task\" in:title,body",
+        "results": [
+          {
+            "number": 440,
+            "title": "feat(runtime): add authoritative managed-task registry",
+            "state": "OPEN",
+            "equivalence": "Not equivalent: it owns task records and lifecycle, which this routing boundary explicitly excludes."
+          },
+          {
+            "number": 376,
+            "title": "feat(agents): execute managed tasks in linked worktrees",
+            "state": "OPEN",
+            "equivalence": "Not equivalent: it owns linked-worktree execution, which A1 excludes."
+          },
+          {
+            "number": 419,
+            "title": "feat(agents): add same-cwd managed execution",
+            "state": "OPEN",
+            "equivalence": "Parent issue, not an equivalent child work unit."
+          },
+          {
+            "number": 379,
+            "title": "fix(orchestrator): prevent unauthorized execution-surface escalation",
+            "state": "OPEN",
+            "equivalence": "Required fail-closed dependency, not an equivalent routing feature."
+          },
+          {
+            "number": 432,
+            "title": "feat(agents): define a Gentle-owned read-only activity projection",
+            "state": "OPEN",
+            "equivalence": "Not equivalent: it defines a read-only activity projection and does not route delegated work."
+          },
+          {
+            "number": 444,
+            "title": "feat(runtime): add isolated Pi AgentSession adapter",
+            "state": "OPEN",
+            "equivalence": "Not equivalent: it prepares an isolated session and does not select delegated-work routing."
+          }
+        ]
+      },
+      {
+        "query": "\"delegated work\" in:title,body",
+        "results": [
+          {
+            "number": 419,
+            "title": "feat(agents): add same-cwd managed execution",
+            "state": "OPEN",
+            "equivalence": "Parent issue, not an equivalent child work unit."
+          },
+          {
+            "number": 430,
+            "title": "feat(ui): add an OpenCode-like agent/subagent status bar",
+            "state": "OPEN",
+            "equivalence": "Not equivalent: it is a read-only UI consumer and does not own routing."
+          }
+        ]
+      },
+      {
+        "query": "\"foreground background\" in:title,body",
+        "results": [
+          {
+            "number": 436,
+            "title": "refactor(agents): isolate delegation admission behind a Gentle Pi seam",
+            "state": "OPEN",
+            "equivalence": "Not equivalent: it preserves the existing pre-dispatch decision and expressly adds no managed-mode selection point."
+          },
+          {
+            "number": 440,
+            "title": "feat(runtime): add authoritative managed-task registry",
+            "state": "OPEN",
+            "equivalence": "Not equivalent: it owns lifecycle records rather than compatibility routing."
+          }
+        ]
+      },
+      {
+        "query": "\"execution mode\" in:title,body",
+        "results": [
+          {
+            "number": 401,
+            "title": "fix(sdd): elide preflight questions already resolved by authority or defaults",
+            "state": "CLOSED",
+            "equivalence": "Not equivalent: it concerns SDD preflight questions, not delegated-work routing."
+          },
+          {
+            "number": 18,
+            "title": "reduce system prompt token cost by lazy-loading SDD orchestrator sections",
+            "state": "CLOSED",
+            "equivalence": "Not equivalent: it concerns prompt loading, not delegated-work routing."
+          }
+        ]
+      }
+    ],
+    "disposition": "no_equivalent_issue_found"
+  },
+  "audit_status": "passed",
+  "publication_authorized": false,
+  "issue_url": null,
+  "issue_number": null,
+  "non_actions": [
+    "No remote issue, comment, pull request, or label was created or changed.",
+    "No implementation or test code was changed.",
+    "No backlog, tracker, manifest, or source contract was updated.",
+    "This draft does not authorize publication or implementation."
+  ]
+}

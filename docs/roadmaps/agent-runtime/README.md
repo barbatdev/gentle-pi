@@ -9,10 +9,11 @@ This directory is the durable, versioned source of truth for the three agent-run
 1. Read `HANDOFF.md` for the verified resume point and current non-actions.
 2. Read `BACKLOG.md` for operational priority.
 3. Read `TRACKER.md` and `manifest.json` for canonical inventory and state.
-4. Read the referenced work-unit contract.
-5. Read `DECISIONS.md` only when durable rationale is needed.
-6. If a source and canonical hash differ, read and validate both `NORMALIZATION.md` and `normalization.json` before treating the difference as accepted.
-7. Verify the ledger with `sha256sum -c SHA256SUMS`.
+4. For a `ready` unit, read its audited publication draft in `publication-drafts/<ID>/` before any separate publication decision.
+5. Read the referenced work-unit contract.
+6. Read `DECISIONS.md` only when durable rationale is needed.
+7. If a source and canonical hash differ, read and validate both `NORMALIZATION.md` and `normalization.json` before treating the difference as accepted.
+8. Verify the ledger with `sha256sum -c SHA256SUMS`.
 
 `HANDOFF.md` and `BACKLOG.md` are operational aids. `manifest.json` and `TRACKER.md` remain canonical for inventory and state.
 
@@ -20,7 +21,7 @@ Historical snapshots at `parents/419/previous-body.md` and `parents/376/previous
 
 ## State machine
 
-Allowed states are finite: `draft`, `ready`, `published-needs-review`, `published-approved`, `in-progress`, `blocked`, `done`, `tombstoned`, and `metadata` (A5a only). Parents are `published-needs-review`; all active children are `draft`; tombstones are `tombstoned`; A5a is `metadata`. A split tombstones the old ID and records its successors; it never deletes decision history.
+Allowed states are finite: `draft`, `ready`, `published-needs-review`, `published-approved`, `in-progress`, `blocked`, `done`, `tombstoned`, and `metadata` (A5a only). Parents are `published-needs-review`; active children are `draft` except audited `ready` publication drafts; tombstones are `tombstoned`; A5a is `metadata`. `ready` requires audit and never authorizes publication or implementation. A split tombstones the old ID and records its successors; it never deletes decision history.
 
 ## Update rules
 
@@ -50,7 +51,7 @@ find . -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 sha256sum > SHA25
 
 1. Update `HANDOFF.md` and `BACKLOG.md` with the verified stopping point and operational exit conditions.
 2. Record only newly evidenced durable decisions in `DECISIONS.md`.
-3. Update `TRACKER.md` and `manifest.json` only if canonical state changed.
+3. Update `TRACKER.md`, `manifest.json`, and audited publication-draft records only if their canonical state changed.
 4. Regenerate `SHA256SUMS` last, then perform structural readback and integrity validation.
 5. Commit to this same branch only under separate authorization.
 
