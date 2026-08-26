@@ -1,0 +1,288 @@
+{
+  "schema_version": 1,
+  "baseline": {
+    "peer_parent_url": "https://github.com/Gentleman-Programming/gentle-pi/issues/442",
+    "comparison": "Each entry differs after only the verified peer-parent URL substitution is applied to its temporary-source baseline."
+  },
+  "rule_definitions": [
+    {
+      "id": "peer_parent_url_substitution",
+      "description": "Replace each verified peer-parent placeholder token with the published #442 URL."
+    },
+    {
+      "id": "peer_parent_stale_state",
+      "description": "Remove stale peer-parent placeholder state that says the parent has not been created; tombstones retain only current historical-state wording."
+    },
+    {
+      "id": "peer_parent_regeneration_wording",
+      "description": "Replace stale parent-placeholder regeneration wording with published-parent wording."
+    },
+    {
+      "id": "b6b1_host_runtime_capability_contract",
+      "description": "Replace two package-specific coupling references with the supported host-runtime capability contract while preserving version, capability, and fail-closed semantics."
+    },
+    {
+      "id": "a4_reviewer_attribution_removal",
+      "description": "Remove personal reviewer attribution while preserving the #419 evidence claim."
+    },
+    {
+      "id": "a5a_durable_publication_metadata",
+      "description": "Replace ephemeral absolute paths and completed publication procedure with durable roadmap-relative and current-state metadata."
+    }
+  ],
+  "entries": [
+    {
+      "id": "A4",
+      "canonical_path": "managed-execution/active/A4-cancellation-concurrency-ancestry-shutdown.md",
+      "source_sha256": "3f38c93816f9dfe8ee0fdbf19a93416cef287b0c09109320bae840a591724ac3",
+      "canonical_sha256": "020a49c23b4800f304dcd9e723c048a01c224f553a795bf84d0d42a8a7866fb2",
+      "rule_ids": [
+        "a4_reviewer_attribution_removal"
+      ]
+    },
+    {
+      "id": "A5a",
+      "canonical_path": "linked-worktrees/metadata/A5a-refreeze-376-contract-only.md",
+      "source_sha256": "d48abe6338955a3a53b1f9566e89ae5dbfb5a4d3fb587f24e64c0f111b03d3e7",
+      "canonical_sha256": "728e9f75aad2ade8385f28dcb52e41b45d918bc0f33167f45471265646bdc7bc",
+      "rule_ids": [
+        "a5a_durable_publication_metadata"
+      ]
+    },
+    {
+      "id": "B1",
+      "canonical_path": "peer-messaging/active/B1-peer-threat-model-identity-bounds.md",
+      "source_sha256": "d975bccf67cb4c6f68e5bb97a8c96a48a22ccbbec863b53302efad3d37f4434f",
+      "canonical_sha256": "b3dcd9f03d7f2dd18077521b8e8b1d4509bf4fe3ec7c6badf158d3d72c373713",
+      "rule_ids": ["peer_parent_url_substitution", "peer_parent_stale_state", "peer_parent_regeneration_wording"]
+    },
+    {
+      "id": "B2a",
+      "canonical_path": "peer-messaging/active/B2a-peer-registry-trust.md",
+      "source_sha256": "b3deb278bf49101d506f91132771b5119811e3a84f3e64df443c2bd300f45911",
+      "canonical_sha256": "27be305e3ff3280995a4852174c9c1468ac6b82e760dbb3d3ce7a2880fb2709b",
+      "rule_ids": ["peer_parent_url_substitution", "peer_parent_stale_state", "peer_parent_regeneration_wording"]
+    },
+    {
+      "id": "B2b1",
+      "canonical_path": "peer-messaging/active/B2b1-peer-credential-storage-rotation.md",
+      "source_sha256": "2f046808a5480feb102efba0f1014abe6c5f3bff2b292bbcb21569b554a01772",
+      "canonical_sha256": "668944c141de4e12aba4415b4a2eaa1b6d560add9db2131c140908d052bdeed0",
+      "rule_ids": ["peer_parent_url_substitution", "peer_parent_stale_state", "peer_parent_regeneration_wording"]
+    },
+    {
+      "id": "B6a",
+      "canonical_path": "peer-messaging/active/B6a-peer-transport-neutral-authenticated-delivery-core.md",
+      "source_sha256": "2999fcf52c6c4c89e864fafa98ae5cb60843968bbc860ab1c3a5615c71ab5e5f",
+      "canonical_sha256": "bc677bbd67e7460c576152691e40a30890ff30f203d8cc06a851aa9703d125f1",
+      "rule_ids": ["peer_parent_url_substitution", "peer_parent_stale_state", "peer_parent_regeneration_wording"]
+    },
+    {
+      "id": "B2b2",
+      "canonical_path": "peer-messaging/active/B2b2-peer-credential-revocation-cancellation.md",
+      "source_sha256": "7c744685b3d7311036cafd9d1c5afaa27b08d9dbd23f36a9b5f4b7b04284ea7c",
+      "canonical_sha256": "491142f02afbbd89c51b0fd45efa8cb6d126509c1fddefe1b6e0756224ef4aa5",
+      "rule_ids": ["peer_parent_url_substitution", "peer_parent_stale_state", "peer_parent_regeneration_wording"]
+    },
+    {
+      "id": "B3",
+      "canonical_path": "peer-messaging/active/B3-named-peer-read-only-directory.md",
+      "source_sha256": "55ae6db6dfe332fc93dbce3a6a84444a292639d1a9a65c6824dcd82ac7662291",
+      "canonical_sha256": "d917f51ce70179b5891fba6ddbe2a756b4647af794c4ccd66c2e33889ca8923c",
+      "rule_ids": ["peer_parent_url_substitution", "peer_parent_stale_state", "peer_parent_regeneration_wording"]
+    },
+    {
+      "id": "B4a",
+      "canonical_path": "peer-messaging/active/B4a-posix-authenticated-endpoint-envelope.md",
+      "source_sha256": "a93afd78121e9210dfd1542da237ab27d27a46b14d2cfad4b4018668b7aab6db",
+      "canonical_sha256": "229eadbce450a8637a03127970eb3fa67775af1f1be5b84660a3313ad1689810",
+      "rule_ids": ["peer_parent_url_substitution", "peer_parent_stale_state", "peer_parent_regeneration_wording"]
+    },
+    {
+      "id": "B4b1",
+      "canonical_path": "peer-messaging/active/B4b1-posix-endpoint-lifecycle.md",
+      "source_sha256": "11628902f435d8f9362bb97e24ef6506b886ba308cdb2b0ec68b86045e83bce7",
+      "canonical_sha256": "e29c3507cbe0a4f6e4d2b011b827e0eb9e3809ac16fe06ebf0408923c52f6749",
+      "rule_ids": ["peer_parent_url_substitution", "peer_parent_stale_state", "peer_parent_regeneration_wording"]
+    },
+    {
+      "id": "B4b2",
+      "canonical_path": "peer-messaging/active/B4b2-posix-packed-peer-transport-proof.md",
+      "source_sha256": "9c5fe03af2981a841524139a2328f92fcc3241660fad4909ae410b433c713765",
+      "canonical_sha256": "7b0664e4c0cfbf4a50c07bd66dffb2639310ce056b30174d21bed05f66ff74fc",
+      "rule_ids": ["peer_parent_url_substitution", "peer_parent_stale_state", "peer_parent_regeneration_wording"]
+    },
+    {
+      "id": "B5a",
+      "canonical_path": "peer-messaging/active/B5a-windows-authenticated-pipe-envelope.md",
+      "source_sha256": "a96c04269e26c3d32d0c490366d7da26c357b3f19a0bf2b4d92985d5834f5c0e",
+      "canonical_sha256": "7528116d3e11783fc20781b9d6407f91b44d70923674292980b2ecade957c38a",
+      "rule_ids": ["peer_parent_url_substitution", "peer_parent_stale_state", "peer_parent_regeneration_wording"]
+    },
+    {
+      "id": "B5b1",
+      "canonical_path": "peer-messaging/active/B5b1-windows-named-pipe-lifecycle.md",
+      "source_sha256": "ca5d4144dae067d670ba5b589cb96b80317505c7dc655bfa38ed9c42a1ecee8d",
+      "canonical_sha256": "2ac649e3b85f0d7a4ce1ac4bacb46628c76da97154a13eb1fbb3a9aa74f70dc9",
+      "rule_ids": ["peer_parent_url_substitution", "peer_parent_stale_state", "peer_parent_regeneration_wording"]
+    },
+    {
+      "id": "B5b2",
+      "canonical_path": "peer-messaging/active/B5b2-windows-packed-peer-transport-proof.md",
+      "source_sha256": "a870042863ec632e77faf2f54e65396a6f0a87184708133e5423a4bc5eb18606",
+      "canonical_sha256": "6d50a58d9d51cc8fff6b70066eab972fdc17e88b44aa49786fd7494a6f1ebfe7",
+      "rule_ids": ["peer_parent_url_substitution", "peer_parent_stale_state", "peer_parent_regeneration_wording"]
+    },
+    {
+      "id": "B6b1",
+      "canonical_path": "peer-messaging/active/B6b1-correlated-guarded-pi-peer-turn-dispatch.md",
+      "source_sha256": "c68bd9ddda41ba923a472b933f791489c631eb5755922065a49ef104f5e0c769",
+      "canonical_sha256": "af3f335277bb74d683dfcdb9c540583abde454e5a151f9505702583eaa2dd7d5",
+      "rule_ids": ["peer_parent_url_substitution", "peer_parent_stale_state", "peer_parent_regeneration_wording", "b6b1_host_runtime_capability_contract"]
+    },
+    {
+      "id": "B6c",
+      "canonical_path": "peer-messaging/active/B6c-posix-bounded-delivery-integration.md",
+      "source_sha256": "b69dd525467ae6abb284dba699c876116f65f8946c2cdb8736186e03233f58c8",
+      "canonical_sha256": "7ff14cad5f73527fbf25c08e43d0a887f5007fd08e6ec62f75e5a09841e76e38",
+      "rule_ids": ["peer_parent_url_substitution", "peer_parent_stale_state", "peer_parent_regeneration_wording"]
+    },
+    {
+      "id": "B6d",
+      "canonical_path": "peer-messaging/active/B6d-windows-bounded-delivery-integration.md",
+      "source_sha256": "a6fae8976ce0eaa569a9ba8b9d7d78df8924f1068b4ab8d4e78b7467c0ab8994",
+      "canonical_sha256": "473484905a9e0643cd38f35f547ab632e3a428f14a61fc26d5e9a9cdbba3def8",
+      "rule_ids": ["peer_parent_url_substitution", "peer_parent_stale_state", "peer_parent_regeneration_wording"]
+    },
+    {
+      "id": "B7a",
+      "canonical_path": "peer-messaging/active/B7a-peer-project-inspection-wrapper.md",
+      "source_sha256": "17af3350bbb9c7e94fe95014c11c5e5f9a4fb4496b5f2924b4ed645784b3fead",
+      "canonical_sha256": "4de1158a503cb298441ef2f7a6a8504bad9585c64a921a58f7724ba5cda8678c",
+      "rule_ids": ["peer_parent_url_substitution", "peer_parent_stale_state", "peer_parent_regeneration_wording"]
+    },
+    {
+      "id": "B7b",
+      "canonical_path": "peer-messaging/active/B7b-peer-directory-bounded-message-tools.md",
+      "source_sha256": "f78c408f3a6d9b13f993a8cb3299fd2af584d1143426361c26aa80cf6eda4922",
+      "canonical_sha256": "2b00d0afe99a47abe8b58ff7ecea28ce4928ea97c8cd7649b90fdea3e5b012dd",
+      "rule_ids": ["peer_parent_url_substitution", "peer_parent_stale_state", "peer_parent_regeneration_wording"]
+    },
+    {
+      "id": "B7c",
+      "canonical_path": "peer-messaging/active/B7c-interactive-named-peer-routing-autocomplete.md",
+      "source_sha256": "e0610e2bc518d18ed0eee9fff2038eaa42562bb16d31890b5a5987c1f9103b75",
+      "canonical_sha256": "6464faee8e845396871a35fed66b64507f97d86102a998ee9fb30847ce0fd908",
+      "rule_ids": ["peer_parent_url_substitution", "peer_parent_stale_state", "peer_parent_regeneration_wording"]
+    },
+    {
+      "id": "B7d",
+      "canonical_path": "peer-messaging/active/B7d-packed-posix-peer-tool-confinement.md",
+      "source_sha256": "935d58a140084558c522a2ff2b99ae6121a8f8861c98ff1a37b864ce70c6d389",
+      "canonical_sha256": "1519778802872d603735b25fd5515ebf4c019d6a433b47ea105ac2a1946e214c",
+      "rule_ids": ["peer_parent_url_substitution", "peer_parent_stale_state", "peer_parent_regeneration_wording"]
+    },
+    {
+      "id": "B7e",
+      "canonical_path": "peer-messaging/active/B7e-packed-windows-peer-tool-confinement.md",
+      "source_sha256": "f7707b3f1f59270198ba5ba3fae202635a42d9c0a9f083e5f4df3db817d2d0e9",
+      "canonical_sha256": "968da5dcbeb5d1a4dfb014596bfc0976f4d7672469cd35323d3228f653c92fad",
+      "rule_ids": ["peer_parent_url_substitution", "peer_parent_stale_state", "peer_parent_regeneration_wording"]
+    },
+    {
+      "id": "B2",
+      "canonical_path": "peer-messaging/tombstones/B2-peer-registry-trust-credentials-revocation.md",
+      "source_sha256": "439865de4fd091c15482268413c1ac7158c9c8d1ae9fd7d2597c4c8c2818527f",
+      "canonical_sha256": "48130086f9be7f926a2af11174d088b423322c03626d21cd87ab072e5988d393",
+      "rule_ids": ["peer_parent_url_substitution", "peer_parent_stale_state"]
+    },
+    {
+      "id": "B2b",
+      "canonical_path": "peer-messaging/tombstones/B2b-peer-credentials-rotation-revocation.md",
+      "source_sha256": "74172fafa796c727404e14bb622927c883318981d9fcb9e130c9d40fc660c878",
+      "canonical_sha256": "35540a6937c0dbe78648a2fca24804a35ed7d779dcd02fccd00904691033e544",
+      "rule_ids": ["peer_parent_url_substitution", "peer_parent_stale_state"]
+    },
+    {
+      "id": "B4",
+      "canonical_path": "peer-messaging/tombstones/B4-posix-authenticated-local-transport.md",
+      "source_sha256": "c6ee37f75b243643548186d86f11dfa64c01fd520c43bb1583e8595de246ca0a",
+      "canonical_sha256": "73bf3d68ac6b1903bd934d28e70bc9d1eef9d4b09906a696a8eb53ff67ab3440",
+      "rule_ids": ["peer_parent_url_substitution", "peer_parent_stale_state"]
+    },
+    {
+      "id": "B4b",
+      "canonical_path": "peer-messaging/tombstones/B4b-posix-liveness-revocation-packed-proof.md",
+      "source_sha256": "6912dfb173afa5d0c2b1b32d9eb79ee9cd5a3200330de7ce19385750d7e2b5ff",
+      "canonical_sha256": "d5429e9df7c37f782fd115abfa7f1cdc461bb10ab81117b3813347535995baf5",
+      "rule_ids": ["peer_parent_url_substitution", "peer_parent_stale_state"]
+    },
+    {
+      "id": "B5",
+      "canonical_path": "peer-messaging/tombstones/B5-windows-authenticated-local-transport.md",
+      "source_sha256": "86ea8c04615703b7501891ec1ad88b1340d914af3ba88a6a88774ebc605db848",
+      "canonical_sha256": "f44eccc62c83fd349f6536b84d1b8a4c6a2fd5cd8bd2c249b0e8d20e79b29cb3",
+      "rule_ids": ["peer_parent_url_substitution", "peer_parent_stale_state"]
+    },
+    {
+      "id": "B5b",
+      "canonical_path": "peer-messaging/tombstones/B5b-windows-liveness-revocation-packed-proof.md",
+      "source_sha256": "6e594fa7d0c2bb6d2dafbc912eb4bfc7c8de5185cc4a12bad4c2b70c0cda3c94",
+      "canonical_sha256": "61a0996e7ddd89636973e29bc6174da23e696334cc4b9d470dfe40e6edc18544",
+      "rule_ids": ["peer_parent_url_substitution", "peer_parent_stale_state"]
+    },
+    {
+      "id": "B6",
+      "canonical_path": "peer-messaging/tombstones/B6-peer-delivery-ack-dedupe-bounds.md",
+      "source_sha256": "cf39baf5a6721fc8cf8aeb5ecc5c3963a0db3c807f05f43e4ed48f65f23afc42",
+      "canonical_sha256": "31feded9b7670cb52d28b6aba468490a5d32e19587f3f84b4f7d0479c1729190",
+      "rule_ids": ["peer_parent_url_substitution", "peer_parent_stale_state"]
+    },
+    {
+      "id": "B6b",
+      "canonical_path": "peer-messaging/tombstones/B6b-peer-posix-windows-bounded-delivery-integration.md",
+      "source_sha256": "b4b24f91fac274d87893a50a64e4410e22a0281f38a6a473c56ba14688f36f1f",
+      "canonical_sha256": "bd5de2b47f4f3bc213c884828b3c6b339cac091beec447a5da3fba8bf8e8928f",
+      "rule_ids": ["peer_parent_url_substitution", "peer_parent_stale_state"]
+    },
+    {
+      "id": "B6b2",
+      "canonical_path": "peer-messaging/tombstones/B6b2-posix-windows-bounded-delivery-integration.md",
+      "source_sha256": "e3bb2176ad590a5bc25cfa8070a12426fdbee4f87349b9ceecbf59a2aee804e1",
+      "canonical_sha256": "72bf37028eea590e1a1dc7d7441de85db74043688c30812c5cce70d84301aec6",
+      "rule_ids": ["peer_parent_url_substitution", "peer_parent_stale_state"]
+    },
+    {
+      "id": "B7",
+      "canonical_path": "peer-messaging/tombstones/B7-peer-human-ux-autonomous-tools.md",
+      "source_sha256": "c130e77237aa3275a13527e089f9e128c1bfeb5e896d279fb9fea2204a4f4d49",
+      "canonical_sha256": "00570e14be120666d40c62ed1cc86e73ceb5355f8db9d78814339ea0e0cb8866",
+      "rule_ids": ["peer_parent_url_substitution", "peer_parent_stale_state"]
+    }
+  ],
+  "aggregate_expected_counts": {
+    "work_unit_source_files": 49,
+    "drift_work_unit_files": 32,
+    "peer_drift_files": 30,
+    "peer_parent_url_substitutions": 35,
+    "peer_parent_stale_state_entries": 30,
+    "peer_parent_regeneration_entries": 20,
+    "b6b1_host_runtime_capability_contract_entries": 1,
+    "a4_reviewer_attribution_removal_entries": 1,
+    "a5a_durable_publication_metadata_entries": 1
+  },
+  "historical_snapshots": [
+    {
+      "parent_id": "#419",
+      "canonical_path": "parents/419/previous-body.md",
+      "sha256": "21b4fb59a2da686ba75af45355ecd8568fa40fcd18c23ea8a5bb990bb32a6931",
+      "status": "historical-not-current"
+    },
+    {
+      "parent_id": "#376",
+      "canonical_path": "parents/376/previous-body.md",
+      "sha256": "e287efe41692b062973a4db78e4767ab73b323f4838e2f97c3725bc4d1e183e6",
+      "status": "historical-not-current"
+    }
+  ]
+}
