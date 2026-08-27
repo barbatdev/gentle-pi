@@ -869,7 +869,7 @@
     {
       "path": "DECISIONS.md",
       "role": "durable-decision-log",
-      "sha256": "14410cb67e7983ac8023af2bee453a5c35825cfd35435dc9e2fc4588b2ce1b30"
+      "sha256": "0da52c0b57a0e9bce7db6219cf871014510f21cb9f722db06df01d69335a95f4"
     },
     {
       "path": "HANDOFF.md",

@@ -64,7 +64,7 @@ The core inventory remains 3 parents, 30 active units (29 draft and 1 published-
 | `NORMALIZATION.md` | normalization rules | `028490d819273960c9806c770f72af735f32a2b4111824dbd076e31d27c9b135` |
 | `normalization.json` | machine-readable normalization record | `9f0e042875ee328e837cd418b00109f23d929272666aebb6113f90840d224181` |
 | `BACKLOG.md` | operational priority and observable exits | `162a8ffa31b244cf3f86519ad423fdd5c9411b016121a66f6f6b54e30962f393` |
-| `DECISIONS.md` | append-only durable decision log | `14410cb67e7983ac8023af2bee453a5c35825cfd35435dc9e2fc4588b2ce1b30` |
+| `DECISIONS.md` | append-only durable decision log | `0da52c0b57a0e9bce7db6219cf871014510f21cb9f722db06df01d69335a95f4` |
 | `HANDOFF.md` | operational resume card | `bb3a61403d6526a7d14b7d192315305b76a2ac704cc26ef0df5d5ed2c16ea55b` |
 | `.gitattributes` | disables only `blank-at-eof` for the two exact historical snapshots | `97d823d709d7ba3de7201ac04b09e948444056b9bfc21d679360557575a779d7` |
 | `parents/419/previous-body.md` | historical-not-current | `21b4fb59a2da686ba75af45355ecd8568fa40fcd18c23ea8a5bb990bb32a6931` |
