@@ -5,9 +5,9 @@ Refresh this operational card at every stopping point. `manifest.json` and `TRAC
 ## Verified baseline
 
 - Roadmap branch: `docs/agent-runtime-roadmaps`.
-- Parent baseline: `328d1270195d8ff5a97fda6cfe99d82cde0e34bc` on that branch. This is the parent baseline, not a claim about the current commit.
+- Parent baseline: `cfbb544e2a0ae8f9f8eaa8b5a28c266f2d407c24` on that branch. This is the parent baseline, not a claim about the current commit.
 - Official base: `425c226252a800dfd011ef2248575ffcb706872a`.
-- Last completed integrity result before this update: 73 files and 72 checksums.
+- Last completed integrity result before this update: 76 files and 75 checksums.
 
 ## Current state
 
@@ -15,11 +15,11 @@ Refresh this operational card at every stopping point. `manifest.json` and `TRAC
 - #376 is OPEN `status:needs-review`.
 - #442 is OPEN `status:needs-review`.
 - #379 is OPEN `status:approved`; #354 is OPEN `status:approved`.
-- No child issue is published.
+- A1 is published as #447 (https://github.com/Gentleman-Programming/gentle-pi/issues/447), OPEN `status:needs-review` and `type:feature`, and appears exactly once as a native sub-issue of #419.
 
 ## Now
 
-A1 is audited and ready; wait for separate explicit publication authorization.
+A1 is published-needs-review. Resume only through #447 and #419 maintainer review/approval gates and delivered prerequisite evidence before implementation.
 
 ## Open gates
 
@@ -36,4 +36,4 @@ A1 is audited and ready; wait for separate explicit publication authorization.
 
 ## Non-actions
 
-This handoff does not authorize issue publication, implementation, a PR, or upstream mutation.
+This handoff does not authorize implementation, a PR, approval, or upstream mutation.

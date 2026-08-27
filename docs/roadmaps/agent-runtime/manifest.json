@@ -73,12 +73,12 @@
     {
       "id": "A1",
       "parent": "419",
-      "state": "ready",
+      "state": "published-needs-review",
       "dependencies": [
         "issue:379"
       ],
       "path": "managed-execution/active/A1-managed-execution-compatibility-seam.md",
-      "issue_url": null,
+      "issue_url": "https://github.com/Gentleman-Programming/gentle-pi/issues/447",
       "branch": null,
       "pr": null,
       "successors": [],
@@ -864,7 +864,7 @@
     {
       "path": "BACKLOG.md",
       "role": "operational-priority",
-      "sha256": "4445f314963bb1ec0e07fcae2c03337a16d3a1445616d6d6bb8fcc6ae195f2bc"
+      "sha256": "162a8ffa31b244cf3f86519ad423fdd5c9411b016121a66f6f6b54e30962f393"
     },
     {
       "path": "DECISIONS.md",
@@ -874,7 +874,7 @@
     {
       "path": "HANDOFF.md",
       "role": "operational-resume-card",
-      "sha256": "4b8aa1e1c566064a240e50264d176e1ede40424b151f688e821d603b2138865d"
+      "sha256": "bb3a61403d6526a7d14b7d192315305b76a2ac704cc26ef0df5d5ed2c16ea55b"
     }
       ],
       "auxiliary_publication_records": [
@@ -893,8 +893,8 @@
         {
           "unit_id": "A1",
           "path": "publication-drafts/A1/metadata.json",
-          "role": "audited-publication-metadata",
-          "sha256": "36e0aebd77e659f5209f6aa30b896f44a41301896874dc1e4ed92a211122cfec"
+          "role": "audited-publication-metadata-and-remote-readback",
+          "sha256": "0363bb5d49758741ca8212c5b1b0484d554980469bcb4db2d04c97075073dd63"
         }
       ],
       "expected_counts": {

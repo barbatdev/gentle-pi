@@ -6,7 +6,7 @@ Operational priority is not canonical inventory or state. `manifest.json` and `T
 
 | ID | Parent | Current state | Dependencies or gate | Next observable exit condition |
 | --- | --- | --- | --- | --- |
-| A1 | #419 | ready | #419 is OPEN `status:needs-review`; #379 is OPEN `status:approved` and not evidenced as delivered or merged. | Wait for separate explicit publication authorization. |
+| A1 | #419 | published-needs-review | #447 and #419 are OPEN `status:needs-review`; #379 is OPEN `status:approved` and not evidenced as delivered or merged. | Wait for maintainer review/approval of #447 and parent #419, plus delivered prerequisite evidence before implementation. |
 
 ## Next
 
@@ -14,7 +14,7 @@ These drafts are ordered by dependency and are not ready for bulk publication.
 
 | ID | Parent | Current state | Dependencies or gate | Next observable exit condition |
 | --- | --- | --- | --- | --- |
-| A2 | #419 | draft | A1; #379, #354, #327, #381, and #382 gates. | Re-read prerequisites after A1's separate publication decision, then prepare only when its gates are evidenced. |
+| A2 | #419 | draft | A1; #379, #354, #327, #381, and #382 gates. | Re-read prerequisites after A1 review/approval and delivered prerequisite evidence, then prepare only when its gates are evidenced. |
 | A3 | #419 | draft | A1 and A2. | Wait for delivered A1 and A2; then prepare the A3 draft under separate authorization. |
 | A4 | #419 | draft | A3. | Wait for delivered A3; then prepare the A4 draft under separate authorization. |
 

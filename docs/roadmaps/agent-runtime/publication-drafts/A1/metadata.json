@@ -166,13 +166,36 @@
     "disposition": "no_equivalent_issue_found"
   },
   "audit_status": "passed",
-  "publication_authorized": false,
-  "issue_url": null,
-  "issue_number": null,
+  "publication_authorized": true,
+  "publication_completed": true,
+  "issue_url": "https://github.com/Gentleman-Programming/gentle-pi/issues/447",
+  "issue_number": 447,
+  "remote_readback": {
+    "scope": "bounded to issue #447 and parent #419 native sub-issue relation",
+    "issue": {
+      "number": 447,
+      "url": "https://github.com/Gentleman-Programming/gentle-pi/issues/447",
+      "state": "OPEN",
+      "labels": [
+        "status:needs-review",
+        "type:feature"
+      ],
+      "title_sha256": "bd0e51e6d8c196f50f2e2b4bc83987f9c9f47a763435492446e2478b04506846",
+      "body_sha256": "9b8aee31cfac3e3cc3d575d4922aac8aecd5f53fa8b653c0327773626ddc005d",
+      "created_at_utc": "2026-08-27T00:50:14Z",
+      "updated_at_utc": "2026-08-27T00:50:14Z"
+    },
+    "native_parent_linkage": {
+      "parent_issue_number": 419,
+      "parent_issue_url": "https://github.com/Gentleman-Programming/gentle-pi/issues/419",
+      "child_issue_number": 447,
+      "occurrences_under_parent": 1
+    }
+  },
   "non_actions": [
-    "No remote issue, comment, pull request, or label was created or changed.",
-    "No implementation or test code was changed.",
-    "No backlog, tracker, manifest, or source contract was updated.",
-    "This draft does not authorize publication or implementation."
+    "No code or test changes were made.",
+    "No pull request was created or updated.",
+    "Publication and remote readback do not grant approval or implementation authorization.",
+    "No implementation was performed."
   ]
 }
