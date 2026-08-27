@@ -1,11 +1,12 @@
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import test from "node:test";
 import { __testing } from "../extensions/gentle-ai.ts";
 
-const { classifyGuardedCommand } = __testing;
+const { classifyGuardedCommand, guardedCommandPreview } = __testing;
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -19,6 +20,24 @@ function writeConfig(dir: string, relPath: string, content: unknown): void {
 	const full = join(dir, relPath);
 	mkdirSync(dirname(full), { recursive: true });
 	writeFileSync(full, JSON.stringify(content, null, 2));
+}
+
+function createForkFirstRepository(t: test.TestContext): string {
+	const repository = makeTmpDir();
+	t.after(() => rmSync(repository, { recursive: true, force: true }));
+	const git = (...args: string[]): void => {
+		execFileSync("git", args, { cwd: repository, stdio: "ignore" });
+	};
+	git("init", "-b", "feature/test");
+	git("remote", "add", "fork", "https://github.com/example/fork.git");
+	git("remote", "add", "upstream", "https://github.com/example/project.git");
+	git("config", "remote.pushDefault", "fork");
+	git("config", "remote.upstream.pushurl", "DISABLED");
+	return repository;
+}
+
+function classifyForkPush(command: string, repository: string, gitPush: "allow" | "block" = "allow"): unknown {
+	return classifyGuardedCommand(command, { autonomousMode: true, guardedCommands: { gitPush } }, repository);
 }
 
 // ---------------------------------------------------------------------------
@@ -121,12 +140,66 @@ test("classifyGuardedCommand: chmod -R 777 always blocked", () => {
 // Autonomous mode + allow action
 // ---------------------------------------------------------------------------
 
-test("classifyGuardedCommand: git push plain allowed when autonomousMode=true and gitPush=allow", () => {
-	const result = classifyGuardedCommand("git push origin feature/test", {
-		autonomousMode: true,
-		guardedCommands: { gitPush: "allow" },
-	});
-	assert.equal(result, "allow");
+test("classifyGuardedCommand: allows only proven fork-first feature pushes", (t) => {
+	const repository = createForkFirstRepository(t);
+	for (const command of [
+		"git push",
+		"git push fork feature/test",
+		"git push -u fork feature/test",
+		"git push --set-upstream fork feature/test",
+	]) {
+		assert.equal(classifyForkPush(command, repository), "allow", command);
+	}
+	for (const command of [
+		"git push upstream",
+		"git push upstream feature/test",
+		"git push fork main",
+		"git push fork refs/tags/v1.0.0",
+		"git push fork :feature/test",
+		"git push --porcelain fork feature/test",
+	]) {
+		assert.equal(
+			classifyForkPush(command, repository),
+			command.startsWith("git push upstream") ? "block" : "confirm",
+			command,
+		);
+	}
+	assert.equal(
+		classifyForkPush("git push fork feature/test", repository, "block"),
+		"block",
+	);
+	execFileSync("git", ["config", "remote.pushDefault", "upstream"], { cwd: repository, stdio: "ignore" });
+	assert.equal(classifyForkPush("git push", repository), "block");
+	execFileSync("git", ["config", "remote.pushDefault", "fork"], { cwd: repository, stdio: "ignore" });
+	execFileSync("git", ["config", "--unset", "remote.upstream.pushurl"], { cwd: repository, stdio: "ignore" });
+	assert.equal(
+		classifyForkPush("git push fork feature/test", repository),
+		"confirm",
+	);
+	execFileSync("git", ["config", "remote.upstream.pushurl", "DISABLED"], { cwd: repository, stdio: "ignore" });
+	execFileSync(
+		"git",
+		[
+			"remote",
+			"set-url",
+			"--push",
+			"fork",
+			"https://github.com/example/project.git",
+		],
+		{ cwd: repository, stdio: "ignore" },
+	);
+	assert.equal(
+		classifyForkPush("git push fork feature/test", repository),
+		"confirm",
+	);
+});
+
+test("guarded command preview centers a late matched action", () => {
+	const preview = guardedCommandPreview(
+		`${"echo local; ".repeat(20)}git push upstream feature/test`,
+	);
+	assert.match(preview, /^…/);
+	assert.match(preview, /git push upstream feature\/test/);
 });
 
 test("classifyGuardedCommand: git push plain still confirm when autonomousMode=false even with gitPush=allow in config", () => {
@@ -369,12 +442,12 @@ test("classifyGuardedCommand: git -C /repo push -f → block", () => {
 	assert.equal(result, "block");
 });
 
-test("classifyGuardedCommand: git -C /repo push origin feat → classified as gitPush (allow when configured)", () => {
+test("classifyGuardedCommand: git -C push confirms without topology proof", () => {
 	const result = classifyGuardedCommand("git -C /repo push origin feat", {
 		autonomousMode: true,
 		guardedCommands: { gitPush: "allow" },
 	});
-	assert.equal(result, "allow");
+	assert.equal(result, "confirm");
 });
 
 test("classifyGuardedCommand: git -C /repo push origin feat → confirm when autonomousMode=false", () => {
@@ -421,12 +494,12 @@ test("classifyGuardedCommand: gitBranchDeleteForce=allow in autonomous mode → 
 // Fix 5b: AUTONOMOUS_DEFAULT_ACTIONS fallback — empty guardedCommands in autonomous mode
 // ---------------------------------------------------------------------------
 
-test("classifyGuardedCommand: autonomousMode=true, empty guardedCommands, gitPush defaults to allow", () => {
+test("classifyGuardedCommand: autonomous default gitPush allow still needs topology proof", () => {
 	const result = classifyGuardedCommand("git push origin main", {
 		autonomousMode: true,
 		guardedCommands: {},
 	});
-	assert.equal(result, "allow");
+	assert.equal(result, "confirm");
 });
 
 // ---------------------------------------------------------------------------

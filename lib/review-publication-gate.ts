@@ -188,6 +188,160 @@ export function resolveConfiguredPushDestinationV1(cwd: string, remote: string):
 	return { remote, url: urls[0]!, destination_id: createHash("sha256").update(urls[0]!).digest("hex") };
 }
 
+export const FORK_FIRST_PUSH_ACTION = {
+	ALLOW: "allow",
+	CONFIRM: "confirm",
+	BLOCK: "block",
+} as const;
+
+export type ForkFirstPushAction =
+	(typeof FORK_FIRST_PUSH_ACTION)[keyof typeof FORK_FIRST_PUSH_ACTION];
+
+function currentBranchName(cwd: string): string | undefined {
+	const result = spawnSync(
+		"git",
+		["-C", cwd, "symbolic-ref", "--quiet", "--short", "HEAD"],
+		{
+			encoding: "utf8",
+			stdio: ["ignore", "pipe", "pipe"],
+			env: publicationProbeGitEnvironment(),
+		},
+	);
+	return result.status === 0 && result.stdout.trim()
+		? result.stdout.trim()
+		: undefined;
+}
+
+function oneConfiguredValue(cwd: string, key: string): string | undefined {
+	const values = configuredRemoteValues(cwd, key);
+	if (values.length > 1)
+		throw publicationError(`Configured Git value "${key}" is ambiguous`);
+	return values[0];
+}
+
+function configuredDefaultPushRemote(cwd: string): string | undefined {
+	const branch = currentBranchName(cwd);
+	return (
+		(branch === undefined
+			? undefined
+			: oneConfiguredValue(cwd, `branch.${branch}.pushRemote`)) ??
+		oneConfiguredValue(cwd, "remote.pushDefault")
+	);
+}
+
+export interface PushInvocationDescriptorV1 {
+	remote: string | undefined;
+	branch: string | undefined;
+	usesDefaultRemote: boolean;
+}
+
+/** The one detailed parser for guarded push commands. Unsupported syntax fails closed. */
+export function parsePushInvocationV1(
+	command: string,
+): PushInvocationDescriptorV1 | undefined {
+	if (/[;&|`$<>(){}\\'\"]/.test(command)) return undefined;
+	const tokens = command.trim().split(/\s+/);
+	if (tokens[0] !== "git" || tokens[1] !== "push") return undefined;
+	let index = 2;
+	if (tokens[index] === "-u" || tokens[index] === "--set-upstream") index += 1;
+	if (tokens.slice(index).some((token) => token.startsWith("-")))
+		return undefined;
+	const args = tokens.slice(index);
+	if (args.length === 0)
+		return { remote: undefined, branch: undefined, usesDefaultRemote: true };
+	if (args.length === 1 && CONFIGURED_REMOTE_NAME.test(args[0]!))
+		return { remote: args[0], branch: undefined, usesDefaultRemote: false };
+	if (
+		args.length !== 2 ||
+		!CONFIGURED_REMOTE_NAME.test(args[0]!) ||
+		args[1]!.includes(":")
+	)
+		return undefined;
+	return { remote: args[0], branch: args[1], usesDefaultRemote: false };
+}
+
+function resolveConfiguredFetchDestinationV1(
+	cwd: string,
+	remote: string,
+): ConfiguredPushDestinationV1 {
+	if (
+		!CONFIGURED_REMOTE_NAME.test(remote) ||
+		!listConfiguredRemotes(cwd).includes(remote)
+	)
+		throw publicationError(
+			`Configured fetch remote "${remote}" could not be resolved`,
+		);
+	const result = spawnSync(
+		"git",
+		["-C", cwd, "remote", "get-url", "--all", remote],
+		{
+			encoding: "utf8",
+			stdio: ["ignore", "pipe", "pipe"],
+			env: publicationProbeGitEnvironment(),
+		},
+	);
+	const urls = result.stdout.split(/\r?\n/).filter(Boolean);
+	if (result.error || result.status !== 0 || urls.length !== 1)
+		throw publicationError(`Configured fetch remote "${remote}" is ambiguous`);
+	return {
+		remote,
+		url: urls[0]!,
+		destination_id: createHash("sha256").update(urls[0]!).digest("hex"),
+	};
+}
+
+function upstreamPushIsDisabled(cwd: string): boolean {
+	const urls = configuredRemoteValues(cwd, "remote.upstream.pushurl");
+	return urls.length === 1 && urls[0] === "DISABLED";
+}
+
+function isCurrentFeatureBranch(
+	cwd: string,
+	branch: string | undefined,
+): boolean {
+	return (
+		branch !== undefined &&
+		branch === currentBranchName(cwd) &&
+		branch !== "main" &&
+		branch !== "master" &&
+		!branch.startsWith("refs/") &&
+		!branch.includes("..") &&
+		!branch.includes("/.") &&
+		!branch.endsWith("/")
+	);
+}
+
+export function classifyForkFirstPushV1(
+	cwd: string | undefined,
+	command: string,
+): ForkFirstPushAction {
+	const parsed = parsePushInvocationV1(command);
+	if (cwd === undefined || parsed === undefined)
+		return FORK_FIRST_PUSH_ACTION.CONFIRM;
+	try {
+		const defaultRemote = configuredDefaultPushRemote(cwd);
+		const remote = parsed.usesDefaultRemote ? defaultRemote : parsed.remote;
+		if (remote === "upstream") return FORK_FIRST_PUSH_ACTION.BLOCK;
+		const branch =
+			parsed.branch ??
+			(parsed.usesDefaultRemote ? currentBranchName(cwd) : undefined);
+		if (
+			remote === undefined ||
+			remote !== defaultRemote ||
+			!isCurrentFeatureBranch(cwd, branch) ||
+			!upstreamPushIsDisabled(cwd)
+		)
+			return FORK_FIRST_PUSH_ACTION.CONFIRM;
+		const destination = resolveConfiguredPushDestinationV1(cwd, remote);
+		const upstream = resolveConfiguredFetchDestinationV1(cwd, "upstream");
+		return destination.destination_id !== upstream.destination_id
+			? FORK_FIRST_PUSH_ACTION.ALLOW
+			: FORK_FIRST_PUSH_ACTION.CONFIRM;
+	} catch {
+		return FORK_FIRST_PUSH_ACTION.CONFIRM;
+	}
+}
+
 export function resolvePushRemoteRefV1(
 	cwd: string,
 	remote: string,
@@ -385,11 +539,25 @@ function deriveReleaseCiStatusForShaV1(options: {
 	} catch {
 		return { proven: false, status: null };
 	}
-	if (!isRecord(summary) || !Number.isSafeInteger(summary.total_count) || !Number.isSafeInteger(summary.returned) || !Array.isArray(summary.checks) || summary.total_count < 0 || summary.returned < 0 || summary.returned !== summary.checks.length || summary.total_count !== summary.checks.length) {
+	if (!isRecord(summary)) return { proven: false, status: null };
+	const totalCount = summary.total_count;
+	const returned = summary.returned;
+	const checks = summary.checks;
+	if (
+		typeof totalCount !== "number" ||
+		typeof returned !== "number" ||
+		!Number.isSafeInteger(totalCount) ||
+		!Number.isSafeInteger(returned) ||
+		!Array.isArray(checks) ||
+		totalCount < 0 ||
+		returned < 0 ||
+		returned !== checks.length ||
+		totalCount !== checks.length
+	) {
 		return { proven: false, status: null };
 	}
-	if (summary.total_count > 0) {
-		const successful = summary.checks.every((check) => Array.isArray(check) && check.length === 2 && check[0] === "completed" && check[1] === "success");
+	if (totalCount > 0) {
+		const successful = checks.every((check) => Array.isArray(check) && check.length === 2 && check[0] === "completed" && check[1] === "success");
 		return successful ? { proven: true, status: "success" } : { proven: false, status: null };
 	}
 	let legacyResult: ReturnType<GhCommandRunnerV1>;
