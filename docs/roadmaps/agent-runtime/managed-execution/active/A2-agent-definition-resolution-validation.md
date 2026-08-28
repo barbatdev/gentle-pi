@@ -12,7 +12,7 @@ At readback, parent #419 is OPEN with `status:needs-review`. Any A2 publication 
 |---|---|
 | Verified current implementation | `pi-subagents-j0k3r@1.5.2` uses trim+lowercase names and global agents → global subagents → project agents → project subagents with normalized last-write-wins. It has no structured identity, discovery provenance, override declaration, or public/internal result contract. `package:` frontmatter is wrapper-only model-profile discovery, not execution-loader provenance. |
 | Proposed policy | This contract and S01–S29 are a candidate policy only. |
-| Observed external authority/state | #62, #327, #354, #379, #381, #382, and #419 are open. #379 is an approved containment gate with #387 open/unmerged and #380 closed/unmerged, not a delivered A2 interface. #354 is ownership/install/drift alignment without a concrete A2 schema/interface. #327/#381/#382 are open authority or defect context, not delivered interfaces. |
+| Observed external authority/state | #62, #327, #354, #379, #381, #382, and #419 are open. #379 is an approved containment gate with #387 open/unmerged and #380 closed/unmerged, not a delivered A2 interface. #354 is delivery/install acceptance alignment after technical closure, not an A2 technical dependency or interface supplier. #327/#381/#382 are open authority or defect context, not delivered interfaces. |
 | Unresolved feasibility | G01–G08 remain open in `evidence/A2-validation/feasibility-gaps.md`. |
 
 ## Proposed contract
@@ -79,7 +79,7 @@ Managed execution is default-off; unmanaged execution keeps current behavior. Th
 
 ## Dependency truth
 
-The durable dependency list remains `issue:379`, `issue:354`, `issue:327`, `issue:381`, `issue:382`, and `A1`. #379 remains a formal gate before implementation. Evidence supports only a separate reclassification question: #379/#354 appear conditional alignment, not demonstrated A2 interfaces. No evidence here waives, removes, or reinterprets either dependency. #327/#381/#382 remain open external context; #62 remains a downstream packed-install acceptance gate; A3 depends on a delivered A2 result.
+The durable technical dependency list is `issue:379`, `issue:327`, `issue:381`, `issue:382`, and `A1`. #379 remains a formal implementation-start containment gate before implementation. #354 is not an A2 technical dependency, implementation prerequisite, or interface supplier; it remains delivery/install acceptance alignment after technical closure. #327/#381/#382 remain open external context; #62 remains a downstream packed-install acceptance gate; A3 depends on a delivered A2 result.
 
 ## Acceptance criteria and evidence
 

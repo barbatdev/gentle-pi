@@ -13,6 +13,6 @@ These gaps remain open. Scenario success is not closure; each needs objective ev
 | G07 candidate/resource-limit policy | Limits remain policy-open. | Production needs deterministic bounded resource behavior. | Product/runtime owner. | Approved numeric policy, boundary tests, and operational evidence. |
 | G08 strict public/internal result projection | No authorized public/internal result interface is established. | Resolution can leak values, identities, paths, contenders, diagnostics, arbitrary summaries/counts, or unknown internal codes. | Diagnostics/privacy owner. | Separate internal read authority and public projection contract; S16/S23-style success, denied access, aggregate-bound, order, unknown-code, and leak tests. |
 
-## Separate dependency reclassification question
+## Recorded dependency classification
 
-#379 and #354 are **not** technical feasibility gaps. Current evidence classifies #379 as conditional containment/integration alignment and #354 as conditional ownership/installation/drift alignment; neither demonstrates an A2-consumed interface. The durable dependency list remains unchanged. Reclassifying either is a separate ledger mutation requiring independent evidence and authorization.
+#379 and #354 are **not** technical feasibility gaps. The recorded Separate semantics decision keeps #379 as the formal implementation-start containment gate/dependency until delivered. It removes #354 from A2’s technical dependency graph: #354 is delivery/install acceptance alignment after technical closure, not an A2 dependency, implementation prerequisite, or interface supplier. G01–G08 remain unchanged.

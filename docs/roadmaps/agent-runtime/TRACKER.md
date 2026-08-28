@@ -6,7 +6,7 @@
 | #376 | - | published-needs-review | - | `parents/376/body.md` | https://github.com/Gentleman-Programming/gentle-pi/issues/376 | - | - | `bb98cc211fa0b378b0657c62f477cb10c728fdd65091b9ea64ef1ad74df8e23e` |
 | #442 | - | published-needs-review | - | `parents/442/body.md` | https://github.com/Gentleman-Programming/gentle-pi/issues/442 | - | - | `6a378023ebbd003f48d3a50fd4bd1d1a1a51f55f83fadc74eda672b1dcb97490` |
 | A1 | #419 | published-needs-review | issue:379 | `managed-execution/active/A1-managed-execution-compatibility-seam.md` | https://github.com/Gentleman-Programming/gentle-pi/issues/447 | - | - | `31ef50d862257cd77a4426d82a4741dbdceab52fb10ba005d27c97fc1ebd195f` |
-| A2 | #419 | draft | issue:379, issue:354, issue:327, issue:381, issue:382, A1 | `managed-execution/active/A2-agent-definition-resolution-validation.md` | - | - | - | `97af221b9b157f15661d5c4065bbdafccbbb519d0a45890f8455d62dbb3ff508` |
+| A2 | #419 | draft | issue:379, issue:327, issue:381, issue:382, A1 | `managed-execution/active/A2-agent-definition-resolution-validation.md` | - | - | - | `9a39be45499462b0fe037a4d77fed524e2cc429f9ff88eb3e5d12251baebc664` |
 | A3 | #419 | draft | A1, A2 | `managed-execution/active/A3-task-record-lifecycle-directory-projection.md` | - | - | - | `6e348795bc50ce9fc76ebd2efaf2993bebd17c3959965cf29dd46e1a4f734c02` |
 | A4 | #419 | draft | A3 | `managed-execution/active/A4-cancellation-concurrency-ancestry-shutdown.md` | - | - | - | `020a49c23b4800f304dcd9e723c048a01c224f553a795bf84d0d42a8a7866fb2` |
 | A6a | #419 | draft | issue:379, A3, A4 | `managed-execution/active/A6a-owner-admission-generation-core.md` | - | - | - | `09dade3eebe11f7ee5bb0455f79cdbc89d6802e4405b8ef60c1e604aa5731807` |
@@ -64,11 +64,11 @@ Registry membership records durable inventory only; they do not change work-unit
 
 ## A2 closure program
 
-A2 remains `draft` / `REVISE`: baseline 0% and 0/8 production gaps closed; G01-G08 remain open. The durable program is `managed-execution/A2-CLOSURE-PROGRAM.md` (`32dcd30ab008297b48d755fb886828eb95591e84e44f7a52b89c6f518214bf36`). Its 10 outcome milestones (0/10/20/35/50/65/80/90/95/100) and closure matrix are authoritative there, not duplicated here. The next decision packet is #379/#354 classification, then G07 A/B/C. No implementation or publication authorization follows; #448/#449 remain public-contract observations with unproven linkage, not mappings to A2/A3.
+A2 remains `draft` / `REVISE`: baseline 0% and 0/8 production gaps closed; G01-G08 remain open. The durable program is `managed-execution/A2-CLOSURE-PROGRAM.md` (`b94cc7e98f9f6fa0ae782eda6206be2dc2971bddb8199135740ee549cc0ff195`). Its 10 outcome milestones (0/10/20/35/50/65/80/90/95/100) and closure matrix are authoritative there, not duplicated here. #379/#354 dependency classification is complete as Separate semantics; G07 A/B/C is next, so milestone 10% remains incomplete. No implementation or publication authorization follows; #448/#449 remain public-contract observations with unproven linkage, not mappings to A2/A3.
 
 ## A2 validation boundary
 
-A2 remains `draft` / `REVISE` and is not publication-ready; its dependency list and state are unchanged, G01-G08 remain open, and #379/#354 are not reclassified. The reference model reports 29/29 proposal self-consistency assertions only, not implementation, delivery, feasibility, product validity, or approval. Terminal executable checks passed, but final architecture review remains `REVISE`: no isolated project-only/global-only discovery mutation fixtures; no explicit rejected-authority and mismatched-context internal-read cases for both success/aggregate, plus no non-aggregate public failure through `resolvePublic`; and no supplied tool authority that explicitly rejects one requested tool. #448/#449 are public-contract observations with unproven linkage, not mappings to A2/A3.
+A2 remains `draft` / `REVISE` and is not publication-ready; its technical dependency list removes only #354, #379 remains the formal implementation-start containment gate, G01-G08 remain open, and #354 is delivery/install acceptance alignment after technical closure. The reference model reports 29/29 proposal self-consistency assertions only, not implementation, delivery, feasibility, product validity, or approval. Terminal executable checks passed, but final architecture review remains `REVISE`: no isolated project-only/global-only discovery mutation fixtures; no explicit rejected-authority and mismatched-context internal-read cases for both success/aggregate, plus no non-aggregate public failure through `resolvePublic`; and no supplied tool authority that explicitly rejects one requested tool. #448/#449 are public-contract observations with unproven linkage, not mappings to A2/A3.
 
 ## Auxiliary integrity records
 
@@ -78,10 +78,10 @@ The core inventory remains 3 parents, 30 active units (29 draft and 1 published-
 | --- | --- | --- |
 | `NORMALIZATION.md` | normalization rules | `028490d819273960c9806c770f72af735f32a2b4111824dbd076e31d27c9b135` |
 | `normalization.json` | machine-readable normalization record | `9f0e042875ee328e837cd418b00109f23d929272666aebb6113f90840d224181` |
-| `BACKLOG.md` | operational priority and observable exits | `d155d0847fafbd34adcc4d9437202cf8fd5268fa0ffa33179e5fd34b8db14813` |
-| `DECISIONS.md` | append-only durable decision log | `3c2d74e6d12b0e0d69c5cad4cd62c1d638aa8c948d42e6e9275aa67cc2757140` |
-| `HANDOFF.md` | operational resume card | `2c2b283fe0fae7a30ed05f51a914737b5d62342e75ac6e85e0eadc5b41b10b63` |
-| `managed-execution/A2-CLOSURE-PROGRAM.md` | validated A2 corrective closure program | `32dcd30ab008297b48d755fb886828eb95591e84e44f7a52b89c6f518214bf36` |
+| `BACKLOG.md` | operational priority and observable exits | `c73e14efc1555265e355ffa90ce858eea5abe55ebd4dc17817c2a17c39ef94f2` |
+| `DECISIONS.md` | append-only durable decision log | `9e74d83d135a68965b0cbbbffd761f5173522c9493a54e8e027f2617918040ce` |
+| `HANDOFF.md` | operational resume card | `535314b0eb4bc4b25e05905b7b88ee671c5504f4c2109d6338024223c2d129a8` |
+| `managed-execution/A2-CLOSURE-PROGRAM.md` | validated A2 corrective closure program | `b94cc7e98f9f6fa0ae782eda6206be2dc2971bddb8199135740ee549cc0ff195` |
 | `.gitattributes` | disables only `blank-at-eof` for the two exact historical snapshots | `97d823d709d7ba3de7201ac04b09e948444056b9bfc21d679360557575a779d7` |
 | `parents/419/previous-body.md` | historical-not-current | `21b4fb59a2da686ba75af45355ecd8568fa40fcd18c23ea8a5bb990bb32a6931` |
 | `parents/376/previous-body.md` | historical-not-current | `e287efe41692b062973a4db78e4767ab73b323f4838e2f97c3725bc4d1e183e6` |

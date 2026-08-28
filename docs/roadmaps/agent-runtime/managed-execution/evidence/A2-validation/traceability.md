@@ -6,7 +6,7 @@
 |---|---|
 | Verified current implementation | `pi-subagents-j0k3r@1.5.2` applies trim+lowercase names; legacy load order is global agents → global subagents → project agents → project subagents; normalized collisions are last-write-wins. It has no structured identity, discovery provenance, override declaration, or strict result boundary. `package:` is wrapper-only model-profile discovery, not execution-loader provenance. |
 | Proposed policy | R01–R14 and the reference model are candidate policy, not runtime behavior. |
-| Observed external issue authority/state | #62, #327, #354, #379, #381, #382, and #419 are open. #379 approved/#387 open-unmerged/#380 closed-unmerged is containment alignment, not a delivered A2 interface. #354 is ownership/install/drift alignment without concrete A2 schema/interface. #327/#381/#382 are not delivered authority. |
+| Observed external issue authority/state | #62, #327, #354, #379, #381, #382, and #419 are open. #379 approved/#387 open-unmerged/#380 closed-unmerged is the formal implementation-start containment gate, not a delivered A2 interface. #354 is delivery/install acceptance alignment after technical closure, not an A2 technical dependency, implementation prerequisite, or interface supplier. #327/#381/#382 are not delivered authority. |
 | Unresolved gaps | G01–G08 are recorded in `feasibility-gaps.md`. |
 
 ## Normative rule mapping
@@ -30,4 +30,4 @@
 
 ## Exact limits of this candidate
 
-The reference model demonstrates **self-consistency of a proposed policy only**. It is not implementation, delivery, product validity, approval, production integration, or evidence that an external authority/interface is delivered. It does not validate current loader behavior beyond the separately stated observations and does not authorize publication, ledger mutation, issue disposition, or dependency reclassification.
+The reference model demonstrates **self-consistency of a proposed policy only**. It is not implementation, delivery, product validity, approval, production integration, or evidence that an external authority/interface is delivered. It does not validate current loader behavior beyond the separately stated observations and does not independently authorize publication, ledger mutation, issue disposition, or any dependency reclassification beyond the recorded Separate semantics decision.

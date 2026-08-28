@@ -6,13 +6,13 @@ Operational priority is not canonical inventory or state. `manifest.json` and `T
 
 | ID | Parent | Current state | Dependencies or gate | Next observable exit condition |
 | --- | --- | --- | --- | --- |
-| A2 | #419 | draft — active closure program (0%; 0/8 production gaps closed) | `managed-execution/A2-CLOSURE-PROGRAM.md`; A1; #379, #354, #327, #381, and #382 gates. | Follow the exact A2 closure sequence below; do not claim a production gap closed. |
+| A2 | #419 | draft — dependency classification complete; active closure program remains 0% (0/8 production gaps closed) | `managed-execution/A2-CLOSURE-PROGRAM.md`; A1; #379, #327, #381, and #382 technical gates; #354 is delivery/install acceptance alignment after technical closure. | Collect G07; do not claim a production gap closed. |
 | A1 | #419 | published-needs-review | #447 and #419 are OPEN `status:needs-review`; #379 is OPEN `status:approved` and not evidenced as delivered or merged. | Wait for maintainer review/approval of #447 and parent #419, plus delivered prerequisite evidence before implementation. |
 
 ### A2 closure sequence
 
 1. Persist and read back `managed-execution/A2-CLOSURE-PROGRAM.md`.
-2. Collect the #379/#354 classification decision.
+2. Dependency classification is recorded as Separate semantics; do not re-prompt #379/#354.
 3. Collect the G07 A/B/C policy decision.
 4. Wait for and verify #379 containment delivery.
 5. Execute the next dependency-ready work unit.
@@ -43,7 +43,7 @@ These drafts are ordered by dependency and are not ready for bulk publication.
 | #376 | OPEN `status:needs-review` | A5b remains gated until its in-place update, re-review, and fresh acceptance are evidenced. |
 | #442 | OPEN `status:needs-review` | Peer drafts remain gated; no peer child is published. |
 | #379 | OPEN `status:approved` | Approved/open prerequisite only; do not claim delivery or merge. |
-| #354 | OPEN `status:approved` | Approved/open prerequisite for A2 only; do not claim delivery or merge. |
+| #354 | OPEN `status:approved` | Delivery/install acceptance alignment after technical closure; not an A2 technical dependency or implementation prerequisite. |
 
 ## Operating rule
 

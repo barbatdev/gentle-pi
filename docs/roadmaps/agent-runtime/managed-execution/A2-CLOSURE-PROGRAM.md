@@ -2,11 +2,11 @@
 
 > **Status:** planning evidence only. This draft does not authorize implementation, publication, ledger mutation, issue mutation, or readiness.
 >
-> **Observed:** 2026-08-28T19:52:59Z. Current upstream `main` was observed as `a3d87c196268774c8989169e45634e9b46066881`; the exact ledger branch `refs/heads/docs/agent-runtime-roadmaps` was verified by direct remote and GitHub API at `9c7705263bb076a5548583078f4c2d23cb92b575`. The fork default `main` branch is unrelated to ledger authority.
+> **Observed:** 2026-08-28T19:52:59Z. Current upstream `main` was observed as `a3d87c196268774c8989169e45634e9b46066881`; the exact ledger branch `refs/heads/docs/agent-runtime-roadmaps` was verified by direct remote and GitHub API at `3087173f0dea80b6a90c0f2499760141a2be2713`. The fork default `main` branch is unrelated to ledger authority.
 
 ## Authority pin
 
-Persist or resume this program only when direct remote and GitHub API agree on the exact ledger branch `refs/heads/docs/agent-runtime-roadmaps`. At this readback both resolve to `9c7705263bb076a5548583078f4c2d23cb92b575`. A change to the fork default `main` branch is not ledger drift and does not require re-pinning.
+Persist or resume this program only when direct remote and GitHub API agree on the exact ledger branch `refs/heads/docs/agent-runtime-roadmaps`. At this readback both resolve to `3087173f0dea80b6a90c0f2499760141a2be2713`. A change to the fork default `main` branch is not ledger drift and does not require re-pinning.
 
 ## Outcome and non-negotiable boundary
 
@@ -57,8 +57,8 @@ The earlier draft's parallelism remains valid only after correcting the external
 ```text
 E0: verify upstream main + exact ledger branch and preserve ledger state
   ├─ H1: #379 containment must be delivered (PR #387 merged) before A2 implementation
-  ├─ D379/354: maintainer dependency-classification decision
-  └─ D1: one G07 product policy
+  ├─ D379/354: Separate semantics recorded
+  └─ D1: one G07 product policy remains open
 
 G02 structured selector transport
   ├─ G03 package provenance adapter (external owner, fail closed)
@@ -74,7 +74,7 @@ G02 structured selector transport
           independent A2 terminal review, then separate #419 publication decision
 ```
 
-**Ordering correction:** #447 is the eventual default-off selection seam, not G02 and not definition validation. #448/#449 are #419 task-result slices, not A2 prerequisites or completion evidence. #354 has no concrete A2 interface; its final placement is the maintainer decision below. #379 remains formal until the ledger is changed, and its unmerged PR #387 makes it a fail-closed implementation-start gate.
+**Ordering correction:** #447 is the eventual default-off selection seam, not G02 and not definition validation. #448/#449 are #419 task-result slices, not A2 prerequisites or completion evidence. The recorded Separate semantics decision removes #354 from A2’s technical dependency graph and retains it as delivery/install acceptance alignment after technical closure. #379 remains the formal implementation-start containment gate until delivered; its unmerged PR #387 makes that gate fail closed.
 
 ## Milestones: 0% to 100%
 
@@ -83,7 +83,7 @@ Percentages represent completed closure outcomes, not effort spent. A milestone 
 | Progress | Completed outcome | Blocking exit |
 |---:|---|---|
 | **0%** | Schema-v2 ledger, A2 draft/REVISE, public-contract snapshots, proposal evidence, and this closure program are durable; production gaps closed: 0/8. | Persist this plan against the pinned ledger branch. |
-| **10%** | #379/#354 dependency classification and one G07 limit policy are explicitly selected and recorded. | Two maintainer decisions; no code starts before G07 is selected. |
+| **10%** | Dependency classification is selected and recorded; this milestone completes only when one G07 limit policy is also selected and recorded. | G07 remains open, so 10% is incomplete and no code starts before G07 is selected. |
 | **20%** | #379 containment gate is delivered on upstream main and its applicability to A2 is read back. | PR #387 or a verified successor must merge; no local substitute. |
 | **35%** | G02 structured selector transport is delivered with exact tuple integration tests. | Typed end-to-end selector transport. |
 | **50%** | G08 authorized internal/public projection contract is delivered with leak and denied-access tests. | Closed public schema and context-bound internal read. |
@@ -108,34 +108,30 @@ Percentages represent completed closure outcomes, not effort spent. A milestone 
 
 Every external or unowned dependency above is **fail-closed**: absence, stale evidence, unapproved child scope, unmerged delivery, or interface mismatch is a blocker, never a local substitute.
 
-## #379 / #354 maintainer decision packet
+## #379 / #354 dependency classification — recorded
 
-### Evidence and consequences
+### Selected decision and consequences
 
-| Dependency | Keep as-is | Remove | Reclassify |
+**Selected — Separate semantics (formerly option 2, Split their semantics).** #379 remains the formal A2 implementation-start containment gate/dependency until delivered; it is not a G01–G08 interface supplier. #354 is removed from A2’s technical dependency array because it supplies no A2-consumed interface; it remains delivery/install acceptance alignment after technical closure, not an implementation prerequisite. No schema expansion is permitted. A2 remains `draft / REVISE`, G01–G08 remain open, and this record authorizes neither implementation nor publication.
+
+**No re-prompt:** dependency classification is complete and recorded in D-016. The next genuine product decision is G07 option A/B/C.
+
+### Historical decision packet (resolved)
+
+| Dependency | Keep as-is | Remove | Separate semantics — selected |
 |---|---|---|---|
-| #379 | Preserves the pinned formal dependency and blocks implementation until PR #387's negative guard is merged. Cost: A2 waits on a non-interface containment issue. | Not supported by current evidence: A2 would lose the explicit containment gate while #387 remains open/unmerged. | Supported only as **implementation-start containment gate, not interface supplier**. It stays blocking until delivered; G01–G08 do not claim to consume its API. |
-| #354 | Preserves ledger consistency, but serializes A2 behind asset-install/drift work that exposes no A2 runtime API. | Supported by #354 and #419 current bodies only if a maintainer explicitly changes the ledger: #354 owns asset-install boundaries, and #419's proposed replacement explicitly removes it as a task-definition dependency. | Supported as **delivery/install acceptance alignment**, not a G01–G08 interface or implementation-start gate. It can gate packaging/release hygiene after resolver proof rather than technical interface work. |
+| #379 | Preserve the formal dependency and wait for PR #387’s negative guard. | Not supported while #387 remains open/unmerged. | Keep as the formal implementation-start containment gate/dependency, not an interface supplier. |
+| #354 | Keep #354 in its former manifest position despite no A2 runtime API. | Remove without documenting the delivery/install boundary. | Remove from the technical dependency graph; retain only delivery/install acceptance alignment after technical closure. |
 
-### One mutually exclusive ledger decision
+The historical packet is retained for evidence only; it is not an active choice. #379 is not removable on the current evidence while PR #387 remains open/unmerged.
 
-1. **Keep both unchanged.** Keep `issue:379` and `issue:354` in the A2 dependency list as formal implementation prerequisites.
-2. **Split their semantics.** Retain `issue:379` as a delivered containment gate before A2 implementation; retain `issue:354` only as a delivery/install acceptance gate after technical A2 closure.
-3. **Remove #354 only.** Retain `issue:379` as the formal containment gate and remove `issue:354` because it has no A2-consumed interface.
+### Exact ledger fields updated by the recorded decision
 
-This is intentionally not a choice to remove #379. Current evidence cannot support that outcome while PR #387 is open/unmerged.
-
-### Exact ledger fields affected after an authorized decision
-
-No field is changed by this draft. A maintainer-authorized record must update all affected facts atomically:
-
-- `docs/roadmaps/agent-runtime/manifest.json` → `work_units[id="A2"].dependencies` and its `content_sha256` after the A2 document changes;
-- `docs/roadmaps/agent-runtime/TRACKER.md` → the `A2` row dependency column and the A2 validation-boundary statement;
-- `docs/roadmaps/agent-runtime/managed-execution/active/A2-agent-definition-resolution-validation.md` → observed-external-authority row and durable dependency-list paragraph;
-- `docs/roadmaps/agent-runtime/managed-execution/evidence/A2-validation/feasibility-gaps.md` → “Separate dependency reclassification question”; and
-- `docs/roadmaps/agent-runtime/managed-execution/evidence/A2-validation/traceability.md` → observed external issue authority/state row.
-
-**Recommendation, not a decision:** option 2 best preserves #379's safety consequence while recognizing #354's actual asset-boundary scope. A maintainer must choose and mutate the ledger separately.
+- `docs/roadmaps/agent-runtime/manifest.json` → A2 `dependencies` is exactly `issue:379`, `issue:327`, `issue:381`, `issue:382`, `A1`; A2 and affected evidence/operational hashes are updated without a schema change.
+- `docs/roadmaps/agent-runtime/TRACKER.md` → A2 dependency column, closure status, next action, and auxiliary hashes reflect the selected semantics.
+- `docs/roadmaps/agent-runtime/managed-execution/active/A2-agent-definition-resolution-validation.md` → observed-authority and dependency truth exclude #354 as a technical prerequisite.
+- `docs/roadmaps/agent-runtime/managed-execution/evidence/A2-validation/feasibility-gaps.md` and `traceability.md` → recorded classification replaces the open reclassification question.
+- `docs/roadmaps/agent-runtime/DECISIONS.md`, `BACKLOG.md`, and `HANDOFF.md` → D-016 and operational resume state record completion of dependency classification and G07 as next.
 
 ## G07 product decision — choose exactly one
 
@@ -155,21 +151,21 @@ No option authorizes an unbounded fallback. The selected policy must define its 
 |---|---|---|---|---:|
 | E0 evidence pin | Maintainer / public GitHub + ledger fork readback | Upstream `main` and exact `refs/heads/docs/agent-runtime-roadmaps` direct/API reads match before and after evidence capture; complete authority table | No mutation | `<=200` |
 | H1 containment | #379 owner / Gentle Pi | PR #387 merged and current main confirms negative guard | Revert guard slice only | `201-400` |
-| D379/354 and D1 | Maintainer / ledger and product policy | One recorded dependency option and one G07 option | No implementation mutation | `<=200` each |
+| D379/354 and D1 | Maintainer / ledger and product policy | Separate semantics is recorded; one G07 option remains required | No implementation mutation | `<=200` each |
 | G02, G08 | Gentle Pi owners | Their matrix exits above, focused tests first | Disable/remove managed seam | `<=200`, `201-400` |
 | G03–G06 | Named authority owners / respective repositories | Delivered interface and negative proof; unowned supplier absence fails closed | Reject affected managed source/declaration | `201-400` except G05 pre-split |
 | G01 | Gentle Pi managed resolver owner | All supplied authority contracts integrate with deterministic diagnostics and default-off proof | Remove managed facade only | `>400/unknown`, mandatory split |
 | #419 runtime integration | #419 child owners / Gentle Pi | Only after #447, admission, registry, session, and result authorities are actually delivered | Disable managed mode; no task migration/recreation | `201-400` per slice |
 | Terminal review/publication packet | Independent reviewer + maintainer / Gentle Pi | All eight closure artifacts, pinned-main proof, and A2 review pass; publication remains separate | No publication mutation | `<=200` |
 
-Automatic mode may run dependency-ready, non-mutating work without interruption. It must stop for a product/authority decision, unavailable or drifting external authority, destructive/publication mutation, or a second failed verification gate. Each authorization binds to immutable candidate identity; unchanged read-only retry or actor replacement does not re-prompt. No automation may select the #379/#354 or G07 decision.
+Automatic mode may run dependency-ready, non-mutating work without interruption. It must stop for a product/authority decision, unavailable or drifting external authority, destructive/publication mutation, or a second failed verification gate. Each authorization binds to immutable candidate identity; unchanged read-only retry or actor replacement does not re-prompt. No automation may select G07; the #379/#354 Separate semantics decision is already recorded and must not be re-prompted.
 
 ## Definition of 100% done
 
 A2 is 100% only when all of the following are true:
 
 1. G01–G08 each have a delivered, owner-confirmed interface or approved G07 policy, with their objective exits and focused negative tests recorded.
-2. #379/#354 have an explicit, durably recorded dependency classification; #379's applicable containment gate is delivered.
+2. #379’s containment gate is delivered; the Separate semantics classification is durably recorded, and #354 delivery/install acceptance alignment is assessed after technical closure.
 3. All managed behavior remains default-off and unmanaged behavior is unchanged.
 4. External package/builtin/model/tool authorities either prove their exact contract or fail closed; no proposal/issue text fills a missing interface.
 5. Resolver public projection leaks no values, identities, paths, contenders, private diagnostics, or unbounded summaries.
@@ -181,11 +177,11 @@ A2 is 100% only when all of the following are true:
 
 | Field | Resume value |
 |---|---|
-| Durable baseline | Fork ledger commit `9c7705263bb076a5548583078f4c2d23cb92b575`; A2 remains `draft / REVISE`; G01–G08 remain open. |
+| Durable baseline | Fork ledger commit `3087173f0dea80b6a90c0f2499760141a2be2713`; A2 remains `draft / REVISE`; G01–G08 remain open. |
 | Exact ledger authority | `barbatdev/gentle-pi` → `refs/heads/docs/agent-runtime-roadmaps`; verify direct remote and GitHub API agree before every ledger mutation. |
 | Upstream evidence pin | `Gentleman-Programming/gentle-pi:main` at `a3d87c196268774c8989169e45634e9b46066881`; refresh only when a work unit depends on newer upstream evidence. |
-| Next dependency-ready action | Persist this closure program, then collect one combined maintainer decision for #379/#354 classification and G07 option A/B/C. |
-| Automatic continuation | After both decisions are durable, verify #379 containment delivery; proceed only to the next dependency-ready work unit. |
+| Next dependency-ready action | Collect one G07 option A/B/C decision. |
+| Automatic continuation | After G07 is durable, verify #379 containment delivery; proceed only to the next dependency-ready work unit. |
 | Stop conditions | Exact ledger-branch drift, upstream authority drift affecting current evidence, unavailable external owner/interface, destructive or publication mutation, unresolved product decision, or second failed verification gate. |
 | Unrelated work | #469 remains separate and is not an A2 prerequisite. |
 
@@ -193,7 +189,7 @@ A2 is 100% only when all of the following are true:
 
 - **Observation window:** 2026-08-28T19:42:54Z–2026-08-28T19:52:59Z.
 - **Upstream main:** direct/API read `a3d87c196268774c8989169e45634e9b46066881`.
-- **Ledger fork:** exact `refs/heads/docs/agent-runtime-roadmaps` direct/API read `9c7705263bb076a5548583078f4c2d23cb92b575` before and after reconciliation. Fork default `main` is not ledger authority.
+- **Ledger fork:** exact `refs/heads/docs/agent-runtime-roadmaps` direct/API read `3087173f0dea80b6a90c0f2499760141a2be2713` before and after reconciliation. Fork default `main` is not ledger authority.
 - **GraphQL coverage:** full bodies/current labels and state for #62, #327, #354, #379, #381, #382, #419, #440, #446, #447, #448, #449, and #469; all comments and timelines for the required issues, each within the 100-item page; linked/closing PR metadata for #380, #387, #429, and #441.
 - **Closing-PR search coverage:** #62, #327, #354, #379, #381, and #382, with `first:100`; #379 returned exactly #380 and #387, and #354/#327 returned none.
 - **Source coverage:** raw upstream-main readback of `extensions/gentle-ai.ts` and `lib/model-routing-authority.ts` against the pinned main SHA.
@@ -201,10 +197,10 @@ A2 is 100% only when all of the following are true:
 
 ## Citations
 
-- **[L-A2]** Pinned A2 draft: https://raw.githubusercontent.com/barbatdev/gentle-pi/9c7705263bb076a5548583078f4c2d23cb92b575/docs/roadmaps/agent-runtime/managed-execution/active/A2-agent-definition-resolution-validation.md
-- **[L-GAPS]** Pinned gap register: https://raw.githubusercontent.com/barbatdev/gentle-pi/9c7705263bb076a5548583078f4c2d23cb92b575/docs/roadmaps/agent-runtime/managed-execution/evidence/A2-validation/feasibility-gaps.md
-- **[L-TRACE]** Pinned traceability: https://raw.githubusercontent.com/barbatdev/gentle-pi/9c7705263bb076a5548583078f4c2d23cb92b575/docs/roadmaps/agent-runtime/managed-execution/evidence/A2-validation/traceability.md
-- **[L-MANIFEST]** Pinned manifest: https://raw.githubusercontent.com/barbatdev/gentle-pi/9c7705263bb076a5548583078f4c2d23cb92b575/docs/roadmaps/agent-runtime/manifest.json
+- **[L-A2]** Pinned A2 draft: https://raw.githubusercontent.com/barbatdev/gentle-pi/3087173f0dea80b6a90c0f2499760141a2be2713/docs/roadmaps/agent-runtime/managed-execution/active/A2-agent-definition-resolution-validation.md
+- **[L-GAPS]** Pinned gap register: https://raw.githubusercontent.com/barbatdev/gentle-pi/3087173f0dea80b6a90c0f2499760141a2be2713/docs/roadmaps/agent-runtime/managed-execution/evidence/A2-validation/feasibility-gaps.md
+- **[L-TRACE]** Pinned traceability: https://raw.githubusercontent.com/barbatdev/gentle-pi/3087173f0dea80b6a90c0f2499760141a2be2713/docs/roadmaps/agent-runtime/managed-execution/evidence/A2-validation/traceability.md
+- **[L-MANIFEST]** Pinned manifest: https://raw.githubusercontent.com/barbatdev/gentle-pi/3087173f0dea80b6a90c0f2499760141a2be2713/docs/roadmaps/agent-runtime/manifest.json
 - **[S-DISCOVERY]** https://github.com/Gentleman-Programming/gentle-pi/blob/a3d87c196268774c8989169e45634e9b46066881/extensions/gentle-ai.ts#L1393-L1554
 - **[S-MODEL]** https://github.com/Gentleman-Programming/gentle-pi/blob/a3d87c196268774c8989169e45634e9b46066881/lib/model-routing-authority.ts
 - **[S-REVIEW-DIAG]** https://github.com/Gentleman-Programming/gentle-pi/blob/a3d87c196268774c8989169e45634e9b46066881/extensions/gentle-ai.ts#L99-L129
