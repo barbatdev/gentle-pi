@@ -13,7 +13,7 @@ At readback, parent #419 is OPEN with `status:needs-review`. Any A2 publication 
 | Verified current implementation | `pi-subagents-j0k3r@1.5.2` uses trim+lowercase names and global agents → global subagents → project agents → project subagents with normalized last-write-wins. It has no structured identity, discovery provenance, override declaration, or public/internal result contract. `package:` frontmatter is wrapper-only model-profile discovery, not execution-loader provenance. |
 | Proposed policy | This contract and S01–S29 are a candidate policy only. |
 | Observed external authority/state | #62, #327, #354, #379, #381, #382, and #419 are open. #379 is an approved containment gate with #387 open/unmerged and #380 closed/unmerged, not a delivered A2 interface. #354 is delivery/install acceptance alignment after technical closure, not an A2 technical dependency or interface supplier. #327/#381/#382 are open authority or defect context, not delivered interfaces. |
-| Unresolved feasibility | G01–G08 remain open in `evidence/A2-validation/feasibility-gaps.md`. |
+| Unresolved feasibility | G01–G08 remain open in `evidence/A2-validation/feasibility-gaps.md`; G07 has a selected bounded policy but executable boundary, operational, metric, and rollback proof remains pending. |
 
 ## Proposed contract
 
@@ -46,7 +46,7 @@ Each literal override authorization binds all of: the exact declarer tuple, a re
 The normative order is:
 
 1. invalid selector → `invalid-selector`;
-2. explicit candidate/resource limit before iteration → `candidate-limit-exceeded`;
+2. candidate/resource accounting before further resolution: after passive structural parsing and tuple normalization, count at most 16 normalized candidates for each source kind (`project`, `global`, `package`, `builtin`) and at most 64 total per managed resolution; malformed ingress counts as one rejected ingress item but never becomes a candidate, and exact duplicate structural tuples count once; at 17 for a source or 65 total, fail closed before definition validation or external adapter iteration with `candidate-limit-exceeded`;
 3. validate every candidate, including discovery authority; aggregate independent of input order and sort privately by canonical tuple then stable reason → `authority-unavailable` before `invalid-definition`;
 4. exact duplicate tuple → `identity-conflict`;
 5. exact selector absent → `selector-not-found`;
@@ -55,6 +55,12 @@ The normative order is:
 8. unresolved multi-candidate alias → `alias-ambiguous`.
 
 A stale declaration blocks even a unique alias. There is no source/load-order precedence or managed fallback to legacy last-write-wins.
+
+### G07 selected candidate/resource policy — executable proof pending
+
+The selected normative policy is fixed: a managed resolution invocation permits at most **16 normalized candidates per source kind** (`project`, `global`, `package`, `builtin`) and at most **64 normalized candidates total**. Count after passive structural parsing and structural tuple normalization, before definition validation or external adapter iteration. A malformed ingress item is charged once as rejected ingress but is never a candidate. Exact duplicate structural tuples count once for candidate limits; identity-conflict behavior remains separate. At the 17th normalized candidate for any source kind or the 65th normalized candidate total, reject before further resolution with public code `candidate-limit-exceeded`.
+
+Public metrics may expose only total count, configured total limit, triggering source category for a per-source breach, configured per-source limit, and outcome. They must not expose names, owners, paths, or contenders. There is no dynamic configuration, deployment override, or unbounded fallback. Until implementation exists, managed resolution fails closed/unavailable rather than using unlimited legacy behavior. Rollback may move only to a previously approved bounded policy. This is a selected policy, not executable evidence: boundary tests, pre-adapter stop proof, safe-metric evidence, operational evidence, and rollback proof remain pending; G07 is not production-closed.
 
 ### Definition, capability, and model/effort boundaries
 
@@ -90,16 +96,16 @@ The durable technical dependency list is `issue:379`, `issue:327`, `issue:381`, 
 | No precedence; alias and override safety | S08–S15, S21, S27 |
 | Deterministic private diagnostics and closed public schemas | S06, S16, S23 |
 | Model/effort authority boundary | S17–S18 |
-| Candidate limit behavior | S19; policy remains open in G07 |
+| Candidate limit behavior | 16/17 per source kind; 64/65 total; exact-duplicate tuple counting; malformed-ingress accounting; rejection before definition validation or adapter iteration; and safe public metric fields. Executable G07 proof remains pending. |
 | Default-off/no managed fallback | S20–S21 |
 | Metadata and tool authority | S22–S26, S28 |
 | Proposal self-consistency only | `reference-model.mjs` executes S01–S29; traceability and gap register remain required |
 
 ## Verification and rollback
 
-Run `node evidence/A2-validation/reference-model.mjs` against frozen candidate bytes and confirm `29/29 proposal self-consistency assertions passed`. Review S01–S29, traceability, and G01–G08. This is only a proposal-model check. Production verification needs focused resolver, discovery/provenance, selector transport, override authority, capability, resource-limit, privacy-projection, and affected package tests once authoritative interfaces exist.
+Run `node evidence/A2-validation/reference-model.mjs` against frozen candidate bytes and confirm `29/29 proposal self-consistency assertions passed`. Review S01–S29, traceability, and G01–G08. This is only a proposal-model check. Production verification needs focused resolver, discovery/provenance, selector transport, override authority, capability, resource-limit, privacy-projection, and affected package tests once authoritative interfaces exist. G07 specifically needs executable 16/17-per-source and 64/65-total boundary tests, duplicate-tuple and malformed-ingress accounting tests, a pre-adapter rejection test, safe-metric-field evidence, operational evidence, and rollback proof; the existing 29/29 proposal result does not prove the selected numeric policy.
 
-A future rollback removes only the managed path and restores unmanaged loading without changing task or peer authority. No external issue disposition follows.
+A future rollback removes only the managed path and restores unmanaged loading without changing task or peer authority. Any G07 policy rollback is only to a previously approved bounded policy; until executable implementation and rollback proof exist, managed resolution is fail-closed/unavailable rather than unlimited legacy behavior. No external issue disposition follows.
 
 ## Publication status
 

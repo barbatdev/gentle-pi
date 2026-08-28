@@ -6,16 +6,16 @@ Operational priority is not canonical inventory or state. `manifest.json` and `T
 
 | ID | Parent | Current state | Dependencies or gate | Next observable exit condition |
 | --- | --- | --- | --- | --- |
-| A2 | #419 | draft — dependency classification complete; active closure program remains 0% (0/8 production gaps closed) | `managed-execution/A2-CLOSURE-PROGRAM.md`; A1; #379, #327, #381, and #382 technical gates; #354 is delivery/install acceptance alignment after technical closure. | Collect G07; do not claim a production gap closed. |
+| A2 | #419 | draft — D-016 and selected G07 policy are complete; closure program is 10% with 0/8 production gaps closed | `managed-execution/A2-CLOSURE-PROGRAM.md`; A1; #379, #327, #381, and #382 technical gates; #354 is delivery/install acceptance alignment after technical closure. | H1: verify/deliver #379 containment gate (PR #387 or verified successor); executable G07 proof remains pending and no implementation is authorized. |
 | A1 | #419 | published-needs-review | #447 and #419 are OPEN `status:needs-review`; #379 is OPEN `status:approved` and not evidenced as delivered or merged. | Wait for maintainer review/approval of #447 and parent #419, plus delivered prerequisite evidence before implementation. |
 
 ### A2 closure sequence
 
 1. Persist and read back `managed-execution/A2-CLOSURE-PROGRAM.md`.
 2. Dependency classification is recorded as Separate semantics; do not re-prompt #379/#354.
-3. Collect the G07 A/B/C policy decision.
-4. Wait for and verify #379 containment delivery.
-5. Execute the next dependency-ready work unit.
+3. D-017 selects G07 option B: 16 normalized candidates per source kind and 64 total; executable boundary, metric, operational, and rollback proof remains pending.
+4. H1: wait for and verify #379 containment delivery (PR #387 or verified successor).
+5. Execute only the next dependency-ready work unit after that gate; no implementation is authorized by this decision.
 
 ## Next
 

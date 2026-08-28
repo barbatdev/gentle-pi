@@ -6,7 +6,7 @@
 | #376 | - | published-needs-review | - | `parents/376/body.md` | https://github.com/Gentleman-Programming/gentle-pi/issues/376 | - | - | `bb98cc211fa0b378b0657c62f477cb10c728fdd65091b9ea64ef1ad74df8e23e` |
 | #442 | - | published-needs-review | - | `parents/442/body.md` | https://github.com/Gentleman-Programming/gentle-pi/issues/442 | - | - | `6a378023ebbd003f48d3a50fd4bd1d1a1a51f55f83fadc74eda672b1dcb97490` |
 | A1 | #419 | published-needs-review | issue:379 | `managed-execution/active/A1-managed-execution-compatibility-seam.md` | https://github.com/Gentleman-Programming/gentle-pi/issues/447 | - | - | `31ef50d862257cd77a4426d82a4741dbdceab52fb10ba005d27c97fc1ebd195f` |
-| A2 | #419 | draft | issue:379, issue:327, issue:381, issue:382, A1 | `managed-execution/active/A2-agent-definition-resolution-validation.md` | - | - | - | `9a39be45499462b0fe037a4d77fed524e2cc429f9ff88eb3e5d12251baebc664` |
+| A2 | #419 | draft | issue:379, issue:327, issue:381, issue:382, A1 | `managed-execution/active/A2-agent-definition-resolution-validation.md` | - | - | - | `4e924ec65afb8317e2ae5be6e212b8e5c693368407e7dae9db062abda74180ac` |
 | A3 | #419 | draft | A1, A2 | `managed-execution/active/A3-task-record-lifecycle-directory-projection.md` | - | - | - | `6e348795bc50ce9fc76ebd2efaf2993bebd17c3959965cf29dd46e1a4f734c02` |
 | A4 | #419 | draft | A3 | `managed-execution/active/A4-cancellation-concurrency-ancestry-shutdown.md` | - | - | - | `020a49c23b4800f304dcd9e723c048a01c224f553a795bf84d0d42a8a7866fb2` |
 | A6a | #419 | draft | issue:379, A3, A4 | `managed-execution/active/A6a-owner-admission-generation-core.md` | - | - | - | `09dade3eebe11f7ee5bb0455f79cdbc89d6802e4405b8ef60c1e604aa5731807` |
@@ -64,7 +64,7 @@ Registry membership records durable inventory only; they do not change work-unit
 
 ## A2 closure program
 
-A2 remains `draft` / `REVISE`: baseline 0% and 0/8 production gaps closed; G01-G08 remain open. The durable program is `managed-execution/A2-CLOSURE-PROGRAM.md` (`b94cc7e98f9f6fa0ae782eda6206be2dc2971bddb8199135740ee549cc0ff195`). Its 10 outcome milestones (0/10/20/35/50/65/80/90/95/100) and closure matrix are authoritative there, not duplicated here. #379/#354 dependency classification is complete as Separate semantics; G07 A/B/C is next, so milestone 10% remains incomplete. No implementation or publication authorization follows; #448/#449 remain public-contract observations with unproven linkage, not mappings to A2/A3.
+A2 remains `draft` / `REVISE`: D-016 and D-017 complete milestone 10%, while 0/8 production gaps are closed and G01-G08 remain production-open. The durable program is `managed-execution/A2-CLOSURE-PROGRAM.md` (`e8708303ddeca4ef73568b4a96052b50cbe24aef3b693dfa0995818fd68ced04`). Its 10 outcome milestones (0/10/20/35/50/65/80/90/95/100) and closure matrix are authoritative there, not duplicated here. Selected G07 option B fixes 16 normalized candidates per source kind and 64 total; executable boundary, metric, operational, and rollback proof remains pending. Next is H1: verify/deliver #379 containment gate (PR #387 or verified successor). No implementation or publication authorization follows; #448/#449 remain public-contract observations with unproven linkage, not mappings to A2/A3.
 
 ## A2 validation boundary
 
@@ -78,10 +78,12 @@ The core inventory remains 3 parents, 30 active units (29 draft and 1 published-
 | --- | --- | --- |
 | `NORMALIZATION.md` | normalization rules | `028490d819273960c9806c770f72af735f32a2b4111824dbd076e31d27c9b135` |
 | `normalization.json` | machine-readable normalization record | `9f0e042875ee328e837cd418b00109f23d929272666aebb6113f90840d224181` |
-| `BACKLOG.md` | operational priority and observable exits | `c73e14efc1555265e355ffa90ce858eea5abe55ebd4dc17817c2a17c39ef94f2` |
-| `DECISIONS.md` | append-only durable decision log | `9e74d83d135a68965b0cbbbffd761f5173522c9493a54e8e027f2617918040ce` |
-| `HANDOFF.md` | operational resume card | `535314b0eb4bc4b25e05905b7b88ee671c5504f4c2109d6338024223c2d129a8` |
-| `managed-execution/A2-CLOSURE-PROGRAM.md` | validated A2 corrective closure program | `b94cc7e98f9f6fa0ae782eda6206be2dc2971bddb8199135740ee549cc0ff195` |
+| `BACKLOG.md` | operational priority and observable exits | `5ec6d848d676b54f417c1cfda6910fa66c325892fe3d156f5ce410058e5dc60b` |
+| `DECISIONS.md` | append-only durable decision log | `81344570b1e9e2a410032b997aab177a9a70f01146aafd488eea6104a530a234` |
+| `HANDOFF.md` | operational resume card | `8a2fa46f3471ac4c5626f7c43dd75fa0bfe217502541c3c04dd1fe519555b65c` |
+| `managed-execution/A2-CLOSURE-PROGRAM.md` | validated A2 corrective closure program | `e8708303ddeca4ef73568b4a96052b50cbe24aef3b693dfa0995818fd68ced04` |
+| `managed-execution/evidence/A2-validation/feasibility-gaps.md` | A2 feasibility gap register | `0e35dc8886a6db8a7ed4a2026612a7d10defa0114bd339a2652c3ffc627d824b` |
+| `managed-execution/evidence/A2-validation/traceability.md` | A2 traceability and evidence boundary | `1082f199d3358b9197c1d1ae1fa093b49e11e37db13dd8bfd94426978dd6f49e` |
 | `.gitattributes` | disables only `blank-at-eof` for the two exact historical snapshots | `97d823d709d7ba3de7201ac04b09e948444056b9bfc21d679360557575a779d7` |
 | `parents/419/previous-body.md` | historical-not-current | `21b4fb59a2da686ba75af45355ecd8568fa40fcd18c23ea8a5bb990bb32a6931` |
 | `parents/376/previous-body.md` | historical-not-current | `e287efe41692b062973a4db78e4767ab73b323f4838e2f97c3725bc4d1e183e6` |

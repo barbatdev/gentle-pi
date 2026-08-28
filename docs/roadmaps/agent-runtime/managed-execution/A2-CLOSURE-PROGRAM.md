@@ -2,11 +2,11 @@
 
 > **Status:** planning evidence only. This draft does not authorize implementation, publication, ledger mutation, issue mutation, or readiness.
 >
-> **Observed:** 2026-08-28T19:52:59Z. Current upstream `main` was observed as `a3d87c196268774c8989169e45634e9b46066881`; the exact ledger branch `refs/heads/docs/agent-runtime-roadmaps` was verified by direct remote and GitHub API at `3087173f0dea80b6a90c0f2499760141a2be2713`. The fork default `main` branch is unrelated to ledger authority.
+> **Observed:** 2026-08-28T19:52:59Z. Current upstream `main` was observed as `a3d87c196268774c8989169e45634e9b46066881`; the exact ledger branch `refs/heads/docs/agent-runtime-roadmaps` was verified by direct remote and GitHub API at `e46f45a2da7cb5705f6e827871c003e2a146bcda`. The fork default `main` branch is unrelated to ledger authority.
 
 ## Authority pin
 
-Persist or resume this program only when direct remote and GitHub API agree on the exact ledger branch `refs/heads/docs/agent-runtime-roadmaps`. At this readback both resolve to `3087173f0dea80b6a90c0f2499760141a2be2713`. A change to the fork default `main` branch is not ledger drift and does not require re-pinning.
+Persist or resume this program only when direct remote and GitHub API agree on the exact ledger branch `refs/heads/docs/agent-runtime-roadmaps`. At this readback both resolve to `e46f45a2da7cb5705f6e827871c003e2a146bcda`. A change to the fork default `main` branch is not ledger drift and does not require re-pinning.
 
 ## Outcome and non-negotiable boundary
 
@@ -14,7 +14,7 @@ Close A2's eight production-feasibility gaps without changing default unmanaged 
 
 | Boundary | Required interpretation |
 |---|---|
-| A2 ledger state | A2 remains `draft / REVISE`; G01–G08 remain open. The reference model is proposal self-consistency only. [L-A2] [L-GAPS] [L-TRACE] |
+| A2 ledger state | A2 remains `draft / REVISE`; D-016 plus selected G07 policy complete milestone 10%, while G01–G08 remain production-open (0/8 closed). The reference model is proposal self-consistency only; executable G07 proof remains pending. [L-A2] [L-GAPS] [L-TRACE] |
 | Parent | #419 is open with `status:needs-review`; parent approval does not authorize a child implementation or publication. [I-419] |
 | Managed mode | It remains default-off. Disabled mode preserves current delegated-work behavior; no managed/unmanaged fallback or dual authority is allowed. [I-419] [I-447] |
 | Identity and privacy | Admission must use the structural `{source, owner, normalizedName}` tuple; candidate frontmatter cannot grant provenance. Internal reads need explicit context authority and public output is a closed safe schema. [L-A2] [L-TRACE] |
@@ -58,7 +58,7 @@ The earlier draft's parallelism remains valid only after correcting the external
 E0: verify upstream main + exact ledger branch and preserve ledger state
   ├─ H1: #379 containment must be delivered (PR #387 merged) before A2 implementation
   ├─ D379/354: Separate semantics recorded
-  └─ D1: one G07 product policy remains open
+  └─ D1: selected G07 option B is durable; executable proof remains pending
 
 G02 structured selector transport
   ├─ G03 package provenance adapter (external owner, fail closed)
@@ -83,7 +83,7 @@ Percentages represent completed closure outcomes, not effort spent. A milestone 
 | Progress | Completed outcome | Blocking exit |
 |---:|---|---|
 | **0%** | Schema-v2 ledger, A2 draft/REVISE, public-contract snapshots, proposal evidence, and this closure program are durable; production gaps closed: 0/8. | Persist this plan against the pinned ledger branch. |
-| **10%** | Dependency classification is selected and recorded; this milestone completes only when one G07 limit policy is also selected and recorded. | G07 remains open, so 10% is incomplete and no code starts before G07 is selected. |
+| **10%** | **Complete:** D-016 dependency classification and D-017 selected G07 option B are recorded. | G07 production gap remains open: executable boundary, metric, operational, and rollback evidence is pending; no implementation authorization follows. |
 | **20%** | #379 containment gate is delivered on upstream main and its applicability to A2 is read back. | PR #387 or a verified successor must merge; no local substitute. |
 | **35%** | G02 structured selector transport is delivered with exact tuple integration tests. | Typed end-to-end selector transport. |
 | **50%** | G08 authorized internal/public projection contract is delivered with leak and denied-access tests. | Closed public schema and context-bound internal read. |
@@ -102,7 +102,7 @@ Percentages represent completed closure outcomes, not effort spent. A milestone 
 | G04 builtin provenance | External/builtin provider owner; #327 disposition required. | Provider emits independently confirmed builtin tuples; unavailable/forged/mutated results reject. Roll back by marking managed builtin source unavailable. | `201-400`. |
 | G05 model/effort | Gentle Pi model-routing owner after the #381/#382 foundation, approved remaining slices, and re-frozen contract. | Versioned authority accepts/rejects model and effort with S17/S18-style proof. Roll back by rejecting managed model/effort declarations as authority unavailable. | `>400/unknown`; must be pre-split. |
 | G06 tool capability | Runtime capability owner; #62 regression and packed-install proof where executable loading exists. | Non-empty requested lists are accepted/rejected by an authority; `[]` needs none; packed proof passes. Roll back by rejecting every non-empty managed list. | `201-400`. |
-| G07 limit policy | Human product/runtime owner; no code starts before one option below is selected. | Deterministic ingress count, boundary tests, closed public error code, and privacy-safe metric defined. Roll back only to a previous approved bounded policy. | `<=200`. |
+| G07 limit policy | **Selected option B:** fixed 16 normalized candidates per source kind and 64 total per managed resolution; no dynamic configuration, deployment override, or unbounded fallback. | Count after passive structural parsing and tuple normalization before definition validation or adapter iteration; malformed ingress is rejected accounting only, duplicates count once; 17/65 fail closed as `candidate-limit-exceeded`; boundary, pre-adapter, safe-metric, operational, and rollback proof remains pending. Roll back only to a previously approved bounded policy. | `<=200`. |
 | G08 projection | Gentle Pi diagnostics/privacy owner. | Literal/context-authorized private read plus exhaustive closed public mapper; denied-read, unknown-code, aggregate/order, and leak tests pass. Roll back by making managed resolver unavailable with no diagnostic fallback. | `201-400`. |
 | G01 integration | Gentle Pi managed resolver owner, after G02–G08 have delivered their interfaces/policy. | Managed parser/resolver validates provenance, overrides, limits, metadata, model, and tools; focused S04/S05/S11–S29-equivalent tests pass; unmanaged path unchanged. Roll back by removing the managed facade only. | `>400/unknown`; pre-split before code. |
 
@@ -114,7 +114,7 @@ Every external or unowned dependency above is **fail-closed**: absence, stale ev
 
 **Selected — Separate semantics (formerly option 2, Split their semantics).** #379 remains the formal A2 implementation-start containment gate/dependency until delivered; it is not a G01–G08 interface supplier. #354 is removed from A2’s technical dependency array because it supplies no A2-consumed interface; it remains delivery/install acceptance alignment after technical closure, not an implementation prerequisite. No schema expansion is permitted. A2 remains `draft / REVISE`, G01–G08 remain open, and this record authorizes neither implementation nor publication.
 
-**No re-prompt:** dependency classification is complete and recorded in D-016. The next genuine product decision is G07 option A/B/C.
+**No re-prompt:** dependency classification is complete and recorded in D-016; G07 option B is selected and recorded in D-017. The next dependency-ready action is H1: verify/deliver #379 containment gate (PR #387 or verified successor). Executable G07 proof remains pending; this does not authorize implementation.
 
 ### Historical decision packet (resolved)
 
@@ -133,17 +133,17 @@ The historical packet is retained for evidence only; it is not an active choice.
 - `docs/roadmaps/agent-runtime/managed-execution/evidence/A2-validation/feasibility-gaps.md` and `traceability.md` → recorded classification replaces the open reclassification question.
 - `docs/roadmaps/agent-runtime/DECISIONS.md`, `BACKLOG.md`, and `HANDOFF.md` → D-016 and operational resume state record completion of dependency classification and G07 as next.
 
-## G07 product decision — choose exactly one
+## G07 product decision — selected option B (do not re-prompt)
 
-The options are bounded, mutually exclusive, and use the same counting rule: count each candidate once after passive structural parsing and tuple normalization, before definition validation or external adapter iteration; malformed input counts as one rejected ingress item but never becomes a candidate; duplicate structural tuples count once; the public failure is `candidate-limit-exceeded`; metrics contain only total count, configured limit, source category, and outcome.
+**D-017 selects option B.** The fixed policy is maximum **16 normalized candidates for each source kind** (`project`, `global`, `package`, `builtin`) and maximum **64 normalized candidates total** per managed resolution invocation. Count after passive structural parsing and tuple normalization, before definition validation or external adapter iteration. Malformed ingress counts once as rejected ingress but never becomes a candidate; exact duplicate structural tuples count once for the candidate limit, while identity-conflict behavior remains separate. At 17 for any source kind or 65 total, fail closed before further resolution with public code `candidate-limit-exceeded`.
 
-| Option | Exact policy | Consequence |
+Public metrics may contain only total count, configured total limit, the source category when a per-source limit triggers, configured per-source limit, and outcome. They contain no names, owners, paths, or contenders. There is no dynamic configuration, deployment override, or unbounded fallback. Rollback is only to a previously approved bounded policy; until executable implementation exists, resolution is fail-closed/unavailable rather than unlimited legacy behavior. Milestone 10% is complete with D-016; production gaps closed remain 0/8 because executable G07 boundary, operational, metric, and rollback evidence is pending.
+
+| Historical option | Status | Retained interpretation |
 |---|---|---|
-| **A** | Maximum **64 total normalized candidates per managed resolution invocation**. | Simplest deterministic policy; one large source may use the whole budget. |
-| **B** | Maximum **16 normalized candidates per source** and **64 total per invocation**. | Prevents one source from exhausting capacity; adds source-boundary test cases. |
-| **C** | A trusted deployment setting selects an integer **1–64 total candidates per invocation**; default is **32** and no configuration may exceed 64. | Adds configuration provenance and operational support; still has a compiled hard bound. |
-
-No option authorizes an unbounded fallback. The selected policy must define its trusted configuration source (C only), exact metric retention, boundary tests at `limit` and `limit + 1`, and rollback to a previously approved bounded setting.
+| A | not selected | 64 total only; superseded by the selected per-source plus total bound. |
+| **B** | **selected** | 16 per source and 64 total, with the counting, failure, privacy, and rollback boundary above. |
+| C | rejected | Dynamic deployment configuration is not authorized. |
 
 ## Delivery plan, automation controls, and review forecast
 
@@ -151,14 +151,14 @@ No option authorizes an unbounded fallback. The selected policy must define its 
 |---|---|---|---|---:|
 | E0 evidence pin | Maintainer / public GitHub + ledger fork readback | Upstream `main` and exact `refs/heads/docs/agent-runtime-roadmaps` direct/API reads match before and after evidence capture; complete authority table | No mutation | `<=200` |
 | H1 containment | #379 owner / Gentle Pi | PR #387 merged and current main confirms negative guard | Revert guard slice only | `201-400` |
-| D379/354 and D1 | Maintainer / ledger and product policy | Separate semantics is recorded; one G07 option remains required | No implementation mutation | `<=200` each |
+| D379/354 and D1 | Maintainer / ledger and product policy | Separate semantics and selected G07 option B are recorded; executable G07 proof remains pending | No implementation mutation | `<=200` each |
 | G02, G08 | Gentle Pi owners | Their matrix exits above, focused tests first | Disable/remove managed seam | `<=200`, `201-400` |
 | G03–G06 | Named authority owners / respective repositories | Delivered interface and negative proof; unowned supplier absence fails closed | Reject affected managed source/declaration | `201-400` except G05 pre-split |
 | G01 | Gentle Pi managed resolver owner | All supplied authority contracts integrate with deterministic diagnostics and default-off proof | Remove managed facade only | `>400/unknown`, mandatory split |
 | #419 runtime integration | #419 child owners / Gentle Pi | Only after #447, admission, registry, session, and result authorities are actually delivered | Disable managed mode; no task migration/recreation | `201-400` per slice |
 | Terminal review/publication packet | Independent reviewer + maintainer / Gentle Pi | All eight closure artifacts, pinned-main proof, and A2 review pass; publication remains separate | No publication mutation | `<=200` |
 
-Automatic mode may run dependency-ready, non-mutating work without interruption. It must stop for a product/authority decision, unavailable or drifting external authority, destructive/publication mutation, or a second failed verification gate. Each authorization binds to immutable candidate identity; unchanged read-only retry or actor replacement does not re-prompt. No automation may select G07; the #379/#354 Separate semantics decision is already recorded and must not be re-prompted.
+Automatic mode may run dependency-ready, non-mutating work without interruption. It must stop for an unresolved product/authority decision, unavailable or drifting external authority, destructive/publication mutation, or a second failed verification gate. Each authorization binds to immutable candidate identity; unchanged read-only retry or actor replacement does not re-prompt. No automation may select G07; D-017 selected option B and D-016 Separate semantics must not be re-prompted. Executable G07 proof remains pending and no implementation is authorized by either decision.
 
 ## Definition of 100% done
 
@@ -177,11 +177,11 @@ A2 is 100% only when all of the following are true:
 
 | Field | Resume value |
 |---|---|
-| Durable baseline | Fork ledger commit `3087173f0dea80b6a90c0f2499760141a2be2713`; A2 remains `draft / REVISE`; G01–G08 remain open. |
+| Durable baseline | Fork ledger commit `e46f45a2da7cb5705f6e827871c003e2a146bcda`; A2 remains `draft / REVISE`; milestone 10% is complete, G01–G08 remain production-open, and executable G07 proof is pending. |
 | Exact ledger authority | `barbatdev/gentle-pi` → `refs/heads/docs/agent-runtime-roadmaps`; verify direct remote and GitHub API agree before every ledger mutation. |
 | Upstream evidence pin | `Gentleman-Programming/gentle-pi:main` at `a3d87c196268774c8989169e45634e9b46066881`; refresh only when a work unit depends on newer upstream evidence. |
-| Next dependency-ready action | Collect one G07 option A/B/C decision. |
-| Automatic continuation | After G07 is durable, verify #379 containment delivery; proceed only to the next dependency-ready work unit. |
+| Next dependency-ready action | H1: verify/deliver #379 containment gate (PR #387 or verified successor) before technical A2 implementation. |
+| Automatic continuation | Do not re-prompt G07; after H1 delivery is verified, proceed only to the next dependency-ready work unit. Executable G07 proof remains pending. |
 | Stop conditions | Exact ledger-branch drift, upstream authority drift affecting current evidence, unavailable external owner/interface, destructive or publication mutation, unresolved product decision, or second failed verification gate. |
 | Unrelated work | #469 remains separate and is not an A2 prerequisite. |
 
@@ -189,7 +189,7 @@ A2 is 100% only when all of the following are true:
 
 - **Observation window:** 2026-08-28T19:42:54Z–2026-08-28T19:52:59Z.
 - **Upstream main:** direct/API read `a3d87c196268774c8989169e45634e9b46066881`.
-- **Ledger fork:** exact `refs/heads/docs/agent-runtime-roadmaps` direct/API read `3087173f0dea80b6a90c0f2499760141a2be2713` before and after reconciliation. Fork default `main` is not ledger authority.
+- **Ledger fork:** exact `refs/heads/docs/agent-runtime-roadmaps` direct/API read `e46f45a2da7cb5705f6e827871c003e2a146bcda` before and after reconciliation. Fork default `main` is not ledger authority.
 - **GraphQL coverage:** full bodies/current labels and state for #62, #327, #354, #379, #381, #382, #419, #440, #446, #447, #448, #449, and #469; all comments and timelines for the required issues, each within the 100-item page; linked/closing PR metadata for #380, #387, #429, and #441.
 - **Closing-PR search coverage:** #62, #327, #354, #379, #381, and #382, with `first:100`; #379 returned exactly #380 and #387, and #354/#327 returned none.
 - **Source coverage:** raw upstream-main readback of `extensions/gentle-ai.ts` and `lib/model-routing-authority.ts` against the pinned main SHA.
@@ -197,10 +197,10 @@ A2 is 100% only when all of the following are true:
 
 ## Citations
 
-- **[L-A2]** Pinned A2 draft: https://raw.githubusercontent.com/barbatdev/gentle-pi/3087173f0dea80b6a90c0f2499760141a2be2713/docs/roadmaps/agent-runtime/managed-execution/active/A2-agent-definition-resolution-validation.md
-- **[L-GAPS]** Pinned gap register: https://raw.githubusercontent.com/barbatdev/gentle-pi/3087173f0dea80b6a90c0f2499760141a2be2713/docs/roadmaps/agent-runtime/managed-execution/evidence/A2-validation/feasibility-gaps.md
-- **[L-TRACE]** Pinned traceability: https://raw.githubusercontent.com/barbatdev/gentle-pi/3087173f0dea80b6a90c0f2499760141a2be2713/docs/roadmaps/agent-runtime/managed-execution/evidence/A2-validation/traceability.md
-- **[L-MANIFEST]** Pinned manifest: https://raw.githubusercontent.com/barbatdev/gentle-pi/3087173f0dea80b6a90c0f2499760141a2be2713/docs/roadmaps/agent-runtime/manifest.json
+- **[L-A2]** Pinned A2 draft: https://raw.githubusercontent.com/barbatdev/gentle-pi/e46f45a2da7cb5705f6e827871c003e2a146bcda/docs/roadmaps/agent-runtime/managed-execution/active/A2-agent-definition-resolution-validation.md
+- **[L-GAPS]** Pinned gap register: https://raw.githubusercontent.com/barbatdev/gentle-pi/e46f45a2da7cb5705f6e827871c003e2a146bcda/docs/roadmaps/agent-runtime/managed-execution/evidence/A2-validation/feasibility-gaps.md
+- **[L-TRACE]** Pinned traceability: https://raw.githubusercontent.com/barbatdev/gentle-pi/e46f45a2da7cb5705f6e827871c003e2a146bcda/docs/roadmaps/agent-runtime/managed-execution/evidence/A2-validation/traceability.md
+- **[L-MANIFEST]** Pinned manifest: https://raw.githubusercontent.com/barbatdev/gentle-pi/e46f45a2da7cb5705f6e827871c003e2a146bcda/docs/roadmaps/agent-runtime/manifest.json
 - **[S-DISCOVERY]** https://github.com/Gentleman-Programming/gentle-pi/blob/a3d87c196268774c8989169e45634e9b46066881/extensions/gentle-ai.ts#L1393-L1554
 - **[S-MODEL]** https://github.com/Gentleman-Programming/gentle-pi/blob/a3d87c196268774c8989169e45634e9b46066881/lib/model-routing-authority.ts
 - **[S-REVIEW-DIAG]** https://github.com/Gentleman-Programming/gentle-pi/blob/a3d87c196268774c8989169e45634e9b46066881/extensions/gentle-ai.ts#L99-L129

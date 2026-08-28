@@ -100,7 +100,7 @@
       "branch": null,
       "pr": null,
       "successors": [],
-      "content_sha256": "9a39be45499462b0fe037a4d77fed524e2cc429f9ff88eb3e5d12251baebc664"
+      "content_sha256": "4e924ec65afb8317e2ae5be6e212b8e5c693368407e7dae9db062abda74180ac"
     },
     {
       "id": "A3",
@@ -901,7 +901,7 @@
       "role": "feasibility-gaps",
       "claim_scope": "Records open feasibility and proof-coverage gaps in the A2 proposal.",
       "basis": "Proposal-validation evidence only; it neither proves implementation, delivery, feasibility, product validity, nor approval. Final architecture review remains REVISE: no isolated project-only/global-only discovery mutation fixtures; no explicit rejected-authority and mismatched-context internal-read cases for both success/aggregate, plus no non-aggregate public failure through resolvePublic; and no supplied tool authority that explicitly rejects one requested tool.",
-      "sha256": "de429c4355e8546d5cb6c77ff046ec9b1c3306cd8005966763a2116c8349ae94",
+      "sha256": "0e35dc8886a6db8a7ed4a2026612a7d10defa0114bd339a2652c3ffc627d824b",
       "execution": null
     },
     {
@@ -937,7 +937,7 @@
       "role": "traceability",
       "claim_scope": "Maps A2 proposal obligations to bounded validation evidence.",
       "basis": "Proposal-validation evidence only; it neither proves implementation, delivery, feasibility, product validity, nor approval. Final architecture review remains REVISE: no isolated project-only/global-only discovery mutation fixtures; no explicit rejected-authority and mismatched-context internal-read cases for both success/aggregate, plus no non-aggregate public failure through resolvePublic; and no supplied tool authority that explicitly rejects one requested tool.",
-      "sha256": "87c2c2dea907cf026b3f22af470f3f014e9c580e64dc8873eb5caefa38b3b10c",
+      "sha256": "1082f199d3358b9197c1d1ae1fa093b49e11e37db13dd8bfd94426978dd6f49e",
       "execution": null
     }
   ],
@@ -945,22 +945,22 @@
     {
       "path": "BACKLOG.md",
       "role": "operational-priority",
-      "sha256": "c73e14efc1555265e355ffa90ce858eea5abe55ebd4dc17817c2a17c39ef94f2"
+      "sha256": "5ec6d848d676b54f417c1cfda6910fa66c325892fe3d156f5ce410058e5dc60b"
     },
     {
       "path": "DECISIONS.md",
       "role": "durable-decision-log",
-      "sha256": "9e74d83d135a68965b0cbbbffd761f5173522c9493a54e8e027f2617918040ce"
+      "sha256": "81344570b1e9e2a410032b997aab177a9a70f01146aafd488eea6104a530a234"
     },
     {
       "path": "HANDOFF.md",
       "role": "operational-resume-card",
-      "sha256": "535314b0eb4bc4b25e05905b7b88ee671c5504f4c2109d6338024223c2d129a8"
+      "sha256": "8a2fa46f3471ac4c5626f7c43dd75fa0bfe217502541c3c04dd1fe519555b65c"
     },
     {
       "path": "managed-execution/A2-CLOSURE-PROGRAM.md",
       "role": "closure-program",
-      "sha256": "b94cc7e98f9f6fa0ae782eda6206be2dc2971bddb8199135740ee549cc0ff195"
+      "sha256": "e8708303ddeca4ef73568b4a96052b50cbe24aef3b693dfa0995818fd68ced04"
     }
       ],
       "auxiliary_publication_records": [
