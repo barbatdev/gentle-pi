@@ -1,0 +1,18 @@
+# A2 production feasibility gaps
+
+These gaps remain open. Scenario success is not closure; each needs objective evidence.
+
+| Gap | Current evidence | Why it blocks production | Authority / owner needed | Objective closure evidence |
+|---|---|---|---|---|
+| G01 discovery/provenance admission and override parser/authority | No verified discovery contract confirms every source tuple, and no override parser/authority contract exists. | Production cannot independently admit source/owner/name provenance or bind a declaration to declarer, context, and structural target set. | Managed resolver, discovery/provenance, and override-authority owners. | Discovery authority contract with literal-equivalent exact tuple admission/rejection across all source kinds; parser and override authority contracts; fixtures for S04/S05 and S11/S12–S15/S27; affected tests. No implementation is claimed here. |
+| G02 exact structured selector transport | No invocation/runtime API is verified to carry exact selectors. | Exact structural tuple lookup and override targets cannot be preserved end-to-end. | Invocation/runtime API owner. | Typed transport interface and integration tests proving S06/S07/S29 without delimiter identity serialization. |
+| G03 trusted package owner provenance | `package:` frontmatter is not execution-loader provenance; no delivered package discovery adapter confirms exact tuples. | Package identity/source cannot be independently trusted. | Package adapter/provider owner. | Delivered discovery adapter/provenance authority plus accepted, missing, forged, and source/owner/name-mutation S04-style tests. |
+| G04 trusted builtin adapter/provider | #327 remains open builtin-discovery defect context; no delivered builtin discovery adapter confirms exact tuples. | Builtin identity/source cannot be independently trusted. | Builtin adapter/provider owner. | Delivered adapter/provenance authority plus accepted, missing, forged, and source/owner/name-mutation S05-style tests; #327 disposition separately reviewed. |
+| G05 model/effort semantic authority | #381/#382 remain open; no concrete authority or production grammar is delivered. | A2 cannot accept semantic model/effort declarations without inventing a catalog or validity claim. | Model-routing authority owner. | Delivered machine-readable semantic interface and S17/S18 integration tests. |
+| G06 tool capability authority | No concrete capability authority is established. | Non-empty tool allowlists cannot be safely accepted. | Tool-capability authority owner. | Capability interface, accepted/rejected-tool tests, and packed-install proof for #62 when executable loading exists. |
+| G07 candidate/resource-limit policy | Limits remain policy-open. | Production needs deterministic bounded resource behavior. | Product/runtime owner. | Approved numeric policy, boundary tests, and operational evidence. |
+| G08 strict public/internal result projection | No authorized public/internal result interface is established. | Resolution can leak values, identities, paths, contenders, diagnostics, arbitrary summaries/counts, or unknown internal codes. | Diagnostics/privacy owner. | Separate internal read authority and public projection contract; S16/S23-style success, denied access, aggregate-bound, order, unknown-code, and leak tests. |
+
+## Separate dependency reclassification question
+
+#379 and #354 are **not** technical feasibility gaps. Current evidence classifies #379 as conditional containment/integration alignment and #354 as conditional ownership/installation/drift alignment; neither demonstrates an A2-consumed interface. The durable dependency list remains unchanged. Reclassifying either is a separate ledger mutation requiring independent evidence and authorization.

@@ -1,61 +1,106 @@
-# feat(agents): resolve and validate owned agent definitions
+# A2: Agent definition resolution and validation — draft / REVISE
 
-## Parent and status gate
+## Outcome and boundary
 
-Parent #419 requires `status:needs-review` for publication. Fresh discovery found remote status drift from that required state. Before any publication, restore `status:needs-review` and read it back; stop if unconfirmed. This draft does not inherit remote status and is not approved or implementation-ready. All child issues must be created and formally linked before #419 is re-reviewed. #379 is OPEN with `status:approved`, not delivered or merged; it must merge before implementation.
+This **proposal-only** contract defines a default-off managed-definition resolver with deterministic validation, collision-proof tuple identity, external authorities, and a strict internal/public result boundary before task creation. It is not production code, a delivered interface, product validation, approval, or publication-ready evidence. Unmanaged loading remains unchanged.
 
-## Outcome
+At readback, parent #419 is OPEN with `status:needs-review`. Any A2 publication must retain `status:needs-review`, link formally to #419, and receive independent review before implementation. Parent approval does not approve A2. The pre-publication A+D/test-inventory gate remains required: measure A+D and enumerate focused/affected tests in the active register; if over 400 A+D or 60 minutes, stop, split, regenerate evidence, and obtain fresh authorization.
 
-Provide deterministic, validated resolution of agent definitions for the future Gentle-owned runtime while consuming #327's open builtin-discovery defect as evidence, not as a delivered prerequisite.
+## Evidence classification
 
-## Evidence and scope
+| Class | Facts used here |
+|---|---|
+| Verified current implementation | `pi-subagents-j0k3r@1.5.2` uses trim+lowercase names and global agents → global subagents → project agents → project subagents with normalized last-write-wins. It has no structured identity, discovery provenance, override declaration, or public/internal result contract. `package:` frontmatter is wrapper-only model-profile discovery, not execution-loader provenance. |
+| Proposed policy | This contract and S01–S29 are a candidate policy only. |
+| Observed external authority/state | #62, #327, #354, #379, #381, #382, and #419 are open. #379 is an approved containment gate with #387 open/unmerged and #380 closed/unmerged, not a delivered A2 interface. #354 is ownership/install/drift alignment without a concrete A2 schema/interface. #327/#381/#382 are open authority or defect context, not delivered interfaces. |
+| Unresolved feasibility | G01–G08 remain open in `evidence/A2-validation/feasibility-gaps.md`. |
 
-#327 is currently OPEN and reports broken builtin agent discovery: `builtinAgentDirs` probes `agents/` directories the subagent packages do not ship. #354 is open and approved because non-SDD and SDD assets are co-installed and refreshed by an SDD command. #62 remains open pending packed-install proof that strict tool allowlists, including YAML-list compatibility, are effective.
+## Proposed contract
 
-## Included scope
+### Identity and selectors
 
-- Define package, global, project, and builtin definition sources; deterministic precedence; normalized-name collisions; builtin discovery; and actionable diagnostics.
-- Validate required metadata, model and effort declarations, and strict tool declarations before task creation.
-- Consume only concrete shared model-routing interfaces delivered by #381 and #382 at implementation time.
-- Consume #354 through its explicit ownership classification.
+A candidate identity is exactly `{ source, owner, normalizedName }`.
 
-## Non-goals
+- `source` is exactly `project`, `global`, `package`, or `builtin`; `normalizedName` is non-empty `trim + lowercase(name)`.
+- `owner` is exactly `null` for project/global and a non-empty string for package/builtin.
+- Equality, exact lookup, override targets, and authority matching compare all three members structurally. Delimiter concatenation is never equality. The proposal model may serialize tuple arrays only as an internal collision-proof map/sort key.
+- A string is an unqualified alias. A structured selector is exact and alias overrides never redirect it.
 
-No task launch, scheduling, peer identity, tool broadening, asset-installer redesign beyond #354, or resolution of #62. No claim that #327, #381, or #382 is currently delivered.
+### Independently authored discovery/provenance authority
 
-## Normative contract
+Candidate source and provenance are discovery-owned for **every** source kind. Frontmatter cannot self-select project, global, package, or builtin authority. Resolver input receives an explicit external discovery authority that confirms an exact structural identity tuple.
 
-Resolution returns one validated definition or a deterministic diagnostic; ambiguity and malformed declarations fail before task creation. Source precedence, builtin discovery, and normalized collision handling are deterministic and actionable. #327 is an open defect consumed within this work; it is not a delivered prerequisite. Close or supersede #327 only after A2's precedence, normalized collisions, builtin discovery, and diagnostics ship with evidence.
+- An authority allowlist is independently authored literal normalized tuples, never calculated from candidate definitions and never populated while creating candidates.
+- Missing authority or a source/owner/name tuple not in that literal authority fails closed as aggregate `authority-unavailable`.
+- Package/builtin adapter gaps remain G03/G04. Generic source-provenance admission is G01; this proposal does not claim any implementation.
+- S02/S03 test only pure identity shape. Every resolver-success fixture supplies explicit independent discovery authority. S04/S05 prove the literal tuple succeeds and source, owner, or name changes cannot inherit trust.
 
-Tool declarations are deny-by-default and never silently broaden. Directory membership, source presence, or model-routing data does not grant execution or messaging permission. Model-routing integration consumes only concrete shared interfaces delivered by #381 and #382 at implementation time and does not duplicate their authority.
+### Independently authored override-declaration authority
 
-## Dependencies
+Package and builtin definitions cannot declare overrides. A project/global definition with a non-empty declaration needs independent override authority; source eligibility alone is insufficient.
 
-- #379 is OPEN with `status:approved` and must merge before implementation; A1 must be completed.
-- #354 is an explicit consumed prerequisite.
-- #327 remains OPEN and is handled by A2's delivered resolver behavior, not as a prerequisite.
-- #381 and #382 are OPEN incomplete foundations: consume only concrete interfaces delivered at implementation time.
-- A3 depends on this result. #62 remains an open downstream acceptance gate.
+Each literal override authorization binds all of: the exact declarer tuple, a resolution context identifier/alias, and the exact structural set of parsed target tuples. `mayDeclareOverrides(declarer, context, parsedTargets)` receives each binding. A changed declarer, target set, or context fails `override-conflict`; it cannot inherit authority. Override grammar is a YAML/list of structured `{ source, owner, name }` selectors only. Overrides affect aliases only and never delete, mutate, or redirect exact candidates.
 
-## Acceptance criteria
+### Deterministic validation and resolution catalog
 
-- [ ] Source ownership, deterministic precedence, and builtin discovery are explicit and testable.
-- [ ] Normalized collisions report all contenders and apply deterministic handling without load-order selection.
-- [ ] Validation failures provide actionable diagnostics and prevent task creation.
-- [ ] #327 remains OPEN until precedence, normalized-collision, builtin-discovery, and diagnostics behavior ships with evidence supporting its disposition.
-- [ ] Invalid model, effort, or tool declarations fail before task creation.
-- [ ] Validated definitions preserve strict allowlists without silent broadening.
-- [ ] Every #381/#382 use is tied only to a concrete interface delivered at implementation time, without claiming either is currently delivered or duplicating authority.
-- [ ] The contract names the #62 packed-install proof still required before closure claims.
+The normative order is:
 
-## Verification
+1. invalid selector → `invalid-selector`;
+2. explicit candidate/resource limit before iteration → `candidate-limit-exceeded`;
+3. validate every candidate, including discovery authority; aggregate independent of input order and sort privately by canonical tuple then stable reason → `authority-unavailable` before `invalid-definition`;
+4. exact duplicate tuple → `identity-conflict`;
+5. exact selector absent → `selector-not-found`;
+6. alias absent → `alias-not-found`;
+7. non-empty malformed, stale, unauthorized, incomplete, or conflicting override → `override-conflict`;
+8. unresolved multi-candidate alias → `alias-ambiguous`.
 
-Run focused resolver, builtin-discovery, validation, and collision fixtures plus affected package tests. Run packed-install black-box allowlist checks only when executable definition loading is added. Record evidence before any #327 close or supersede decision.
+A stale declaration blocks even a unique alias. There is no source/load-order precedence or managed fallback to legacy last-write-wins.
 
-## Rollback
+### Definition, capability, and model/effort boundaries
 
-Revert the owned resolver and restore the prior definition path without changing task or peer authorities. Do not disposition #327 without the required evidence.
+Every definition needs a non-empty name, non-empty description, and `tools` array. Omitted tools is ordinary `invalid-definition`; `tools: []` is valid and needs no tool authority. Every non-empty tool list needs external acceptance of every tool or fails `authority-unavailable`.
 
-## Pre-publication measured A+D/test-inventory gate
+A2 may pass fixture-shaped model/effort input to an explicit external test double. It does not call that grammar production-valid. Semantic acceptance needs authority supplied by #381/#382; missing or rejected authority fails `authority-unavailable`.
 
-Before the first publication mutation, measure this unit's A+D and enumerate focused and affected tests as part of the complete active register. If it exceeds 400 A+D or 60 minutes, stop before publication; split locally, regenerate the register, counts, topology, parent and #376, update tombstones and hash-bound diffs, rerun exact-title searches and full human validation, and obtain new explicit publication authorization. The current snapshot and authorization are invalid.
+### Strict internal/public API separation
+
+The private lexical core is never mixed into a public result. The model uses two separate entry points:
+
+1. `resolveInternal(input, internalReadAuthority, context)` returns the full validated value and private diagnostics only when an independently authored, literal, context-bound read authority authorizes that exact context. Missing, rejected, or mismatched access returns only a denied result; it exposes no value, definition, internal failures, tuple key, path, identity, or contenders.
+2. `resolvePublic(input)` invokes the private core but returns only a closed safe schema and never returns or spreads the core result.
+
+Public success is exactly `{ok:true,status:"resolved"}`. Public failure is exactly `{ok:false,status:"failed",code}`; only aggregate candidate-validation codes may add the fixed bounded `counts` object `{authority,invalidDefinition}`. It never forwards summary, arbitrary count keys, reasons, sort keys, identities, values, definitions, paths, or contenders. Unknown/non-public core codes map to fixed `resolution-failed`.
+
+S16 proves authorized internal inspection, denied internal access for both success and aggregate failure, exact public success keys, bounded aggregate failure keys/counts, ignored injected details, and no private leak. S23 proves reversed input produces identical public aggregate output and proves private deterministic diagnostic ordering only through authorized internal access.
+
+## Compatibility and non-goals
+
+Managed execution is default-off; unmanaged execution keeps current behavior. This proposal does not implement loaders, task launch, scheduling, peer identity, tool broadening, discovery adapters, model catalogs, capability authority, resource limits, diagnostic storage, or public interfaces. It does not claim delivery for #327, #381, or #382, or closure of any external issue.
+
+## Dependency truth
+
+The durable dependency list remains `issue:379`, `issue:354`, `issue:327`, `issue:381`, `issue:382`, and `A1`. #379 remains a formal gate before implementation. Evidence supports only a separate reclassification question: #379/#354 appear conditional alignment, not demonstrated A2 interfaces. No evidence here waives, removes, or reinterprets either dependency. #327/#381/#382 remain open external context; #62 remains a downstream packed-install acceptance gate; A3 depends on a delivered A2 result.
+
+## Acceptance criteria and evidence
+
+| Criterion | Evidence scenarios |
+|---|---|
+| Tuple identity, normalization, exact selectors | S01–S07, S29 |
+| Independent discovery provenance and override authority | S04–S05, S11–S15 |
+| No precedence; alias and override safety | S08–S15, S21, S27 |
+| Deterministic private diagnostics and closed public schemas | S06, S16, S23 |
+| Model/effort authority boundary | S17–S18 |
+| Candidate limit behavior | S19; policy remains open in G07 |
+| Default-off/no managed fallback | S20–S21 |
+| Metadata and tool authority | S22–S26, S28 |
+| Proposal self-consistency only | `reference-model.mjs` executes S01–S29; traceability and gap register remain required |
+
+## Verification and rollback
+
+Run `node evidence/A2-validation/reference-model.mjs` against frozen candidate bytes and confirm `29/29 proposal self-consistency assertions passed`. Review S01–S29, traceability, and G01–G08. This is only a proposal-model check. Production verification needs focused resolver, discovery/provenance, selector transport, override authority, capability, resource-limit, privacy-projection, and affected package tests once authoritative interfaces exist.
+
+A future rollback removes only the managed path and restores unmanaged loading without changing task or peer authority. No external issue disposition follows.
+
+## Publication status
+
+**draft / REVISE.** Do not publish. This candidate awaits G01–G08 closure, authoritative interfaces, implementation evidence, the A+D/test-inventory gate, and separate authorization.

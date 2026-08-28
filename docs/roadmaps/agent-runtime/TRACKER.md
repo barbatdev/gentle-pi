@@ -6,7 +6,7 @@
 | #376 | - | published-needs-review | - | `parents/376/body.md` | https://github.com/Gentleman-Programming/gentle-pi/issues/376 | - | - | `bb98cc211fa0b378b0657c62f477cb10c728fdd65091b9ea64ef1ad74df8e23e` |
 | #442 | - | published-needs-review | - | `parents/442/body.md` | https://github.com/Gentleman-Programming/gentle-pi/issues/442 | - | - | `6a378023ebbd003f48d3a50fd4bd1d1a1a51f55f83fadc74eda672b1dcb97490` |
 | A1 | #419 | published-needs-review | issue:379 | `managed-execution/active/A1-managed-execution-compatibility-seam.md` | https://github.com/Gentleman-Programming/gentle-pi/issues/447 | - | - | `31ef50d862257cd77a4426d82a4741dbdceab52fb10ba005d27c97fc1ebd195f` |
-| A2 | #419 | draft | issue:379, issue:354, issue:327, issue:381, issue:382, A1 | `managed-execution/active/A2-agent-definition-resolution-validation.md` | - | - | - | `aa6e07c2c7e77f5c64be52b5e3cf36f78b45659bb3ee1ba1db9d167327c404ac` |
+| A2 | #419 | draft | issue:379, issue:354, issue:327, issue:381, issue:382, A1 | `managed-execution/active/A2-agent-definition-resolution-validation.md` | - | - | - | `97af221b9b157f15661d5c4065bbdafccbbb519d0a45890f8455d62dbb3ff508` |
 | A3 | #419 | draft | A1, A2 | `managed-execution/active/A3-task-record-lifecycle-directory-projection.md` | - | - | - | `6e348795bc50ce9fc76ebd2efaf2993bebd17c3959965cf29dd46e1a4f734c02` |
 | A4 | #419 | draft | A3 | `managed-execution/active/A4-cancellation-concurrency-ancestry-shutdown.md` | - | - | - | `020a49c23b4800f304dcd9e723c048a01c224f553a795bf84d0d42a8a7866fb2` |
 | A6a | #419 | draft | issue:379, A3, A4 | `managed-execution/active/A6a-owner-admission-generation-core.md` | - | - | - | `09dade3eebe11f7ee5bb0455f79cdbc89d6802e4405b8ef60c1e604aa5731807` |
@@ -57,21 +57,25 @@
 
 ## Manifest schema v2 registries
 
-- Registered public contracts: 0.
-- Registered evidence artifacts: 0.
+- Registered public contracts: 2.
+- Registered evidence artifacts: 4.
 
-Empty registry counts mean no records are registered in this ledger yet; they do not assert that no matching public contracts or evidence exist elsewhere. Registry records do not change work-unit state or approval.
+Registry membership records durable inventory only; they do not change work-unit state or approval.
+
+## A2 validation boundary
+
+A2 remains `draft` / `REVISE` and is not publication-ready; its dependency list and state are unchanged, G01-G08 remain open, and #379/#354 are not reclassified. The reference model reports 29/29 proposal self-consistency assertions only, not implementation, delivery, feasibility, product validity, or approval. Terminal executable checks passed, but final architecture review remains `REVISE`: no isolated project-only/global-only discovery mutation fixtures; no explicit rejected-authority and mismatched-context internal-read cases for both success/aggregate, plus no non-aggregate public failure through `resolvePublic`; and no supplied tool authority that explicitly rejects one requested tool. #448/#449 are public-contract observations with unproven linkage, not mappings to A2/A3.
 
 ## Auxiliary integrity records
 
-The core inventory remains 3 parents, 30 active units (29 draft and 1 published-needs-review), 18 tombstones, and 1 metadata unit. With the 65 prior files plus two normalization records, two historical snapshots, one Git whitespace exception, three operational records, and three publication-draft records, the expected durable file total is 76.
+The core inventory remains 3 parents, 30 active units (29 draft and 1 published-needs-review), 18 tombstones, and 1 metadata unit. With the 65 prior files plus two normalization records, two historical snapshots, one Git whitespace exception, three operational records, three publication-draft records, two public-contract snapshots, and four evidence artifacts, the expected durable file total is 82.
 
 | Artifact | Status | SHA-256 |
 | --- | --- | --- |
 | `NORMALIZATION.md` | normalization rules | `028490d819273960c9806c770f72af735f32a2b4111824dbd076e31d27c9b135` |
 | `normalization.json` | machine-readable normalization record | `9f0e042875ee328e837cd418b00109f23d929272666aebb6113f90840d224181` |
 | `BACKLOG.md` | operational priority and observable exits | `162a8ffa31b244cf3f86519ad423fdd5c9411b016121a66f6f6b54e30962f393` |
-| `DECISIONS.md` | append-only durable decision log | `0da52c0b57a0e9bce7db6219cf871014510f21cb9f722db06df01d69335a95f4` |
+| `DECISIONS.md` | append-only durable decision log | `fb1e404a43a19659475db18e0c3936f7fa457ada301a618286fb0d8e8c64141b` |
 | `HANDOFF.md` | operational resume card | `bb3a61403d6526a7d14b7d192315305b76a2ac704cc26ef0df5d5ed2c16ea55b` |
 | `.gitattributes` | disables only `blank-at-eof` for the two exact historical snapshots | `97d823d709d7ba3de7201ac04b09e948444056b9bfc21d679360557575a779d7` |
 | `parents/419/previous-body.md` | historical-not-current | `21b4fb59a2da686ba75af45355ecd8568fa40fcd18c23ea8a5bb990bb32a6931` |

@@ -101,7 +101,7 @@
       "branch": null,
       "pr": null,
       "successors": [],
-      "content_sha256": "aa6e07c2c7e77f5c64be52b5e3cf36f78b45659bb3ee1ba1db9d167327c404ac"
+      "content_sha256": "97af221b9b157f15661d5c4065bbdafccbbb519d0a45890f8455d62dbb3ff508"
     },
     {
       "id": "A3",
@@ -860,8 +860,88 @@
       "content_sha256": "00570e14be120666d40c62ed1cc86e73ceb5355f8db9d78814339ea0e0cb8866"
     }
   ],
-  "public_contracts": [],
-  "evidence_records": [],
+  "public_contracts": [
+    {
+      "issue_number": 448,
+      "parent": "#419",
+      "remote_state": "open",
+      "status_label": "status:approved",
+      "relationship": "published-slice-under-419",
+      "native_linkage_evidence": {
+        "status": "unproven",
+        "linked_unit_ids": [],
+        "basis": "#419 lists this issue as a published slice, proving public parentage and slice status but no durable native mapping to A2 or A3."
+      },
+      "issue_url": "https://github.com/Gentleman-Programming/gentle-pi/issues/448",
+      "path": "managed-execution/public-contracts/448/body.md",
+      "body_sha256": "24901f7936df2500332d38bd07f5cacf6ed6b97cf7ab31d5bdec0865c280f641",
+      "observed_updated_at": "2026-08-27T03:22:28Z"
+    },
+    {
+      "issue_number": 449,
+      "parent": "#419",
+      "remote_state": "open",
+      "status_label": "status:approved",
+      "relationship": "published-slice-under-419",
+      "native_linkage_evidence": {
+        "status": "unproven",
+        "linked_unit_ids": [],
+        "basis": "#419 lists this issue as a published slice, proving public parentage and slice status but no durable native mapping to A2 or A3."
+      },
+      "issue_url": "https://github.com/Gentleman-Programming/gentle-pi/issues/449",
+      "path": "managed-execution/public-contracts/449/body.md",
+      "body_sha256": "dd8623719f803a22e3fce2c1b88983e565a368e25aae6adb814a1e856de98ef5",
+      "observed_updated_at": "2026-08-27T03:49:30Z"
+    }
+  ],
+  "evidence_records": [
+    {
+      "unit_id": "A2",
+      "evidence_set": "A2-validation",
+      "path": "managed-execution/evidence/A2-validation/feasibility-gaps.md",
+      "role": "feasibility-gaps",
+      "claim_scope": "Records open feasibility and proof-coverage gaps in the A2 proposal.",
+      "basis": "Proposal-validation evidence only; it neither proves implementation, delivery, feasibility, product validity, nor approval. Final architecture review remains REVISE: no isolated project-only/global-only discovery mutation fixtures; no explicit rejected-authority and mismatched-context internal-read cases for both success/aggregate, plus no non-aggregate public failure through resolvePublic; and no supplied tool authority that explicitly rejects one requested tool.",
+      "sha256": "17b003e3f4c34247e769154283528813583b3bba81f2c73997a73049902a9612",
+      "execution": null
+    },
+    {
+      "unit_id": "A2",
+      "evidence_set": "A2-validation",
+      "path": "managed-execution/evidence/A2-validation/reference-model.mjs",
+      "role": "reference-model",
+      "claim_scope": "Checks A2 proposal self-consistency only.",
+      "basis": "Proposal-validation evidence only; it neither proves implementation, delivery, feasibility, product validity, nor approval. Final architecture review remains REVISE: no isolated project-only/global-only discovery mutation fixtures; no explicit rejected-authority and mismatched-context internal-read cases for both success/aggregate, plus no non-aggregate public failure through resolvePublic; and no supplied tool authority that explicitly rejects one requested tool.",
+      "sha256": "6f8b66134fa4b0d9f6659a7275a510437c4ce6af7326a56642c68f0e39f007a6",
+      "execution": {
+        "mode": "validation-only",
+        "production": false,
+        "command": "node managed-execution/evidence/A2-validation/reference-model.mjs",
+        "assertions_passed": 29,
+        "assertions_total": 29
+      }
+    },
+    {
+      "unit_id": "A2",
+      "evidence_set": "A2-validation",
+      "path": "managed-execution/evidence/A2-validation/scenarios.md",
+      "role": "scenarios",
+      "claim_scope": "Exercises proposal scenarios for A2 resolver and validation behavior.",
+      "basis": "Proposal-validation evidence only; it neither proves implementation, delivery, feasibility, product validity, nor approval. Final architecture review remains REVISE: no isolated project-only/global-only discovery mutation fixtures; no explicit rejected-authority and mismatched-context internal-read cases for both success/aggregate, plus no non-aggregate public failure through resolvePublic; and no supplied tool authority that explicitly rejects one requested tool.",
+      "sha256": "bc08bb48e3405de13fd9605f2d393462e44c76b90f51fbf2c6b9182ab9618537",
+      "execution": null
+    },
+    {
+      "unit_id": "A2",
+      "evidence_set": "A2-validation",
+      "path": "managed-execution/evidence/A2-validation/traceability.md",
+      "role": "traceability",
+      "claim_scope": "Maps A2 proposal obligations to bounded validation evidence.",
+      "basis": "Proposal-validation evidence only; it neither proves implementation, delivery, feasibility, product validity, nor approval. Final architecture review remains REVISE: no isolated project-only/global-only discovery mutation fixtures; no explicit rejected-authority and mismatched-context internal-read cases for both success/aggregate, plus no non-aggregate public failure through resolvePublic; and no supplied tool authority that explicitly rejects one requested tool.",
+      "sha256": "cbc86b237647831cfe76df681bd57378b242333c858212206edc12f07314c7c2",
+      "execution": null
+    }
+  ],
   "operational_records": [
     {
       "path": "BACKLOG.md",
@@ -912,9 +992,9 @@
     "whitespace_exception_files": 1,
     "operational_files": 3,
     "publication_draft_files": 3,
-    "public_contract_files": 0,
-    "evidence_files": 0,
-    "total_files": 76
+    "public_contract_files": 2,
+    "evidence_files": 4,
+    "total_files": 82
   },
   "whitespace_exceptions": [
     {
