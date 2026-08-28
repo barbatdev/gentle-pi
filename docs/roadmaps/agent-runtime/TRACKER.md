@@ -62,21 +62,26 @@
 
 Registry membership records durable inventory only; they do not change work-unit state or approval.
 
+## A2 closure program
+
+A2 remains `draft` / `REVISE`: baseline 0% and 0/8 production gaps closed; G01-G08 remain open. The durable program is `managed-execution/A2-CLOSURE-PROGRAM.md` (`32dcd30ab008297b48d755fb886828eb95591e84e44f7a52b89c6f518214bf36`). Its 10 outcome milestones (0/10/20/35/50/65/80/90/95/100) and closure matrix are authoritative there, not duplicated here. The next decision packet is #379/#354 classification, then G07 A/B/C. No implementation or publication authorization follows; #448/#449 remain public-contract observations with unproven linkage, not mappings to A2/A3.
+
 ## A2 validation boundary
 
 A2 remains `draft` / `REVISE` and is not publication-ready; its dependency list and state are unchanged, G01-G08 remain open, and #379/#354 are not reclassified. The reference model reports 29/29 proposal self-consistency assertions only, not implementation, delivery, feasibility, product validity, or approval. Terminal executable checks passed, but final architecture review remains `REVISE`: no isolated project-only/global-only discovery mutation fixtures; no explicit rejected-authority and mismatched-context internal-read cases for both success/aggregate, plus no non-aggregate public failure through `resolvePublic`; and no supplied tool authority that explicitly rejects one requested tool. #448/#449 are public-contract observations with unproven linkage, not mappings to A2/A3.
 
 ## Auxiliary integrity records
 
-The core inventory remains 3 parents, 30 active units (29 draft and 1 published-needs-review), 18 tombstones, and 1 metadata unit. With the 65 prior files plus two normalization records, two historical snapshots, one Git whitespace exception, three operational records, three publication-draft records, two public-contract snapshots, and four evidence artifacts, the expected durable file total is 82.
+The core inventory remains 3 parents, 30 active units (29 draft and 1 published-needs-review), 18 tombstones, and 1 metadata unit. With the 65 prior files plus two normalization records, two historical snapshots, one Git whitespace exception, four operational records, three publication-draft records, two public-contract snapshots, and four evidence artifacts, the expected durable file total is 83.
 
 | Artifact | Status | SHA-256 |
 | --- | --- | --- |
 | `NORMALIZATION.md` | normalization rules | `028490d819273960c9806c770f72af735f32a2b4111824dbd076e31d27c9b135` |
 | `normalization.json` | machine-readable normalization record | `9f0e042875ee328e837cd418b00109f23d929272666aebb6113f90840d224181` |
-| `BACKLOG.md` | operational priority and observable exits | `162a8ffa31b244cf3f86519ad423fdd5c9411b016121a66f6f6b54e30962f393` |
-| `DECISIONS.md` | append-only durable decision log | `fb1e404a43a19659475db18e0c3936f7fa457ada301a618286fb0d8e8c64141b` |
-| `HANDOFF.md` | operational resume card | `bb3a61403d6526a7d14b7d192315305b76a2ac704cc26ef0df5d5ed2c16ea55b` |
+| `BACKLOG.md` | operational priority and observable exits | `d155d0847fafbd34adcc4d9437202cf8fd5268fa0ffa33179e5fd34b8db14813` |
+| `DECISIONS.md` | append-only durable decision log | `3c2d74e6d12b0e0d69c5cad4cd62c1d638aa8c948d42e6e9275aa67cc2757140` |
+| `HANDOFF.md` | operational resume card | `2c2b283fe0fae7a30ed05f51a914737b5d62342e75ac6e85e0eadc5b41b10b63` |
+| `managed-execution/A2-CLOSURE-PROGRAM.md` | validated A2 corrective closure program | `32dcd30ab008297b48d755fb886828eb95591e84e44f7a52b89c6f518214bf36` |
 | `.gitattributes` | disables only `blank-at-eof` for the two exact historical snapshots | `97d823d709d7ba3de7201ac04b09e948444056b9bfc21d679360557575a779d7` |
 | `parents/419/previous-body.md` | historical-not-current | `21b4fb59a2da686ba75af45355ecd8568fa40fcd18c23ea8a5bb990bb32a6931` |
 | `parents/376/previous-body.md` | historical-not-current | `e287efe41692b062973a4db78e4767ab73b323f4838e2f97c3725bc4d1e183e6` |

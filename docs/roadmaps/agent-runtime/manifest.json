@@ -946,17 +946,22 @@
     {
       "path": "BACKLOG.md",
       "role": "operational-priority",
-      "sha256": "162a8ffa31b244cf3f86519ad423fdd5c9411b016121a66f6f6b54e30962f393"
+      "sha256": "d155d0847fafbd34adcc4d9437202cf8fd5268fa0ffa33179e5fd34b8db14813"
     },
     {
       "path": "DECISIONS.md",
       "role": "durable-decision-log",
-      "sha256": "0da52c0b57a0e9bce7db6219cf871014510f21cb9f722db06df01d69335a95f4"
+      "sha256": "3c2d74e6d12b0e0d69c5cad4cd62c1d638aa8c948d42e6e9275aa67cc2757140"
     },
     {
       "path": "HANDOFF.md",
       "role": "operational-resume-card",
-      "sha256": "bb3a61403d6526a7d14b7d192315305b76a2ac704cc26ef0df5d5ed2c16ea55b"
+      "sha256": "2c2b283fe0fae7a30ed05f51a914737b5d62342e75ac6e85e0eadc5b41b10b63"
+    },
+    {
+      "path": "managed-execution/A2-CLOSURE-PROGRAM.md",
+      "role": "closure-program",
+      "sha256": "32dcd30ab008297b48d755fb886828eb95591e84e44f7a52b89c6f518214bf36"
     }
       ],
       "auxiliary_publication_records": [
@@ -990,11 +995,11 @@
     "normalization_files": 2,
     "historical_snapshot_files": 2,
     "whitespace_exception_files": 1,
-    "operational_files": 3,
+    "operational_files": 4,
     "publication_draft_files": 3,
     "public_contract_files": 2,
     "evidence_files": 4,
-    "total_files": 82
+    "total_files": 83
   },
   "whitespace_exceptions": [
     {

@@ -6,7 +6,16 @@ Operational priority is not canonical inventory or state. `manifest.json` and `T
 
 | ID | Parent | Current state | Dependencies or gate | Next observable exit condition |
 | --- | --- | --- | --- | --- |
+| A2 | #419 | draft — active closure program (0%; 0/8 production gaps closed) | `managed-execution/A2-CLOSURE-PROGRAM.md`; A1; #379, #354, #327, #381, and #382 gates. | Follow the exact A2 closure sequence below; do not claim a production gap closed. |
 | A1 | #419 | published-needs-review | #447 and #419 are OPEN `status:needs-review`; #379 is OPEN `status:approved` and not evidenced as delivered or merged. | Wait for maintainer review/approval of #447 and parent #419, plus delivered prerequisite evidence before implementation. |
+
+### A2 closure sequence
+
+1. Persist and read back `managed-execution/A2-CLOSURE-PROGRAM.md`.
+2. Collect the #379/#354 classification decision.
+3. Collect the G07 A/B/C policy decision.
+4. Wait for and verify #379 containment delivery.
+5. Execute the next dependency-ready work unit.
 
 ## Next
 
@@ -14,7 +23,6 @@ These drafts are ordered by dependency and are not ready for bulk publication.
 
 | ID | Parent | Current state | Dependencies or gate | Next observable exit condition |
 | --- | --- | --- | --- | --- |
-| A2 | #419 | draft | A1; #379, #354, #327, #381, and #382 gates. | Re-read prerequisites after A1 review/approval and delivered prerequisite evidence, then prepare only when its gates are evidenced. |
 | A3 | #419 | draft | A1 and A2. | Wait for delivered A1 and A2; then prepare the A3 draft under separate authorization. |
 | A4 | #419 | draft | A3. | Wait for delivered A3; then prepare the A4 draft under separate authorization. |
 
