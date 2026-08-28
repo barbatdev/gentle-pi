@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "official_base": {
     "remote": "Gentleman-Programming/gentle-pi",
     "branch": "main",
@@ -860,6 +860,8 @@
       "content_sha256": "00570e14be120666d40c62ed1cc86e73ceb5355f8db9d78814339ea0e0cb8866"
     }
   ],
+  "public_contracts": [],
+  "evidence_records": [],
   "operational_records": [
     {
       "path": "BACKLOG.md",
@@ -910,6 +912,8 @@
     "whitespace_exception_files": 1,
     "operational_files": 3,
     "publication_draft_files": 3,
+    "public_contract_files": 0,
+    "evidence_files": 0,
     "total_files": 76
   },
   "whitespace_exceptions": [

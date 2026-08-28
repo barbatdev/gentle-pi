@@ -55,6 +55,13 @@
 | B6b2 | #442 | tombstoned | - | `peer-messaging/tombstones/B6b2-posix-windows-bounded-delivery-integration.md` | - | - | - | `72bf37028eea590e1a1dc7d7441de85db74043688c30812c5cce70d84301aec6` |
 | B7 | #442 | tombstoned | - | `peer-messaging/tombstones/B7-peer-human-ux-autonomous-tools.md` | - | - | - | `00570e14be120666d40c62ed1cc86e73ceb5355f8db9d78814339ea0e0cb8866` |
 
+## Manifest schema v2 registries
+
+- Registered public contracts: 0.
+- Registered evidence artifacts: 0.
+
+Empty registry counts mean no records are registered in this ledger yet; they do not assert that no matching public contracts or evidence exist elsewhere. Registry records do not change work-unit state or approval.
+
 ## Auxiliary integrity records
 
 The core inventory remains 3 parents, 30 active units (29 draft and 1 published-needs-review), 18 tombstones, and 1 metadata unit. With the 65 prior files plus two normalization records, two historical snapshots, one Git whitespace exception, three operational records, and three publication-draft records, the expected durable file total is 76.

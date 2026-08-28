@@ -23,6 +23,43 @@ Historical snapshots at `parents/419/previous-body.md` and `parents/376/previous
 
 Allowed states are finite: `draft`, `ready`, `published-needs-review`, `published-approved`, `in-progress`, `blocked`, `done`, `tombstoned`, and `metadata` (A5a only). Parents are `published-needs-review`; active children are `draft` except audited `ready` publication drafts; tombstones are `tombstoned`; A5a is `metadata`. `ready` requires audit and never authorizes publication or implementation. A split tombstones the old ID and records its successors; it never deletes decision history.
 
+## Manifest registries
+
+`manifest.json` schema v2 keeps public contracts and validation evidence outside `units`. Registry membership records durable ledger inventory; it does not approve publication, implementation, delivery, or a work-unit state change.
+
+### `public_contracts`
+
+Each record requires:
+
+- `issue_number`: positive GitHub issue number;
+- `parent`: canonical parent identifier in `#<number>` form;
+- `remote_state`: `open` or `closed`, observed during the record's remote readback;
+- `status_label`: the exact observed `status:*` label, or `null` when no such label is present;
+- `relationship`: stable relationship identifier;
+- `native_linkage_evidence`: object containing `status` (`proven` or `unproven`), `linked_unit_ids` (array of canonical unit IDs), and a non-empty `basis`;
+- `issue_url`: canonical upstream issue URL;
+- `path`: ledger-relative body snapshot path;
+- `body_sha256`: lowercase SHA-256 of that exact snapshot.
+
+A public-contract record is not a `units` entry. `unproven` linkage never creates a unit mapping, dependency edge, or native-child claim. Remote state fields are readback observations at the ledger update that records them, not permanent properties of the issue.
+
+### `evidence_records`
+
+Each record requires:
+
+- `unit_id`: existing canonical unit ID;
+- `evidence_set`: stable grouping identifier;
+- `path`: ledger-relative artifact path;
+- `role`: stable artifact-role identifier;
+- `claim_scope`: bounded statement of what the evidence evaluates;
+- `basis`: non-empty statement of the evidence limits;
+- `sha256`: lowercase SHA-256 of the exact artifact;
+- `execution`: `null` for passive evidence, or a validation-only object containing `mode`, `production`, `command`, `assertions_passed`, and `assertions_total`.
+
+When `execution` is present, `mode` must be `validation-only`, `production` must be `false`, and assertion counts must be non-negative integers with `assertions_passed` no greater than `assertions_total`. Evidence records have no unit-state or approval field and cannot upgrade the referenced unit.
+
+An empty registry means no records are registered in this ledger yet. It does not prove that no matching public contract or evidence exists elsewhere.
+
 ## Update rules
 
 - Keep all detailed internal contracts, budgets, forecasts, dependency edges, and tombstones here.

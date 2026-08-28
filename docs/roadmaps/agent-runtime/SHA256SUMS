@@ -3,8 +3,8 @@
 0da52c0b57a0e9bce7db6219cf871014510f21cb9f722db06df01d69335a95f4  ./DECISIONS.md
 bb3a61403d6526a7d14b7d192315305b76a2ac704cc26ef0df5d5ed2c16ea55b  ./HANDOFF.md
 028490d819273960c9806c770f72af735f32a2b4111824dbd076e31d27c9b135  ./NORMALIZATION.md
-b241b7b941cda23441838824a3d7eaed2133e327045e756011fa651fdb11a846  ./README.md
-6de3eb2c196caa9c690647db4e3cfad8d3375df5d817ce46ba169042055d94b4  ./TRACKER.md
+1190cbfa5bd46e22621ac2464baf5c12b468e6cd25a8ae86412c1d1c50758b07  ./README.md
+bd4c6c9ec2ebdfd0aff04ce98307e879afecbdb83e46431d73a831427e2b68f5  ./TRACKER.md
 11188daa54a564e3dc1e9acef6a25acaf6489e1ef2535bc7ddd7c2c2221f9669  ./linked-worktrees/active/A5b-managed-target-cwd-integration.md
 00ec7ea59e6154a7a53c710e4dbb576384477b2d2be8dd7cb23ae29a5fd694d6  ./linked-worktrees/forecast.md
 f6a3c6067a01a2f411ef93ef58abd00173437633a154df7303070de703b733dc  ./linked-worktrees/index.md
@@ -28,7 +28,7 @@ e019099e24349cf882535447f24ab06c2944070297725adcb5d3e998c85f600f  ./managed-exec
 ec060a6982754499ef82f0a2c00070b6e86e41aea85eedc89842ac4f7f02914c  ./managed-execution/tombstones/A7a-packed-install-readiness-compatibility-proof.md
 a9bafa34658bdf33816685cddacf588995f98a8fe8f7c984ee16e6ec698bb7b0  ./managed-execution/tombstones/A7b-quiescent-production-cutover-rollback.md
 33b8ac6ec174ff20e0de1d81f2619fbd7646a5911ec21963d647a6b52499c7b8  ./managed-execution/tombstones/A7c-external-coupling-removal-provenance.md
-8e08782bb24ddac8368ed4f988ca349f6b8ab0002ed6fd5b1ace66968577f691  ./manifest.json
+c660498cfc50f773c9b0b3792b4f515f9df659969d98f932793e3e6c39719ce0  ./manifest.json
 9f0e042875ee328e837cd418b00109f23d929272666aebb6113f90840d224181  ./normalization.json
 bb98cc211fa0b378b0657c62f477cb10c728fdd65091b9ea64ef1ad74df8e23e  ./parents/376/body.md
 e287efe41692b062973a4db78e4767ab73b323f4838e2f97c3725bc4d1e183e6  ./parents/376/previous-body.md
