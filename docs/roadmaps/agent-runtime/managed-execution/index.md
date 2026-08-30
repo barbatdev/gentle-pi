@@ -2,7 +2,7 @@
 
 ## Current state
 
-Parent [#419](https://github.com/Gentleman-Programming/gentle-pi/issues/419) is published and awaits review. Its nine child work units remain unpublished drafts.
+Parent [#419](https://github.com/Gentleman-Programming/gentle-pi/issues/419) is published and awaits review. Its nine child work units remain unpublished drafts. A2 remains `draft / REVISE`; D-018 records G02 selector-transport ownership, but G02 is `BLOCKED_EXTERNAL` and no implementation is authorized.
 
 ## Inventory
 
@@ -12,4 +12,4 @@ Parent [#419](https://github.com/Gentleman-Programming/gentle-pi/issues/419) is 
 
 ## Publication boundary
 
-No child draft is published or implementation-ready. Capture actual numstat and focused/regression evidence before any review or delivery decision.
+No child draft is published or implementation-ready. H1 remains the #379 implementation gate. G02 additionally requires external-owner acceptance and versioned singular ABI delivery; plural structured fan-out remains unconfirmed and fails closed for managed exact use. Capture actual numstat and focused/regression evidence before any review or delivery decision.

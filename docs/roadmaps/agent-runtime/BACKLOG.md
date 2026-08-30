@@ -6,7 +6,7 @@ Operational priority is not canonical inventory or state. `manifest.json` and `T
 
 | ID | Parent | Current state | Dependencies or gate | Next observable exit condition |
 | --- | --- | --- | --- | --- |
-| A2 | #419 | draft — D-016 and selected G07 policy are complete; closure program is 10% with 0/8 production gaps closed | `managed-execution/A2-CLOSURE-PROGRAM.md`; A1; #379, #327, #381, and #382 technical gates; #354 is delivery/install acceptance alignment after technical closure. | H1: verify/deliver #379 containment gate (PR #387 or verified successor); executable G07 proof remains pending and no implementation is authorized. |
+| A2 | #419 | draft / REVISE — D-016, D-017, and D-018 are recorded; closure program remains 10% with 0/8 production gaps closed; G02 is `BLOCKED_EXTERNAL` | `managed-execution/A2-CLOSURE-PROGRAM.md`; A1; #379, #327, #381, and #382 technical gates; #354 is delivery/install acceptance alignment after technical closure. G02 also requires external-owner acceptance and versioned singular ABI delivery. | H1: verify/deliver #379 containment gate (PR #387 or verified successor); then verify external-owner G02 delivery. Executable G07 proof remains pending and no implementation is authorized. |
 | A1 | #419 | published-needs-review | #447 and #419 are OPEN `status:needs-review`; #379 is OPEN `status:approved` and not evidenced as delivered or merged. | Wait for maintainer review/approval of #447 and parent #419, plus delivered prerequisite evidence before implementation. |
 
 ### A2 closure sequence
@@ -14,8 +14,9 @@ Operational priority is not canonical inventory or state. `manifest.json` and `T
 1. Persist and read back `managed-execution/A2-CLOSURE-PROGRAM.md`.
 2. Dependency classification is recorded as Separate semantics; do not re-prompt #379/#354.
 3. D-017 selects G07 option B: 16 normalized candidates per source kind and 64 total; executable boundary, metric, operational, and rollback proof remains pending.
-4. H1: wait for and verify #379 containment delivery (PR #387 or verified successor).
-5. Execute only the next dependency-ready work unit after that gate; no implementation is authorized by this decision.
+4. D-018 assigns singular structured-selector transport to the external runtime and managed-adapter consumption to Gentle Pi. G02 is `BLOCKED_EXTERNAL` pending owner acceptance and versioned delivery; plural structured fan-out fails closed until confirmed.
+5. H1: wait for and verify #379 containment delivery (PR #387 or verified successor).
+6. Execute only the next dependency-ready work unit after that gate and external G02 evidence; no implementation is authorized by these decisions.
 
 ## Next
 
@@ -44,6 +45,7 @@ These drafts are ordered by dependency and are not ready for bulk publication.
 | #442 | OPEN `status:needs-review` | Peer drafts remain gated; no peer child is published. |
 | #379 | OPEN `status:approved` | Approved/open prerequisite only; do not claim delivery or merge. |
 | #354 | OPEN `status:approved` | Delivery/install acceptance alignment after technical closure; not an A2 technical dependency or implementation prerequisite. |
+| G02 external runtime | Owner-unconfirmed; no accepted versioned singular ABI delivery is recorded. | `BLOCKED_EXTERNAL`; do not substitute a local compatibility shim, decide plural fan-out, or claim implementation readiness. |
 
 ## Operating rule
 

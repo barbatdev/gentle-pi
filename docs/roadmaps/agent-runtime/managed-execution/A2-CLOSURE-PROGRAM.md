@@ -14,7 +14,7 @@ Close A2's eight production-feasibility gaps without changing default unmanaged 
 
 | Boundary | Required interpretation |
 |---|---|
-| A2 ledger state | A2 remains `draft / REVISE`; D-016 plus selected G07 policy complete milestone 10%, while G01–G08 remain production-open (0/8 closed). The reference model is proposal self-consistency only; executable G07 proof remains pending. [L-A2] [L-GAPS] [L-TRACE] |
+| A2 ledger state | A2 remains `draft / REVISE`; D-016, D-017, and D-018 leave milestone 10% unchanged, while G01–G08 remain production-open (0/8 closed). The reference model is proposal self-consistency only; executable G07 proof remains pending and G02 is `BLOCKED_EXTERNAL`. [L-A2] [L-GAPS] [L-TRACE] [L-G02] |
 | Parent | #419 is open with `status:needs-review`; parent approval does not authorize a child implementation or publication. [I-419] |
 | Managed mode | It remains default-off. Disabled mode preserves current delegated-work behavior; no managed/unmanaged fallback or dual authority is allowed. [I-419] [I-447] |
 | Identity and privacy | Admission must use the structural `{source, owner, normalizedName}` tuple; candidate frontmatter cannot grant provenance. Internal reads need explicit context authority and public output is a closed safe schema. [L-A2] [L-TRACE] |
@@ -60,7 +60,9 @@ E0: verify upstream main + exact ledger branch and preserve ledger state
   ├─ D379/354: Separate semantics recorded
   └─ D1: selected G07 option B is durable; executable proof remains pending
 
-G02 structured selector transport
+D-018: external runtime owns backward-compatible singular selector transport;
+  Gentle Pi owns managed-adapter consumption only
+  ├─ G02 remains BLOCKED_EXTERNAL pending owner acceptance and versioned delivery
   ├─ G03 package provenance adapter (external owner, fail closed)
   ├─ G04 builtin provenance adapter / #327 disposition (external owner, fail closed)
   ├─ G05 versioned model/effort authority after #381/#382 foundation re-freeze
@@ -85,7 +87,7 @@ Percentages represent completed closure outcomes, not effort spent. A milestone 
 | **0%** | Schema-v2 ledger, A2 draft/REVISE, public-contract snapshots, proposal evidence, and this closure program are durable; production gaps closed: 0/8. | Persist this plan against the pinned ledger branch. |
 | **10%** | **Complete:** D-016 dependency classification and D-017 selected G07 option B are recorded. | G07 production gap remains open: executable boundary, metric, operational, and rollback evidence is pending; no implementation authorization follows. |
 | **20%** | #379 containment gate is delivered on upstream main and its applicability to A2 is read back. | PR #387 or a verified successor must merge; no local substitute. |
-| **35%** | G02 structured selector transport is delivered with exact tuple integration tests. | Typed end-to-end selector transport. |
+| **35%** | G02 structured selector transport is delivered with exact tuple integration tests. | External-owner acceptance and versioned singular ABI delivery, then managed-adapter proof. This milestone is not complete. |
 | **50%** | G08 authorized internal/public projection contract is delivered with leak and denied-access tests. | Closed public schema and context-bound internal read. |
 | **65%** | G03/G04 package and builtin provenance interfaces are owner-delivered or fail closed with objective adapter evidence. | Exact source/owner/name tuple authority; #327 disposition reviewed separately. |
 | **80%** | G05/G06 model-effort and tool authorities are delivered with accepted/rejected and packed-install evidence. | Versioned semantic interfaces; no issue prose as authority. |
@@ -97,7 +99,7 @@ Percentages represent completed closure outcomes, not effort spent. A milestone 
 
 | Gap | Owner/repository and prerequisite | Objective exit and rollback | Review band |
 |---|---|---|---|
-| G02 selector transport | Gentle Pi invocation/runtime owner; after E0, H1, and G07 if enumeration is exposed. | Typed alias-or-exact `{source, owner, normalizedName}` passes unchanged from invocation to resolver; collision and exact-not-found tests pass. Roll back by disabling/removing only the managed route. | `<=200` or split. |
+| G02 selector transport | External subagent runtime owner; Gentle Pi managed-adapter owner consumes only an owner-delivered ABI. After E0 and H1; G07 applies if enumeration is exposed. | External-owner acceptance and versioned backward-compatible singular transport pass alias-or-exact `{source, owner?, normalizedName}` unchanged to the managed adapter; collision, exact-not-found, and no alias/model-override redirection tests pass. Legacy strings remain unchanged. Plural structured fan-out is unconfirmed and fails closed for managed exact use. Roll back by disabling/removing only the managed route. | `<=200` or split. |
 | G03 package provenance | External package/discovery owner plus Gentle Pi adapter boundary; fail closed until a verified owner supplies exact tuples. | Adapter independently attests package owner and tuple; accepted/missing/forged/mutated tests pass. Roll back by rejecting managed package candidates. | `201-400`. |
 | G04 builtin provenance | External/builtin provider owner; #327 disposition required. | Provider emits independently confirmed builtin tuples; unavailable/forged/mutated results reject. Roll back by marking managed builtin source unavailable. | `201-400`. |
 | G05 model/effort | Gentle Pi model-routing owner after the #381/#382 foundation, approved remaining slices, and re-frozen contract. | Versioned authority accepts/rejects model and effort with S17/S18-style proof. Roll back by rejecting managed model/effort declarations as authority unavailable. | `>400/unknown`; must be pre-split. |
@@ -114,7 +116,7 @@ Every external or unowned dependency above is **fail-closed**: absence, stale ev
 
 **Selected — Separate semantics (formerly option 2, Split their semantics).** #379 remains the formal A2 implementation-start containment gate/dependency until delivered; it is not a G01–G08 interface supplier. #354 is removed from A2’s technical dependency array because it supplies no A2-consumed interface; it remains delivery/install acceptance alignment after technical closure, not an implementation prerequisite. No schema expansion is permitted. A2 remains `draft / REVISE`, G01–G08 remain open, and this record authorizes neither implementation nor publication.
 
-**No re-prompt:** dependency classification is complete and recorded in D-016; G07 option B is selected and recorded in D-017. The next dependency-ready action is H1: verify/deliver #379 containment gate (PR #387 or verified successor). Executable G07 proof remains pending; this does not authorize implementation.
+**No re-prompt:** dependency classification is complete and recorded in D-016; G07 option B is selected and recorded in D-017; G02 ownership is fixed in D-018. The next dependency-ready action is H1: verify/deliver #379 containment gate (PR #387 or verified successor). G02 remains `BLOCKED_EXTERNAL` pending external-owner acceptance and versioned singular ABI delivery. Executable G07 proof remains pending; none of these decisions authorize implementation.
 
 ### Historical decision packet (resolved)
 
@@ -152,7 +154,8 @@ Public metrics may contain only total count, configured total limit, the source 
 | E0 evidence pin | Maintainer / public GitHub + ledger fork readback | Upstream `main` and exact `refs/heads/docs/agent-runtime-roadmaps` direct/API reads match before and after evidence capture; complete authority table | No mutation | `<=200` |
 | H1 containment | #379 owner / Gentle Pi | PR #387 merged and current main confirms negative guard | Revert guard slice only | `201-400` |
 | D379/354 and D1 | Maintainer / ledger and product policy | Separate semantics and selected G07 option B are recorded; executable G07 proof remains pending | No implementation mutation | `<=200` each |
-| G02, G08 | Gentle Pi owners | Their matrix exits above, focused tests first | Disable/remove managed seam | `<=200`, `201-400` |
+| G02 | External subagent runtime owner, then Gentle Pi managed-adapter owner | Owner accepts and version-delivers the singular ABI; managed-adapter tests prove unchanged exact transport | Disable/remove managed seam | `<=200` |
+| G08 | Gentle Pi diagnostics/privacy owner | Its matrix exit above, focused tests first | Disable/remove managed seam | `201-400` |
 | G03–G06 | Named authority owners / respective repositories | Delivered interface and negative proof; unowned supplier absence fails closed | Reject affected managed source/declaration | `201-400` except G05 pre-split |
 | G01 | Gentle Pi managed resolver owner | All supplied authority contracts integrate with deterministic diagnostics and default-off proof | Remove managed facade only | `>400/unknown`, mandatory split |
 | #419 runtime integration | #419 child owners / Gentle Pi | Only after #447, admission, registry, session, and result authorities are actually delivered | Disable managed mode; no task migration/recreation | `201-400` per slice |
@@ -177,10 +180,10 @@ A2 is 100% only when all of the following are true:
 
 | Field | Resume value |
 |---|---|
-| Durable baseline | Fork ledger commit `e46f45a2da7cb5705f6e827871c003e2a146bcda`; A2 remains `draft / REVISE`; milestone 10% is complete, G01–G08 remain production-open, and executable G07 proof is pending. |
+| Durable baseline | Fork ledger commit `e46f45a2da7cb5705f6e827871c003e2a146bcda`; A2 remains `draft / REVISE`; milestone 10% is complete, G01–G08 remain production-open, executable G07 proof is pending, and G02 is `BLOCKED_EXTERNAL`. |
 | Exact ledger authority | `barbatdev/gentle-pi` → `refs/heads/docs/agent-runtime-roadmaps`; verify direct remote and GitHub API agree before every ledger mutation. |
 | Upstream evidence pin | `Gentleman-Programming/gentle-pi:main` at `a3d87c196268774c8989169e45634e9b46066881`; refresh only when a work unit depends on newer upstream evidence. |
-| Next dependency-ready action | H1: verify/deliver #379 containment gate (PR #387 or verified successor) before technical A2 implementation. |
+| Next dependency-ready action | H1: verify/deliver #379 containment gate (PR #387 or verified successor) before technical A2 implementation; obtain external-owner acceptance and versioned singular ABI delivery before G02 can close. |
 | Automatic continuation | Do not re-prompt G07; after H1 delivery is verified, proceed only to the next dependency-ready work unit. Executable G07 proof remains pending. |
 | Stop conditions | Exact ledger-branch drift, upstream authority drift affecting current evidence, unavailable external owner/interface, destructive or publication mutation, unresolved product decision, or second failed verification gate. |
 | Unrelated work | #469 remains separate and is not an A2 prerequisite. |
@@ -200,6 +203,7 @@ A2 is 100% only when all of the following are true:
 - **[L-A2]** Pinned A2 draft: https://raw.githubusercontent.com/barbatdev/gentle-pi/e46f45a2da7cb5705f6e827871c003e2a146bcda/docs/roadmaps/agent-runtime/managed-execution/active/A2-agent-definition-resolution-validation.md
 - **[L-GAPS]** Pinned gap register: https://raw.githubusercontent.com/barbatdev/gentle-pi/e46f45a2da7cb5705f6e827871c003e2a146bcda/docs/roadmaps/agent-runtime/managed-execution/evidence/A2-validation/feasibility-gaps.md
 - **[L-TRACE]** Pinned traceability: https://raw.githubusercontent.com/barbatdev/gentle-pi/e46f45a2da7cb5705f6e827871c003e2a146bcda/docs/roadmaps/agent-runtime/managed-execution/evidence/A2-validation/traceability.md
+- **[L-G02]** G02 runtime contract: `managed-execution/evidence/A2-validation/g02-runtime-contract.md` (local draft; no external delivery is claimed)
 - **[L-MANIFEST]** Pinned manifest: https://raw.githubusercontent.com/barbatdev/gentle-pi/e46f45a2da7cb5705f6e827871c003e2a146bcda/docs/roadmaps/agent-runtime/manifest.json
 - **[S-DISCOVERY]** https://github.com/Gentleman-Programming/gentle-pi/blob/a3d87c196268774c8989169e45634e9b46066881/extensions/gentle-ai.ts#L1393-L1554
 - **[S-MODEL]** https://github.com/Gentleman-Programming/gentle-pi/blob/a3d87c196268774c8989169e45634e9b46066881/lib/model-routing-authority.ts

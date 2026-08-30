@@ -10,7 +10,7 @@ At readback, parent #419 is OPEN with `status:needs-review`. Any A2 publication 
 
 | Class | Facts used here |
 |---|---|
-| Verified current implementation | `pi-subagents-j0k3r@1.5.2` uses trim+lowercase names and global agents → global subagents → project agents → project subagents with normalized last-write-wins. It has no structured identity, discovery provenance, override declaration, or public/internal result contract. `package:` frontmatter is wrapper-only model-profile discovery, not execution-loader provenance. |
+| Verified current implementation | The observed external subagent runtime accepts optional string/string-array agent input and resolves a name-keyed definition map. Discovery reports `project`, `user`, or `builtin` without `owner` or `normalizedName`; package-name concatenation is lossy and normalized collisions are last-write-wins. It has no structured identity, discovery provenance, override declaration, or public/internal result contract. Gentle Pi intercepts `subagent_run` only for edit-surface and review context; it does not parse, resolve, or rewrite selectors. |
 | Proposed policy | This contract and S01–S29 are a candidate policy only. |
 | Observed external authority/state | #62, #327, #354, #379, #381, #382, and #419 are open. #379 is an approved containment gate with #387 open/unmerged and #380 closed/unmerged, not a delivered A2 interface. #354 is delivery/install acceptance alignment after technical closure, not an A2 technical dependency or interface supplier. #327/#381/#382 are open authority or defect context, not delivered interfaces. |
 | Unresolved feasibility | G01–G08 remain open in `evidence/A2-validation/feasibility-gaps.md`; G07 has a selected bounded policy but executable boundary, operational, metric, and rollback proof remains pending. |
@@ -24,7 +24,7 @@ A candidate identity is exactly `{ source, owner, normalizedName }`.
 - `source` is exactly `project`, `global`, `package`, or `builtin`; `normalizedName` is non-empty `trim + lowercase(name)`.
 - `owner` is exactly `null` for project/global and a non-empty string for package/builtin.
 - Equality, exact lookup, override targets, and authority matching compare all three members structurally. Delimiter concatenation is never equality. The proposal model may serialize tuple arrays only as an internal collision-proof map/sort key.
-- A string is an unqualified alias. A structured selector is exact and alias overrides never redirect it.
+- A string is an unqualified alias. A structured selector is exact and alias overrides never redirect it. D-018 assigns singular selector transport to the external runtime; Gentle Pi consumes an owner-delivered selector only through its managed adapter. Legacy strings remain unmanaged.
 
 ### Independently authored discovery/provenance authority
 
@@ -79,19 +79,23 @@ Public success is exactly `{ok:true,status:"resolved"}`. Public failure is exact
 
 S16 proves authorized internal inspection, denied internal access for both success and aggregate failure, exact public success keys, bounded aggregate failure keys/counts, ignored injected details, and no private leak. S23 proves reversed input produces identical public aggregate output and proves private deterministic diagnostic ordering only through authorized internal access.
 
+### D-018 external selector boundary
+
+G02 is `BLOCKED_EXTERNAL`. The external runtime owns the backward-compatible singular transport ABI, expected as `agent?: string | AgentSelector`; Gentle Pi owns managed-adapter consumption only. Exact identity remains `{source, owner?, normalizedName}` and has no name-only or last-write-wins fallback. Exact selectors cannot be redirected by alias or model overrides. External-owner acceptance and versioned delivery are required before G02 can close. Plural `agents` structured fan-out is not decided here and must fail closed for managed exact use until the external owner confirms its contract. H1 remains the implementation gate; this boundary authorizes no implementation.
+
 ## Compatibility and non-goals
 
 Managed execution is default-off; unmanaged execution keeps current behavior. This proposal does not implement loaders, task launch, scheduling, peer identity, tool broadening, discovery adapters, model catalogs, capability authority, resource limits, diagnostic storage, or public interfaces. It does not claim delivery for #327, #381, or #382, or closure of any external issue.
 
 ## Dependency truth
 
-The durable technical dependency list is `issue:379`, `issue:327`, `issue:381`, `issue:382`, and `A1`. #379 remains a formal implementation-start containment gate before implementation. #354 is not an A2 technical dependency, implementation prerequisite, or interface supplier; it remains delivery/install acceptance alignment after technical closure. #327/#381/#382 remain open external context; #62 remains a downstream packed-install acceptance gate; A3 depends on a delivered A2 result.
+The durable technical dependency list is `issue:379`, `issue:327`, `issue:381`, `issue:382`, and `A1`. #379 remains a formal implementation-start containment gate before implementation. #354 is not an A2 technical dependency, implementation prerequisite, or interface supplier; it remains delivery/install acceptance alignment after technical closure. G02 is additionally `BLOCKED_EXTERNAL` pending external-owner acceptance and versioned singular ABI delivery; it adds no manifest dependency edge. #327/#381/#382 remain open external context; #62 remains a downstream packed-install acceptance gate; A3 depends on a delivered A2 result.
 
 ## Acceptance criteria and evidence
 
 | Criterion | Evidence scenarios |
 |---|---|
-| Tuple identity, normalization, exact selectors | S01–S07, S29 |
+| Tuple identity, normalization, exact selectors | S01–S07, S29; external-owner singular transport and managed-adapter integration evidence remain required for G02 |
 | Independent discovery provenance and override authority | S04–S05, S11–S15 |
 | No precedence; alias and override safety | S08–S15, S21, S27 |
 | Deterministic private diagnostics and closed public schemas | S06, S16, S23 |

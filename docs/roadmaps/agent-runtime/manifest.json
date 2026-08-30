@@ -100,7 +100,7 @@
       "branch": null,
       "pr": null,
       "successors": [],
-      "content_sha256": "4e924ec65afb8317e2ae5be6e212b8e5c693368407e7dae9db062abda74180ac"
+      "content_sha256": "23fbc06b19a7d57d0cd802bbbe368522f0baf920159176b3e6b50431cdc6e461"
     },
     {
       "id": "A3",
@@ -901,7 +901,7 @@
       "role": "feasibility-gaps",
       "claim_scope": "Records open feasibility and proof-coverage gaps in the A2 proposal.",
       "basis": "Proposal-validation evidence only; it neither proves implementation, delivery, feasibility, product validity, nor approval. Final architecture review remains REVISE: no isolated project-only/global-only discovery mutation fixtures; no explicit rejected-authority and mismatched-context internal-read cases for both success/aggregate, plus no non-aggregate public failure through resolvePublic; and no supplied tool authority that explicitly rejects one requested tool.",
-      "sha256": "0e35dc8886a6db8a7ed4a2026612a7d10defa0114bd339a2652c3ffc627d824b",
+      "sha256": "0f93d941e73d58216186d95eeab78bbcd4f69dedd3aa464e3a3acfd601400cbd",
       "execution": null
     },
     {
@@ -937,7 +937,17 @@
       "role": "traceability",
       "claim_scope": "Maps A2 proposal obligations to bounded validation evidence.",
       "basis": "Proposal-validation evidence only; it neither proves implementation, delivery, feasibility, product validity, nor approval. Final architecture review remains REVISE: no isolated project-only/global-only discovery mutation fixtures; no explicit rejected-authority and mismatched-context internal-read cases for both success/aggregate, plus no non-aggregate public failure through resolvePublic; and no supplied tool authority that explicitly rejects one requested tool.",
-      "sha256": "1082f199d3358b9197c1d1ae1fa093b49e11e37db13dd8bfd94426978dd6f49e",
+      "sha256": "726bca024e2eafcc25ce9d4a8db9f9b3ecd988ee16339abdc688852baa8a0090",
+      "execution": null
+    },
+    {
+      "unit_id": "A2",
+      "evidence_set": "A2-validation",
+      "path": "managed-execution/evidence/A2-validation/g02-runtime-contract.md",
+      "role": "g02-runtime-contract",
+      "claim_scope": "Records D-018 selector-transport ownership and the unresolved external-owner contract questions for G02.",
+      "basis": "Decision evidence only; it neither proves external-owner acceptance, versioned delivery, implementation, feasibility, product validity, nor approval. G02 remains BLOCKED_EXTERNAL until the required owner evidence and managed-adapter proof exist.",
+      "sha256": "5571c3d87200d0ae4a38dccc242ce1af212d1513a04a47fe6507fbfb8f25624d",
       "execution": null
     }
   ],
@@ -945,22 +955,22 @@
     {
       "path": "BACKLOG.md",
       "role": "operational-priority",
-      "sha256": "5ec6d848d676b54f417c1cfda6910fa66c325892fe3d156f5ce410058e5dc60b"
+      "sha256": "f36ec1ae4b2fcc963246d5fbc32659916a581f78eb6cdfa3a178ed00550a75c6"
     },
     {
       "path": "DECISIONS.md",
       "role": "durable-decision-log",
-      "sha256": "81344570b1e9e2a410032b997aab177a9a70f01146aafd488eea6104a530a234"
+      "sha256": "f3aa562bd7090bc78e5ad897c4b38e0775848b8412ff594311ce6e2fee66483b"
     },
     {
       "path": "HANDOFF.md",
       "role": "operational-resume-card",
-      "sha256": "8a2fa46f3471ac4c5626f7c43dd75fa0bfe217502541c3c04dd1fe519555b65c"
+      "sha256": "d4f93613d25c34f916629c4ca05e596f52f18dc265d8cc0634bf60cf869f107e"
     },
     {
       "path": "managed-execution/A2-CLOSURE-PROGRAM.md",
       "role": "closure-program",
-      "sha256": "e8708303ddeca4ef73568b4a96052b50cbe24aef3b693dfa0995818fd68ced04"
+      "sha256": "a9d313446bc20c13002be4202c1e2a30ec10b6cc6732c22c2909afc3fe353053"
     }
       ],
       "auxiliary_publication_records": [
@@ -997,8 +1007,8 @@
     "operational_files": 4,
     "publication_draft_files": 3,
     "public_contract_files": 2,
-    "evidence_files": 4,
-    "total_files": 83
+    "evidence_files": 5,
+    "total_files": 84
   },
   "whitespace_exceptions": [
     {
