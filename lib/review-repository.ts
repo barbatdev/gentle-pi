@@ -1,5 +1,6 @@
 import { execFileSync } from "node:child_process";
-import { closeSync, linkSync, lstatSync, mkdirSync, openSync, readFileSync, realpathSync, statSync, unlinkSync, writeFileSync, fsyncSync } from "node:fs";
+import { closeSync, fsyncSync, linkSync, lstatSync, mkdtempSync, mkdirSync, openSync, readFileSync, realpathSync, rmSync, statSync, unlinkSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { isAbsolute, join, relative, resolve, sep } from "node:path";
 import { canonicalJsonV1, domainHashV1, parseCanonicalJsonV1 } from "./review-canonical.ts";
 
@@ -47,20 +48,49 @@ export function inheritedUnsafeGitEnvironmentKeys(
 		.toSorted();
 }
 
-export function reviewGitEnvironment(): NodeJS.ProcessEnv {
-	for (const key of Object.keys(process.env)) {
+export interface ReviewGitEnvironmentLeaseOptions {
+	readonly environment?: NodeJS.ProcessEnv;
+	readonly platform?: NodeJS.Platform;
+	readonly removeTemporaryDirectory?: (path: string) => void;
+}
+
+export function withReviewGitEnvironment<T>(
+	callback: (environment: NodeJS.ProcessEnv) => T,
+	options: ReviewGitEnvironmentLeaseOptions = {},
+): T {
+	const inherited = options.environment ?? process.env;
+	for (const key of Object.keys(inherited)) {
 		const normalizedKey = key.toUpperCase();
 		if (UNSAFE_GIT_ENVIRONMENT.has(normalizedKey) || /^GIT_CONFIG_(?:KEY|VALUE)_/.test(normalizedKey)) throw new ReviewRepositoryError("REVIEW_GIT_ENV_UNSAFE: inherited Git routing/configuration override is present");
 	}
 	const environment: NodeJS.ProcessEnv = {};
-	for (const [key, value] of Object.entries(process.env)) if (!key.startsWith("GIT_")) environment[key] = value;
+	for (const [key, value] of Object.entries(inherited)) if (!key.toUpperCase().startsWith("GIT_")) environment[key] = value;
 	environment.GIT_CONFIG_NOSYSTEM = "1";
-	environment.GIT_CONFIG_GLOBAL = process.platform === "win32" ? "NUL" : "/dev/null";
-	environment.GIT_CONFIG_SYSTEM = process.platform === "win32" ? "NUL" : "/dev/null";
 	environment.GIT_OPTIONAL_LOCKS = "0";
 	environment.LC_ALL = "C";
 	environment.LANG = "C";
-	return environment;
+	if ((options.platform ?? process.platform) !== "win32") {
+		environment.GIT_CONFIG_GLOBAL = "/dev/null";
+		return callback(environment);
+	}
+	const temporaryDirectory = mkdtempSync(join(tmpdir(), "gentle-ai-git-config-"));
+	const globalConfig = join(temporaryDirectory, "global");
+	let callbackFailed = false;
+	try {
+		writeFileSync(globalConfig, "", { flag: "wx", mode: 0o600 });
+		environment.GIT_CONFIG_GLOBAL = globalConfig;
+		return callback(environment);
+	} catch (error) {
+		callbackFailed = true;
+		throw error;
+	} finally {
+		const removeTemporaryDirectory = options.removeTemporaryDirectory ?? ((path: string) => rmSync(path, { recursive: true, force: true }));
+		try {
+			removeTemporaryDirectory(temporaryDirectory);
+		} catch (error) {
+			if (!callbackFailed) throw error;
+		}
+	}
 }
 
 export function publicationProbeGitEnvironment(): NodeJS.ProcessEnv {
@@ -72,13 +102,29 @@ export function publicationProbeGitEnvironment(): NodeJS.ProcessEnv {
 	return environment;
 }
 
+function sanitizedGitAuthorityStderr(error: unknown): string | undefined {
+	if (typeof error !== "object" || error === null || !("stderr" in error)) return undefined;
+	const stderr = (error as { stderr?: unknown }).stderr;
+	if (typeof stderr !== "string" && !Buffer.isBuffer(stderr)) return undefined;
+	const sanitized = (Buffer.isBuffer(stderr) ? stderr.toString("utf8") : stderr)
+		.replace(/\u001B(?:\][\s\S]*?(?:\u0007|\u001B\\)|\[[0-?]*[ -/]*[@-~]|[@-_])/g, "")
+		.replace(/([a-z][a-z\d+.-]*:\/\/)[^/\s@]+@/gi, "$1[redacted]@")
+		.replace(/\b((?:access[_-]?token|token|auth(?:orization)?|password|passwd|secret|api[_-]?key)\s*[=:]\s*)[^\s&#]+/gi, "$1[redacted]")
+		.replace(/[\u0000-\u001F\u007F-\u009F]/g, " ")
+		.replace(/\s+/g, " ")
+		.trim()
+		.slice(0, 240);
+	return sanitized || undefined;
+}
+
 function gitLines(cwd: string, args: string[]): string[] {
 	let output: string;
 	try {
-		output = execFileSync("git", ["-C", resolve(cwd), ...args], { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"], shell: false, env: reviewGitEnvironment() });
+		output = withReviewGitEnvironment((environment) => execFileSync("git", ["-C", resolve(cwd), ...args], { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"], shell: false, env: environment }));
 	} catch (error) {
 		if (error instanceof ReviewRepositoryError) throw error;
-		throw new ReviewRepositoryError("Unable to resolve Git repository authority");
+		const diagnostic = sanitizedGitAuthorityStderr(error);
+		throw new ReviewRepositoryError(`Unable to resolve Git repository authority${diagnostic ? `: ${diagnostic}` : ""}`);
 	}
 	if (output.includes("\0")) throw new ReviewRepositoryError("Git authority probe returned malformed output");
 	return output.split("\n").filter(Boolean);

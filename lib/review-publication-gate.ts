@@ -2,7 +2,7 @@ import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import {
 	publicationProbeGitEnvironment,
-	reviewGitEnvironment,
+	withReviewGitEnvironment,
 } from "./review-repository.ts";
 
 export const GATE_TARGET_KIND = {
@@ -131,14 +131,17 @@ function publicationError(message: string): Error {
 }
 
 function runGateGit(cwd: string, args: readonly string[]): string {
-	const result = spawnSync("git", args, {
-		cwd,
-		encoding: "utf8",
-		stdio: ["ignore", "pipe", "pipe"],
-		env: reviewGitEnvironment(),
+	return withReviewGitEnvironment((environment) => {
+		const result = spawnSync("git", args, {
+			cwd,
+			encoding: "utf8",
+			stdio: ["ignore", "pipe", "pipe"],
+			env: environment,
+			shell: false,
+		});
+		if (result.error || result.status !== 0) throw publicationError(`Git publication identity could not be resolved: ${args.join(" ")}`);
+		return result.stdout.trim();
 	});
-	if (result.error || result.status !== 0) throw publicationError(`Git publication identity could not be resolved: ${args.join(" ")}`);
-	return result.stdout.trim();
 }
 
 function repositoryRootForGate(cwd: string): string {
@@ -146,13 +149,16 @@ function repositoryRootForGate(cwd: string): string {
 }
 
 function listConfiguredRemotes(cwd: string): string[] {
-	const result = spawnSync("git", ["-C", cwd, "remote"], {
-		encoding: "utf8",
-		stdio: ["ignore", "pipe", "pipe"],
-		env: reviewGitEnvironment(),
+	return withReviewGitEnvironment((environment) => {
+		const result = spawnSync("git", ["-C", cwd, "remote"], {
+			encoding: "utf8",
+			stdio: ["ignore", "pipe", "pipe"],
+			env: environment,
+			shell: false,
+		});
+		if (result.error || result.status !== 0) throw publicationError("Configured Git remotes could not be listed");
+		return result.stdout.split(/\r?\n/).filter(Boolean);
 	});
-	if (result.error || result.status !== 0) throw publicationError("Configured Git remotes could not be listed");
-	return result.stdout.split(/\r?\n/).filter(Boolean);
 }
 
 function configuredRemoteValues(cwd: string, key: string): string[] {
@@ -228,11 +234,12 @@ export function resolvePushDestinationRefV1(
 	if (destinationValue.startsWith("refs/")) {
 		return { ...resolvePushRemoteRefV1(cwd, remote, destinationValue, label), ref: destinationValue };
 	}
-	const formatCheck = spawnSync("git", ["check-ref-format", `refs/${destinationValue}`], {
+	const formatCheck = withReviewGitEnvironment((environment) => spawnSync("git", ["check-ref-format", `refs/${destinationValue}`], {
 		cwd,
 		stdio: "ignore",
-		env: reviewGitEnvironment(),
-	});
+		env: environment,
+		shell: false,
+	}));
 	if (formatCheck.error || formatCheck.status !== 0) throw publicationError(`${label} is malformed`);
 	const destination = resolveConfiguredPushDestinationV1(cwd, remote);
 	const result = spawnSync("git", ["ls-remote", "--refs", destination.url], {
@@ -357,7 +364,7 @@ function defaultGhCommandRunner(
 	args: readonly string[],
 	options: { cwd: string; env: NodeJS.ProcessEnv },
 ): { status: number | null; stdout: string; error?: Error } {
-	const result = spawnSync("gh", args, { ...options, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
+	const result = spawnSync("gh", args, { ...options, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"], shell: false });
 	return { status: result.status, stdout: result.stdout ?? "", error: result.error };
 }
 
@@ -366,41 +373,43 @@ function deriveReleaseCiStatusForShaV1(options: {
 	sha: string;
 	ghCommandRunner: GhCommandRunnerV1;
 }): { proven: boolean; status: string | null } {
-	const runnerOptions = { cwd: options.repositoryCwd, env: reviewGitEnvironment() };
-	let checkRunsResult: ReturnType<GhCommandRunnerV1>;
-	try {
-		checkRunsResult = options.ghCommandRunner([
-			"api",
-			`repos/{owner}/{repo}/commits/${options.sha}/check-runs?per_page=100`,
-			"--jq",
-			"{total_count, returned: (.check_runs | length), checks: [.check_runs[] | [.status, .conclusion]]}",
-		], runnerOptions);
-	} catch {
-		return { proven: false, status: null };
-	}
-	if (checkRunsResult.error || checkRunsResult.status !== 0) return { proven: false, status: null };
-	let summary: unknown;
-	try {
-		summary = JSON.parse(checkRunsResult.stdout);
-	} catch {
-		return { proven: false, status: null };
-	}
-	if (!isRecord(summary) || !Number.isSafeInteger(summary.total_count) || !Number.isSafeInteger(summary.returned) || !Array.isArray(summary.checks) || summary.total_count < 0 || summary.returned < 0 || summary.returned !== summary.checks.length || summary.total_count !== summary.checks.length) {
-		return { proven: false, status: null };
-	}
-	if (summary.total_count > 0) {
-		const successful = summary.checks.every((check) => Array.isArray(check) && check.length === 2 && check[0] === "completed" && check[1] === "success");
-		return successful ? { proven: true, status: "success" } : { proven: false, status: null };
-	}
-	let legacyResult: ReturnType<GhCommandRunnerV1>;
-	try {
-		legacyResult = options.ghCommandRunner(["api", `repos/{owner}/{repo}/commits/${options.sha}/status`, "--jq", ".state"], runnerOptions);
-	} catch {
-		return { proven: false, status: null };
-	}
-	return legacyResult.error || legacyResult.status !== 0 || legacyResult.stdout.trim() !== "success"
-		? { proven: false, status: null }
-		: { proven: true, status: "success" };
+	return withReviewGitEnvironment((environment) => {
+		const runnerOptions = { cwd: options.repositoryCwd, env: environment };
+		let checkRunsResult: ReturnType<GhCommandRunnerV1>;
+		try {
+			checkRunsResult = options.ghCommandRunner([
+				"api",
+				`repos/{owner}/{repo}/commits/${options.sha}/check-runs?per_page=100`,
+				"--jq",
+				"{total_count, returned: (.check_runs | length), checks: [.check_runs[] | [.status, .conclusion]]}",
+			], runnerOptions);
+		} catch {
+			return { proven: false, status: null };
+		}
+		if (checkRunsResult.error || checkRunsResult.status !== 0) return { proven: false, status: null };
+		let summary: unknown;
+		try {
+			summary = JSON.parse(checkRunsResult.stdout);
+		} catch {
+			return { proven: false, status: null };
+		}
+		if (!isRecord(summary) || !Number.isSafeInteger(summary.total_count) || !Number.isSafeInteger(summary.returned) || !Array.isArray(summary.checks) || summary.total_count < 0 || summary.returned < 0 || summary.returned !== summary.checks.length || summary.total_count !== summary.checks.length) {
+			return { proven: false, status: null };
+		}
+		if (summary.total_count > 0) {
+			const successful = summary.checks.every((check) => Array.isArray(check) && check.length === 2 && check[0] === "completed" && check[1] === "success");
+			return successful ? { proven: true, status: "success" } : { proven: false, status: null };
+		}
+		let legacyResult: ReturnType<GhCommandRunnerV1>;
+		try {
+			legacyResult = options.ghCommandRunner(["api", `repos/{owner}/{repo}/commits/${options.sha}/status`, "--jq", ".state"], runnerOptions);
+		} catch {
+			return { proven: false, status: null };
+		}
+		return legacyResult.error || legacyResult.status !== 0 || legacyResult.stdout.trim() !== "success"
+			? { proven: false, status: null }
+			: { proven: true, status: "success" };
+	});
 }
 
 export function recheckReleaseFastPathCiStatusV1(options: {
@@ -419,33 +428,39 @@ export function recheckReleaseFastPathCiStatusV1(options: {
 function resolveConfiguredRemoteUrl(cwd: string, remote: string): string {
 	if (!CONFIGURED_REMOTE_NAME.test(remote)) throw publicationError("Release fast path remote must be a bare configured Git remote name, not a URL or path");
 	if (!listConfiguredRemotes(cwd).includes(remote)) throw publicationError(`Release fast path remote "${remote}" is not a configured Git remote`);
-	const result = spawnSync("git", ["-C", cwd, "remote", "get-url", remote], {
-		encoding: "utf8",
-		stdio: ["ignore", "pipe", "pipe"],
-		env: reviewGitEnvironment(),
+	return withReviewGitEnvironment((environment) => {
+		const result = spawnSync("git", ["-C", cwd, "remote", "get-url", remote], {
+			encoding: "utf8",
+			stdio: ["ignore", "pipe", "pipe"],
+			env: environment,
+			shell: false,
+		});
+		if (result.error || result.status !== 0) throw publicationError(`Configured remote "${remote}" URL could not be resolved`);
+		const url = result.stdout.trim();
+		if (!url) throw publicationError(`Configured remote "${remote}" has no URL`);
+		return url;
 	});
-	if (result.error || result.status !== 0) throw publicationError(`Configured remote "${remote}" URL could not be resolved`);
-	const url = result.stdout.trim();
-	if (!url) throw publicationError(`Configured remote "${remote}" has no URL`);
-	return url;
 }
 
 function resolveRemoteGateRef(cwd: string, remote: string, ref: string, label: string): string | null {
 	if (!isFullRef(ref)) throw publicationError(`${label} is not a full ref`);
-	const result = spawnSync("git", ["ls-remote", "--refs", resolveConfiguredRemoteUrl(cwd, remote), ref], {
-		cwd,
-		encoding: "utf8",
-		stdio: ["ignore", "pipe", "pipe"],
-		env: reviewGitEnvironment(),
+	return withReviewGitEnvironment((environment) => {
+		const result = spawnSync("git", ["ls-remote", "--refs", resolveConfiguredRemoteUrl(cwd, remote), ref], {
+			cwd,
+			encoding: "utf8",
+			stdio: ["ignore", "pipe", "pipe"],
+			env: environment,
+			shell: false,
+		});
+		if (result.error || result.status !== 0) throw publicationError(`${label} could not be resolved`);
+		const matches = result.stdout.split(/\r?\n/).filter(Boolean).flatMap((line) => {
+			const [objectId, remoteRef] = line.split("\t");
+			return remoteRef === ref && isObjectId(objectId) ? [objectId] : [];
+		});
+		if (matches.length === 0) return null;
+		if (matches.length !== 1) throw publicationError(`${label} resolved ambiguously`);
+		return matches[0]!;
 	});
-	if (result.error || result.status !== 0) throw publicationError(`${label} could not be resolved`);
-	const matches = result.stdout.split(/\r?\n/).filter(Boolean).flatMap((line) => {
-		const [objectId, remoteRef] = line.split("\t");
-		return remoteRef === ref && isObjectId(objectId) ? [objectId] : [];
-	});
-	if (matches.length === 0) return null;
-	if (matches.length !== 1) throw publicationError(`${label} resolved ambiguously`);
-	return matches[0]!;
 }
 
 function assertReleaseIdentity(cwd: string, target: ReleaseGateTargetV1): void {

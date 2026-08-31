@@ -28,7 +28,7 @@ import {
 	type ReviewRiskTier,
 	type ReviewRiskClassification,
 } from "./review-risk.ts";
-import { reviewGitEnvironment } from "./review-repository.ts";
+import { withReviewGitEnvironment } from "./review-repository.ts";
 
 export const REVIEW_MODE = {
 	ORDINARY: "ordinary",
@@ -158,20 +158,21 @@ function runGit(
 	args: readonly string[],
 	environment: GitEnvironment = {},
 ): string {
-	const env = reviewGitEnvironment();
-	if (environment.indexFile) env.GIT_INDEX_FILE = environment.indexFile;
-	if (environment.objectDirectory) {
-		env.GIT_OBJECT_DIRECTORY = environment.objectDirectory;
-	}
-	if (environment.alternateObjectDirectory) {
-		env.GIT_ALTERNATE_OBJECT_DIRECTORIES = environment.alternateObjectDirectory;
-	}
-	return execFileSync("git", args, {
-		cwd,
-		encoding: "utf8",
-		stdio: ["ignore", "pipe", "pipe"],
-		env,
-	}).trim();
+	return withReviewGitEnvironment((env) => {
+		if (environment.indexFile) env.GIT_INDEX_FILE = environment.indexFile;
+		if (environment.objectDirectory) {
+			env.GIT_OBJECT_DIRECTORY = environment.objectDirectory;
+		}
+		if (environment.alternateObjectDirectory) {
+			env.GIT_ALTERNATE_OBJECT_DIRECTORIES = environment.alternateObjectDirectory;
+		}
+		return execFileSync("git", args, {
+			cwd,
+			encoding: "utf8",
+			stdio: ["ignore", "pipe", "pipe"],
+			env,
+		}).trim();
+	});
 }
 
 function repositoryRoot(cwd: string): string {
