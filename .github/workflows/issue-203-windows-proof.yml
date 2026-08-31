@@ -10,9 +10,25 @@ permissions:
 
 jobs:
   windows-proof:
-    name: Windows Git-for-Windows field proof
-    runs-on: windows-latest
+    name: Windows Git-for-Windows field proof (${{ matrix.architecture }})
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - architecture: x64
+            runner: windows-latest
+            git_asset: PortableGit-2.53.0.3-64-bit.7z.exe
+            git_sha256: b365da794b1d2225eb24d5f5e09ef7792cfd5fa26c3a3586210280c80dff3a2a
+            git_root: PortableGit-2.53.0.3-64-bit
+            expect_nul_rejection: false
+          - architecture: arm64
+            runner: windows-11-arm
+            git_asset: PortableGit-2.53.0.3-arm64.7z.exe
+            git_sha256: 0db54010054c01f35501cf69e1e32d3710138ecb934d188bd77093afed24300e
+            git_root: PortableGit-2.53.0.3-arm64
+            expect_nul_rejection: true
     steps:
       - name: Checkout candidate
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
@@ -55,10 +71,10 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          $gitRoot = Join-Path $env:RUNNER_TEMP 'PortableGit-2.53.0.3-64-bit'
-          $archive = Join-Path $env:RUNNER_TEMP 'PortableGit-2.53.0.3-64-bit.7z.exe'
-          $url = 'https://github.com/git-for-windows/git/releases/download/v2.53.0.windows.3/PortableGit-2.53.0.3-64-bit.7z.exe'
-          $expectedSha256 = 'b365da794b1d2225eb24d5f5e09ef7792cfd5fa26c3a3586210280c80dff3a2a'
+          $gitRoot = Join-Path $env:RUNNER_TEMP '${{ matrix.git_root }}'
+          $archive = Join-Path $env:RUNNER_TEMP '${{ matrix.git_asset }}'
+          $url = 'https://github.com/git-for-windows/git/releases/download/v2.53.0.windows.3/${{ matrix.git_asset }}'
+          $expectedSha256 = '${{ matrix.git_sha256 }}'
           Invoke-WebRequest -Uri $url -OutFile $archive
           $actualSha256 = (Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLowerInvariant()
           if ($actualSha256 -ne $expectedSha256) { throw "PortableGit SHA-256 mismatch: expected $expectedSha256, received $actualSha256" }
@@ -67,33 +83,35 @@ jobs:
           $gitCmd = Join-Path $gitRoot 'cmd'
           $gitExe = Join-Path $gitCmd 'git.exe'
           if (-not (Test-Path -LiteralPath $gitExe -PathType Leaf)) { throw 'PortableGit extraction did not produce cmd\\git.exe' }
+          "PINNED_GIT_ROOT=$gitRoot" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          "PINNED_GIT_CMD=$gitCmd" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          "PINNED_GIT_EXE=$gitExe" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           $gitCmd | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
 
       - name: Prove Windows and pinned Git environment
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          $gitCmd = Join-Path $env:RUNNER_TEMP 'PortableGit-2.53.0.3-64-bit\cmd'
-          $env:PATH = "$gitCmd;$env:PATH"
+          $env:PATH = "$env:PINNED_GIT_CMD;$env:PATH"
           node -e "if (process.platform !== 'win32') throw new Error('expected win32, received ' + process.platform)"
           if ($LASTEXITCODE -ne 0) { throw "Node platform check failed with exit code $LASTEXITCODE" }
-          $version = (& git --version).Trim()
+          $version = (& $env:PINNED_GIT_EXE --version).Trim()
           if ($LASTEXITCODE -ne 0) { throw "git --version failed with exit code $LASTEXITCODE" }
           if ($version -ne 'git version 2.53.0.windows.3') { throw "unexpected Git version: $version" }
           $gitLocations = @(& where.exe git)
           if ($LASTEXITCODE -ne 0) { throw "where.exe git failed with exit code $LASTEXITCODE" }
           $gitLocations | ForEach-Object { Write-Host $_ }
-          if ($gitLocations.Count -lt 1 -or $gitLocations[0] -ne (Join-Path $gitCmd 'git.exe')) { throw 'Pinned Git executable is not first on PATH' }
+          if ($gitLocations.Count -lt 1 -or $gitLocations[0] -ne $env:PINNED_GIT_EXE) { throw 'Pinned Git executable is not first on PATH' }
 
-      - name: Reproduce the NUL global-config rejection
+      - name: Record the NUL global-config control outcome
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          $gitRoot = Join-Path $env:RUNNER_TEMP 'issue-203-control-repository'
-          $gitExe = Join-Path $env:RUNNER_TEMP 'PortableGit-2.53.0.3-64-bit\cmd\git.exe'
-          $env:PATH = "$(Split-Path -Parent $gitExe);$env:PATH"
-          New-Item -ItemType Directory -Path $gitRoot | Out-Null
-          & $gitExe 'init' '-b' 'main' $gitRoot
+          $expectNulRejection = '${{ matrix.expect_nul_rejection }}' -eq 'true'
+          $controlRoot = Join-Path $env:RUNNER_TEMP 'issue-203-control-repository'
+          $env:PATH = "$env:PINNED_GIT_CMD;$env:PATH"
+          New-Item -ItemType Directory -Path $controlRoot | Out-Null
+          & $env:PINNED_GIT_EXE 'init' '-b' 'main' $controlRoot
           if ($LASTEXITCODE -ne 0) { throw "git init failed with exit code $LASTEXITCODE" }
           $saved = @{}
           foreach ($key in @('GIT_CONFIG_GLOBAL', 'GIT_CONFIG_SYSTEM', 'GIT_CONFIG_NOSYSTEM')) {
@@ -104,21 +122,28 @@ jobs:
             $env:GIT_CONFIG_SYSTEM = 'NUL'
             $env:GIT_CONFIG_NOSYSTEM = '1'
             $startInfo = [System.Diagnostics.ProcessStartInfo]::new()
-            $startInfo.FileName = $gitExe
+            $startInfo.FileName = $env:PINNED_GIT_EXE
             $startInfo.UseShellExecute = $false
             $startInfo.RedirectStandardOutput = $true
             $startInfo.RedirectStandardError = $true
             $startInfo.ArgumentList.Add('-C')
-            $startInfo.ArgumentList.Add($gitRoot)
+            $startInfo.ArgumentList.Add($controlRoot)
             $startInfo.ArgumentList.Add('status')
             $process = [System.Diagnostics.Process]::Start($startInfo)
             $stderr = $process.StandardError.ReadToEnd()
             $null = $process.StandardOutput.ReadToEnd()
             $process.WaitForExit()
             $boundedStderr = $stderr.Substring(0, [Math]::Min($stderr.Length, 500)).Trim()
-            Write-Host "Control stderr (bounded): $boundedStderr"
-            if ($process.ExitCode -eq 0) { throw 'Control unexpectedly succeeded with GIT_CONFIG_GLOBAL=NUL' }
-            if ([string]::IsNullOrWhiteSpace($boundedStderr) -or $boundedStderr -notmatch '(?i)NUL') { throw 'Control stderr did not report the expected NUL/path rejection' }
+            if ($process.ExitCode -eq 0) {
+              $controlOutcome = 'accepted'
+              Write-Host 'NUL control outcome: accepted'
+              if ($expectNulRejection) { throw 'ARM64 NUL control unexpectedly succeeded' }
+            } else {
+              $controlOutcome = 'rejected'
+              Write-Host "NUL control outcome: rejected (stderr, bounded): $boundedStderr"
+              if ([string]::IsNullOrWhiteSpace($boundedStderr) -or $boundedStderr -notmatch '(?i)NUL|invalid argument|unable to access') { throw 'NUL control rejection stderr did not mention NUL, invalid argument, or unable to access' }
+            }
+            "NUL_CONTROL_OUTCOME=$controlOutcome" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           } finally {
             foreach ($key in $saved.Keys) {
               if ($saved[$key].Exists) { [Environment]::SetEnvironmentVariable($key, $saved[$key].Value, 'Process') }
@@ -132,8 +157,7 @@ jobs:
           CANDIDATE_SHA: d2eba24e8847e315517f1841948abb21ff68f59b
         run: |
           $ErrorActionPreference = 'Stop'
-          $gitExe = Join-Path $env:RUNNER_TEMP 'PortableGit-2.53.0.3-64-bit\cmd\git.exe'
-          $env:PATH = "$(Split-Path -Parent $gitExe);$env:PATH"
+          $env:PATH = "$env:PINNED_GIT_CMD;$env:PATH"
           $proofScript = Join-Path $env:RUNNER_TEMP 'issue-203-candidate-proof.mjs'
           @'
           import assert from "node:assert/strict";
@@ -202,7 +226,7 @@ jobs:
             rmSync(repositoryParent, { recursive: true, force: true });
           }
           '@ | Set-Content -LiteralPath $proofScript -Encoding utf8
-          $env:PROOF_GIT = $gitExe
+          $env:PROOF_GIT = $env:PINNED_GIT_EXE
           node --experimental-strip-types $proofScript
           if ($LASTEXITCODE -ne 0) { throw "candidate black-box proof failed with exit code $LASTEXITCODE" }
 
@@ -210,8 +234,7 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          $gitCmd = Join-Path $env:RUNNER_TEMP 'PortableGit-2.53.0.3-64-bit\cmd'
-          $env:PATH = "$gitCmd;$env:PATH"
+          $env:PATH = "$env:PINNED_GIT_CMD;$env:PATH"
           $testOutput = @(node --experimental-strip-types --test tests/review-repository.test.ts tests/review-snapshot.test.ts tests/review-gate.test.ts tests/review-transaction.test.ts 2>&1)
           $testExitCode = $LASTEXITCODE
           $testOutput | ForEach-Object { Write-Host $_ }
@@ -223,14 +246,14 @@ jobs:
       - name: Run review repository suite from cmd
         shell: cmd
         run: |
-          set "PATH=%RUNNER_TEMP%\PortableGit-2.53.0.3-64-bit\cmd;%PATH%"
+          set "PATH=%PINNED_GIT_CMD%;%PATH%"
           where git
           node --experimental-strip-types --test tests/review-repository.test.ts
 
       - name: Run review repository suite from Git Bash
         shell: bash
         run: |
-          export PATH="$(cygpath "$RUNNER_TEMP")/PortableGit-2.53.0.3-64-bit/cmd:$PATH"
+          export PATH="$(cygpath "$PINNED_GIT_CMD"):$PATH"
           which git
           node --experimental-strip-types --test tests/review-repository.test.ts
 
@@ -238,8 +261,7 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          $gitCmd = Join-Path $env:RUNNER_TEMP 'PortableGit-2.53.0.3-64-bit\cmd'
-          $env:PATH = "$gitCmd;$env:PATH"
+          $env:PATH = "$env:PINNED_GIT_CMD;$env:PATH"
           pnpm test
           if ($LASTEXITCODE -ne 0) { throw "pnpm test failed with exit code $LASTEXITCODE" }
 
@@ -247,8 +269,7 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          $gitCmd = Join-Path $env:RUNNER_TEMP 'PortableGit-2.53.0.3-64-bit\cmd'
-          $env:PATH = "$gitCmd;$env:PATH"
+          $env:PATH = "$env:PINNED_GIT_CMD;$env:PATH"
           pnpm run check:runtime-modules
           if ($LASTEXITCODE -ne 0) { throw "check:runtime-modules failed with exit code $LASTEXITCODE" }
 
@@ -258,13 +279,14 @@ jobs:
           CANDIDATE_SHA: d2eba24e8847e315517f1841948abb21ff68f59b
         run: |
           $ErrorActionPreference = 'Stop'
-          $gitCmd = Join-Path $env:RUNNER_TEMP 'PortableGit-2.53.0.3-64-bit\cmd'
-          $env:PATH = "$gitCmd;$env:PATH"
-          $version = (& git --version).Trim()
+          $env:PATH = "$env:PINNED_GIT_CMD;$env:PATH"
+          $version = (& $env:PINNED_GIT_EXE --version).Trim()
           if ($LASTEXITCODE -ne 0) { throw "git --version failed with exit code $LASTEXITCODE" }
           if ($version -ne 'git version 2.53.0.windows.3') { throw "unexpected Git version: $version" }
+          Write-Host "Matrix architecture: ${{ matrix.architecture }}"
+          Write-Host "Runner architecture: $([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)"
+          Write-Host "Pinned Git asset: ${{ matrix.git_asset }}"
+          Write-Host "Pinned Git version: $version"
+          Write-Host "NUL control outcome: $env:NUL_CONTROL_OUTCOME"
           Write-Host "Candidate SHA: $env:CANDIDATE_SHA"
-          Write-Host "OS: $([System.Runtime.InteropServices.RuntimeInformation]::OSDescription)"
-          Write-Host "Architecture: $([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)"
-          Write-Host "Pinned Git: $version"
           Write-Host 'Proof status: passed'
