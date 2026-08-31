@@ -72,6 +72,33 @@ test("Windows-mode review Git environment leases an empty regular global config 
 	assert.equal(existsSync(dirname(failedConfigPath)), false);
 });
 
+test("Windows review Git environment lease supports a real Git subprocess and removes its global config", { skip: process.platform !== "win32" }, (t) => {
+	const root = repository(t);
+	let configPath = "";
+	withReviewGitEnvironment((environment) => {
+		configPath = environment.GIT_CONFIG_GLOBAL ?? "";
+		assert.equal(environment.GIT_CONFIG_NOSYSTEM, "1");
+		assert.equal(environment.GIT_CONFIG_SYSTEM, undefined);
+		assert.notEqual(configPath, "NUL");
+		assert.notEqual(configPath, "/dev/null");
+		assert.equal(existsSync(configPath), true);
+		assert.equal(statSync(configPath).isFile(), true);
+		assert.equal(statSync(configPath).size, 0);
+
+		const output = execFileSync("git", ["-C", root, "rev-parse", "--is-inside-work-tree"], {
+			encoding: "utf8",
+			env: environment,
+			shell: false,
+		});
+		assert.equal(output.trim(), "true");
+		assert.equal(existsSync(configPath), true);
+		assert.equal(statSync(configPath).isFile(), true);
+		assert.equal(statSync(configPath).size, 0);
+	});
+	assert.equal(existsSync(configPath), false);
+	assert.equal(existsSync(dirname(configPath)), false);
+});
+
 test("review Git environment lease preserves callback failure when cleanup also fails", (t) => {
 	let temporaryDirectory = "";
 	t.after(() => rmSync(temporaryDirectory, { recursive: true, force: true }));
