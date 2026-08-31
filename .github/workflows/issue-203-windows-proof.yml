@@ -62,8 +62,8 @@ jobs:
           Invoke-WebRequest -Uri $url -OutFile $archive
           $actualSha256 = (Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLowerInvariant()
           if ($actualSha256 -ne $expectedSha256) { throw "PortableGit SHA-256 mismatch: expected $expectedSha256, received $actualSha256" }
-          & $archive '-y' "-o$gitRoot"
-          if ($LASTEXITCODE -ne 0) { throw "PortableGit extraction failed with exit code $LASTEXITCODE" }
+          $extraction = Start-Process -FilePath $archive -ArgumentList @('-y', ('-o"{0}"' -f $gitRoot)) -Wait -PassThru
+          if ($extraction.ExitCode -ne 0) { throw "PortableGit extraction failed with exit code $($extraction.ExitCode)" }
           $gitCmd = Join-Path $gitRoot 'cmd'
           $gitExe = Join-Path $gitCmd 'git.exe'
           if (-not (Test-Path -LiteralPath $gitExe -PathType Leaf)) { throw 'PortableGit extraction did not produce cmd\\git.exe' }
