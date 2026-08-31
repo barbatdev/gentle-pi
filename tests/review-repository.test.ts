@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { chmodSync, cpSync, existsSync, mkdtempSync, mkdirSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, mkdtempSync, mkdirSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import test from "node:test";
@@ -108,25 +108,18 @@ test("unsafe inherited Git configuration fails before a review Git environment c
 });
 
 test("Git authority failures retain only bounded sanitized stderr diagnostics", (t) => {
-	const root = repository(t);
-	const bin = join(root, "fake-git");
-	mkdirSync(bin);
-	writeFileSync(join(bin, "git"), "#!/bin/sh\nprintf '\\033[31mfatal: https://user:super-secret@example.invalid/repo?token=super-secret\\033[0m\\n' >&2\nexit 1\n");
-	chmodSync(join(bin, "git"), 0o755);
-	const originalPath = process.env.PATH;
-	process.env.PATH = `${bin}:${originalPath ?? ""}`;
-	try {
-		assert.throws(() => resolveRepositoryAuthorityV1(root), (error: unknown) => {
-			assert.ok(error instanceof Error);
-			assert.match(error.message, /^Unable to resolve Git repository authority:/);
-			assert.match(error.message, /fatal:/i);
-			assert.doesNotMatch(error.message, /\x1b|user:super-secret|token=super-secret/i);
-			assert.ok(error.message.length <= "Unable to resolve Git repository authority: ".length + 240);
-			return true;
-		});
-	} finally {
-		process.env.PATH = originalPath;
-	}
+	const parent = mkdtempSync(join(tmpdir(), "gentle-pi-review-repository-missing-"));
+	t.after(() => rmSync(parent, { recursive: true, force: true }));
+	const missingPath = join(parent, `missing-\x1b[31m-token=super-secret#${"safe-suffix-".repeat(16)}`);
+
+	assert.throws(() => resolveRepositoryAuthorityV1(missingPath), (error: unknown) => {
+		assert.ok(error instanceof Error);
+		assert.match(error.message, /^Unable to resolve Git repository authority:/);
+		assert.match(error.message, /fatal:/i);
+		assert.doesNotMatch(error.message, /\x1b|super-secret/i);
+		assert.equal(error.message.length, "Unable to resolve Git repository authority: ".length + 240);
+		return true;
+	});
 });
 
 test("a Windows drive-letter Git common directory resolves repository authority", { skip: process.platform !== "win32" }, (t) => {
