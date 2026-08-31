@@ -1,0 +1,166 @@
+name: Issue 203 Base Windows Diagnostics
+
+on:
+  push:
+    branches:
+      - ci/203-base-windows-diagnostics
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  baseline:
+    name: Base Windows (${{ matrix.architecture }})
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - architecture: x64
+            runner: windows-latest
+            portable_git_asset: PortableGit-2.53.0.3-64-bit.7z.exe
+            portable_git_digest: b365da794b1d2225eb24d5f5e09ef7792cfd5fa26c3a3586210280c80dff3a2a
+          - architecture: arm64
+            runner: windows-11-arm
+            portable_git_asset: PortableGit-2.53.0.3-arm64.7z.exe
+            portable_git_digest: 0db54010054c01f35501cf69e1e32d3710138ecb934d188bd77093afed24300e
+
+    steps:
+      - name: Check out exact base
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          ref: fe5c708cbb61e39e793a3301421e56a7b7c6c877
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Verify checked out base identity
+        shell: pwsh
+        run: |
+          $expected = "fe5c708cbb61e39e793a3301421e56a7b7c6c877"
+          $actual = (git rev-parse HEAD).Trim()
+          if ($actual -ne $expected) {
+            throw "Expected base $expected but checked out $actual"
+          }
+          Write-Host "Checked out base $actual"
+
+      - name: Bind temporary directories
+        shell: pwsh
+        run: |
+          $tempRoot = Join-Path $env:RUNNER_TEMP "issue-203-base-windows-diagnostics"
+          New-Item -ItemType Directory -Force -Path $tempRoot | Out-Null
+          "TEMP=$tempRoot" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          "TMP=$tempRoot" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+        with:
+          version: 11.1.1
+
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "24"
+          cache: pnpm
+
+      - name: Set up Go
+        uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
+        with:
+          go-version: "1.25.10"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install pinned PortableGit
+        id: portable_git
+        shell: pwsh
+        run: |
+          $asset = "${{ matrix.portable_git_asset }}"
+          $expectedDigest = "${{ matrix.portable_git_digest }}"
+          $installer = Join-Path $env:RUNNER_TEMP $asset
+          $extractRoot = Join-Path $env:RUNNER_TEMP "PortableGit-2.53.0.windows.3-${{ matrix.architecture }}"
+          $url = "https://github.com/git-for-windows/git/releases/download/v2.53.0.windows.3/$asset"
+          Invoke-WebRequest -Uri $url -OutFile $installer
+          $actualDigest = (Get-FileHash -Algorithm SHA256 -Path $installer).Hash.ToLowerInvariant()
+          Write-Host "PortableGit asset: $asset"
+          Write-Host "PortableGit digest: $actualDigest"
+          if ($actualDigest -ne $expectedDigest) {
+            throw "PortableGit digest mismatch: expected $expectedDigest, got $actualDigest"
+          }
+          $process = Start-Process -FilePath $installer -ArgumentList "-o$extractRoot", "-y" -Wait -PassThru -NoNewWindow
+          if ($process.ExitCode -ne 0) {
+            throw "PortableGit extraction failed with exit code $($process.ExitCode)"
+          }
+          "PATH=$(Join-Path $extractRoot 'cmd');$env:PATH" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          "asset=$asset" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          "digest=$actualDigest" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+
+      - name: Verify pinned PortableGit version
+        id: portable_git_version
+        shell: pwsh
+        run: |
+          $version = (git --version).Trim()
+          if ($version -ne "git version 2.53.0.windows.3") {
+            throw "Expected PortableGit version 2.53.0.windows.3 but got $version"
+          }
+          Write-Host "PortableGit version: $version"
+          "version=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+
+      - name: Record baseline NUL control
+        id: nul_control
+        continue-on-error: true
+        shell: pwsh
+        run: |
+          $stderrPath = Join-Path $env:RUNNER_TEMP "issue-203-nul-control.stderr"
+          $env:GIT_CONFIG_NOSYSTEM = "1"
+          $env:GIT_CONFIG_GLOBAL = "NUL"
+          $env:GIT_CONFIG_SYSTEM = "NUL"
+          & git config --list 1>$null 2>$stderrPath
+          $exitCode = $LASTEXITCODE
+          $stderr = if (Test-Path $stderrPath) { [System.IO.File]::ReadAllText($stderrPath) } else { "" }
+          $stderr = ($stderr -replace "[\r\n]+", " ").Trim()
+          if ($stderr.Length -gt 4096) {
+            $stderr = "$($stderr.Substring(0, 4096)) [truncated]"
+          }
+          $outcome = "exit=$exitCode; stderr=$stderr"
+          Write-Host "NUL control: $outcome"
+          "outcome=$outcome" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          exit $exitCode
+
+      - name: Diagnose review repository tests
+        id: review_repository
+        continue-on-error: true
+        run: pnpm exec node --experimental-strip-types --test tests/review-repository.test.ts
+
+      - name: Diagnose review snapshot, gate, and transaction tests
+        id: review_snapshot_gate_transaction
+        continue-on-error: true
+        run: pnpm exec node --experimental-strip-types --test tests/review-snapshot.test.ts tests/review-gate.test.ts tests/review-transaction.test.ts
+
+      - name: Diagnose full test suite
+        id: full_test_suite
+        continue-on-error: true
+        env:
+          GENTLE_PI_REQUIRE_NATIVE_BINARY: "1"
+        run: pnpm test
+
+      - name: Diagnose runtime modules
+        id: runtime_modules
+        continue-on-error: true
+        run: pnpm run check:runtime-modules
+
+      - name: Summarize baseline evidence
+        if: always()
+        shell: pwsh
+        run: |
+          Write-Host "architecture: ${{ matrix.architecture }}"
+          Write-Host "base SHA: fe5c708cbb61e39e793a3301421e56a7b7c6c877"
+          Write-Host "PortableGit asset: ${{ steps.portable_git.outputs.asset || matrix.portable_git_asset }}"
+          Write-Host "PortableGit digest: ${{ steps.portable_git.outputs.digest || matrix.portable_git_digest }}"
+          Write-Host "PortableGit version: ${{ steps.portable_git_version.outputs.version || 'not recorded' }}"
+          Write-Host "NUL control: ${{ steps.nul_control.outputs.outcome || 'not recorded' }} (step outcome: ${{ steps.nul_control.outcome }})"
+          Write-Host "review-repository: ${{ steps.review_repository.outcome }}"
+          Write-Host "review-snapshot-gate-transaction: ${{ steps.review_snapshot_gate_transaction.outcome }}"
+          Write-Host "full-test-suite: ${{ steps.full_test_suite.outcome }}"
+          Write-Host "runtime-modules: ${{ steps.runtime_modules.outcome }}"
+          exit 0
