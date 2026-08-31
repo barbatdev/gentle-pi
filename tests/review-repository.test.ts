@@ -1,10 +1,10 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { cpSync, mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { chmodSync, cpSync, existsSync, mkdtempSync, mkdirSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import test from "node:test";
-import { resolveRepositoryAuthorityV1, setReviewRepositoryIdentityRetryHookForTesting } from "../lib/review-repository.ts";
+import { resolveRepositoryAuthorityV1, setReviewRepositoryIdentityRetryHookForTesting, withReviewGitEnvironment } from "../lib/review-repository.ts";
 import { REVIEW_MODE, ReviewTransactionStore, createReviewState, setReviewMutationLockPlatformForTesting } from "../lib/review-transaction.ts";
 import { REVIEW_LENS, REVIEW_ROUTE } from "../lib/review-triggers.ts";
 import { qualifiedReviewLockPlatform, testSnapshot } from "./review-test-fixtures.ts";
@@ -48,6 +48,86 @@ function addOrphanRoot(root: string, branch: string, file: string): void {
 	git(root, "commit", "-m", `orphan root on ${branch}`);
 	git(root, "checkout", "main");
 }
+
+test("Windows-mode review Git environment leases an empty regular global config and removes it after success or callback failure", () => {
+	let successfulConfigPath = "";
+	withReviewGitEnvironment((environment) => {
+		successfulConfigPath = environment.GIT_CONFIG_GLOBAL ?? "";
+		assert.notEqual(successfulConfigPath, "NUL");
+		assert.equal(environment.GIT_CONFIG_SYSTEM, undefined);
+		assert.equal(existsSync(successfulConfigPath), true);
+		assert.equal(statSync(successfulConfigPath).isFile(), true);
+		assert.equal(statSync(successfulConfigPath).size, 0);
+	}, { platform: "win32" });
+	assert.equal(existsSync(successfulConfigPath), false);
+	assert.equal(existsSync(dirname(successfulConfigPath)), false);
+
+	let failedConfigPath = "";
+	assert.throws(() => withReviewGitEnvironment((environment) => {
+		failedConfigPath = environment.GIT_CONFIG_GLOBAL ?? "";
+		assert.equal(existsSync(failedConfigPath), true);
+		throw new Error("callback failed");
+	}, { platform: "win32" }), /callback failed/);
+	assert.equal(existsSync(failedConfigPath), false);
+	assert.equal(existsSync(dirname(failedConfigPath)), false);
+});
+
+test("review Git environment lease preserves callback failure when cleanup also fails", (t) => {
+	let temporaryDirectory = "";
+	t.after(() => rmSync(temporaryDirectory, { recursive: true, force: true }));
+	assert.throws(() => withReviewGitEnvironment((environment) => {
+		temporaryDirectory = dirname(environment.GIT_CONFIG_GLOBAL ?? "");
+		throw new Error("callback failed");
+	}, {
+		platform: "win32",
+		removeTemporaryDirectory: () => {
+			throw new Error("cleanup failed");
+		},
+	}), /callback failed/);
+});
+
+test("review Git environment lease surfaces cleanup failure after its callback completes", (t) => {
+	let temporaryDirectory = "";
+	t.after(() => rmSync(temporaryDirectory, { recursive: true, force: true }));
+	assert.throws(() => withReviewGitEnvironment((environment) => {
+		temporaryDirectory = dirname(environment.GIT_CONFIG_GLOBAL ?? "");
+	}, {
+		platform: "win32",
+		removeTemporaryDirectory: () => {
+			throw new Error("cleanup failed");
+		},
+	}), /cleanup failed/);
+});
+
+test("unsafe inherited Git configuration fails before a review Git environment callback", () => {
+	let called = false;
+	assert.throws(() => withReviewGitEnvironment(() => {
+		called = true;
+	}, { environment: { GIT_CONFIG_GLOBAL: "unsafe" } }), /REVIEW_GIT_ENV_UNSAFE/);
+	assert.equal(called, false);
+});
+
+test("Git authority failures retain only bounded sanitized stderr diagnostics", (t) => {
+	const root = repository(t);
+	const bin = join(root, "fake-git");
+	mkdirSync(bin);
+	writeFileSync(join(bin, "git"), "#!/bin/sh\nprintf '\\033[31mfatal: https://user:super-secret@example.invalid/repo?token=super-secret\\033[0m\\n' >&2\nexit 1\n");
+	chmodSync(join(bin, "git"), 0o755);
+	const originalPath = process.env.PATH;
+	process.env.PATH = `${bin}:${originalPath ?? ""}`;
+	try {
+		assert.throws(() => resolveRepositoryAuthorityV1(root), (error: unknown) => {
+			assert.ok(error instanceof Error);
+			assert.match(error.message, /^Unable to resolve Git repository authority:/);
+			assert.match(error.message, /fatal:/i);
+			assert.doesNotMatch(error.message, /\x1b|user:super-secret|token=super-secret/i);
+			assert.ok(error.message.length <= "Unable to resolve Git repository authority: ".length + 240);
+			return true;
+		});
+	} finally {
+		process.env.PATH = originalPath;
+	}
+});
 
 test("a Windows drive-letter Git common directory resolves repository authority", { skip: process.platform !== "win32" }, (t) => {
 	const root = repository(t);
