@@ -315,7 +315,7 @@ jobs:
             echo Windows-only literal repository probe did not execute
             exit /b 1
           )
-          findstr /R /C:"#[ ]*skipped[ ]*0" "%TEST_OUTPUT%" >nul
+          node -e "const fs=require('node:fs'); const text=fs.readFileSync(process.argv[1], 'utf8'); if (!/\bskipped\s+0\b/.test(text)) process.exit(1)" "%TEST_OUTPUT%"
           if errorlevel 1 (
             echo Review repository suite did not report zero skipped tests on Windows
             exit /b 1
