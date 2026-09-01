@@ -1,0 +1,451 @@
+name: Issue 203 Windows proof
+
+on:
+  push:
+    branches:
+      - ci/203-final-msys-proof
+
+permissions:
+  contents: read
+
+jobs:
+  windows-proof:
+    name: Windows Git-for-Windows field proof (${{ matrix.architecture }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - architecture: x64
+            runner: windows-latest
+            git_asset: PortableGit-2.53.0.3-64-bit.7z.exe
+            git_sha256: b365da794b1d2225eb24d5f5e09ef7792cfd5fa26c3a3586210280c80dff3a2a
+            git_root: PortableGit-2.53.0.3-64-bit
+            expect_nul_rejection: false
+          - architecture: arm64
+            runner: windows-11-arm
+            git_asset: PortableGit-2.53.0.3-arm64.7z.exe
+            git_sha256: 0db54010054c01f35501cf69e1e32d3710138ecb934d188bd77093afed24300e
+            git_root: PortableGit-2.53.0.3-arm64
+            expect_nul_rejection: true
+    steps:
+      - name: Checkout candidate
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          ref: b96dfc39233fd59c2167046d427285172c41a725
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify exact candidate diff
+        id: candidate-integrity
+        shell: pwsh
+        env:
+          BASE_SHA: fe5c708cbb61e39e793a3301421e56a7b7c6c877
+          CANDIDATE_SHA: b96dfc39233fd59c2167046d427285172c41a725
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $actualSha = (git rev-parse HEAD).Trim()
+          if ($LASTEXITCODE -ne 0 -or $actualSha -ne $env:CANDIDATE_SHA) { throw "unexpected candidate checkout: $actualSha" }
+          git merge-base --is-ancestor $env:BASE_SHA $env:CANDIDATE_SHA
+          if ($LASTEXITCODE -ne 0) { throw "candidate is not descended from base $env:BASE_SHA" }
+          $commitCount = (git rev-list --count "$env:BASE_SHA..$env:CANDIDATE_SHA").Trim()
+          if ($LASTEXITCODE -ne 0 -or $commitCount -ne '3') { throw "expected three candidate commits, received $commitCount" }
+          $expectedPaths = @(
+            'lib/review-publication-gate.ts'
+            'lib/review-repository.ts'
+            'lib/review-snapshot.ts'
+            'tests/review-repository.test.ts'
+          )
+          $actualPaths = @(git diff --name-only "$env:BASE_SHA..$env:CANDIDATE_SHA" | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
+          if ($LASTEXITCODE -ne 0) { throw "candidate path inspection failed with exit code $LASTEXITCODE" }
+          $pathDifference = @(Compare-Object -ReferenceObject $expectedPaths -DifferenceObject $actualPaths)
+          if ($pathDifference.Count -ne 0) { throw "candidate paths differ: $($pathDifference | Out-String)" }
+          $added = 0
+          $deleted = 0
+          foreach ($line in @(git diff --numstat "$env:BASE_SHA..$env:CANDIDATE_SHA")) {
+            $columns = $line -split "`t"
+            if ($columns.Count -lt 3 -or $columns[0] -notmatch '^\d+$' -or $columns[1] -notmatch '^\d+$') { throw "unexpected numstat row: $line" }
+            $added += [int]$columns[0]
+            $deleted += [int]$columns[1]
+          }
+          if ($LASTEXITCODE -ne 0) { throw "candidate numstat failed with exit code $LASTEXITCODE" }
+          if ($added -ne 262 -or $deleted -ne 100) { throw "unexpected candidate size: +$added/-$deleted" }
+          git diff --check "$env:BASE_SHA..$env:CANDIDATE_SHA"
+          if ($LASTEXITCODE -ne 0) { throw "candidate diff check failed with exit code $LASTEXITCODE" }
+          Write-Host "Candidate integrity: $actualSha, 3 commits, +$added/-$deleted"
+
+      - name: Bind temporary paths to runner temp
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          "TEMP=$env:RUNNER_TEMP" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          "TMP=$env:RUNNER_TEMP" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+        with:
+          version: 11.1.1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "24"
+          cache: "pnpm"
+
+      - name: Setup Go
+        uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
+        with:
+          go-version: "1.25.10"
+          cache: false
+
+      - name: Install dependencies
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          pnpm install --frozen-lockfile
+          if ($LASTEXITCODE -ne 0) { throw "pnpm install failed with exit code $LASTEXITCODE" }
+
+      - name: Download and verify pinned Git for Windows
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $gitRoot = Join-Path $env:RUNNER_TEMP '${{ matrix.git_root }}'
+          $archive = Join-Path $env:RUNNER_TEMP '${{ matrix.git_asset }}'
+          $url = 'https://github.com/git-for-windows/git/releases/download/v2.53.0.windows.3/${{ matrix.git_asset }}'
+          $expectedSha256 = '${{ matrix.git_sha256 }}'
+          Invoke-WebRequest -Uri $url -OutFile $archive
+          $actualSha256 = (Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($actualSha256 -ne $expectedSha256) { throw "PortableGit SHA-256 mismatch: expected $expectedSha256, received $actualSha256" }
+          Write-Host "Verified PortableGit SHA-256: $actualSha256"
+          "PINNED_GIT_SHA256=$actualSha256" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          $extraction = Start-Process -FilePath $archive -ArgumentList @('-y', ('-o"{0}"' -f $gitRoot)) -Wait -PassThru
+          if ($extraction.ExitCode -ne 0) { throw "PortableGit extraction failed with exit code $($extraction.ExitCode)" }
+          $gitCmd = Join-Path $gitRoot 'cmd'
+          $gitExe = Join-Path $gitCmd 'git.exe'
+          if (-not (Test-Path -LiteralPath $gitExe -PathType Leaf)) { throw 'PortableGit extraction did not produce cmd\\git.exe' }
+          "PINNED_GIT_ROOT=$gitRoot" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          "PINNED_GIT_CMD=$gitCmd" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          "PINNED_GIT_EXE=$gitExe" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          $gitCmd | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
+
+      - name: Prove Windows and pinned Git environment
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $env:PATH = "$env:PINNED_GIT_CMD;$env:PATH"
+          node -e "if (process.platform !== 'win32') throw new Error('expected win32, received ' + process.platform)"
+          if ($LASTEXITCODE -ne 0) { throw "Node platform check failed with exit code $LASTEXITCODE" }
+          $version = (& $env:PINNED_GIT_EXE --version).Trim()
+          if ($LASTEXITCODE -ne 0) { throw "git --version failed with exit code $LASTEXITCODE" }
+          if ($version -ne 'git version 2.53.0.windows.3') { throw "unexpected Git version: $version" }
+          $gitLocations = @(& where.exe git)
+          if ($LASTEXITCODE -ne 0) { throw "where.exe git failed with exit code $LASTEXITCODE" }
+          $gitLocations | ForEach-Object { Write-Host $_ }
+          if ($gitLocations.Count -lt 1 -or $gitLocations[0] -ne $env:PINNED_GIT_EXE) { throw 'Pinned Git executable is not first on PATH' }
+
+      - name: Record the NUL global-config control outcome
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $expectNulRejection = '${{ matrix.expect_nul_rejection }}' -eq 'true'
+          $controlRoot = Join-Path $env:RUNNER_TEMP 'issue-203-control-repository'
+          $env:PATH = "$env:PINNED_GIT_CMD;$env:PATH"
+          New-Item -ItemType Directory -Path $controlRoot | Out-Null
+          & $env:PINNED_GIT_EXE 'init' '-b' 'main' $controlRoot
+          if ($LASTEXITCODE -ne 0) { throw "git init failed with exit code $LASTEXITCODE" }
+          $saved = @{}
+          foreach ($key in @('GIT_CONFIG_GLOBAL', 'GIT_CONFIG_SYSTEM', 'GIT_CONFIG_NOSYSTEM')) {
+            $saved[$key] = @{ Exists = Test-Path "Env:$key"; Value = [Environment]::GetEnvironmentVariable($key, 'Process') }
+          }
+          try {
+            $env:GIT_CONFIG_GLOBAL = 'NUL'
+            $env:GIT_CONFIG_SYSTEM = 'NUL'
+            $env:GIT_CONFIG_NOSYSTEM = '1'
+            $startInfo = [System.Diagnostics.ProcessStartInfo]::new()
+            $startInfo.FileName = $env:PINNED_GIT_EXE
+            $startInfo.UseShellExecute = $false
+            $startInfo.RedirectStandardOutput = $true
+            $startInfo.RedirectStandardError = $true
+            $startInfo.ArgumentList.Add('-C')
+            $startInfo.ArgumentList.Add($controlRoot)
+            $startInfo.ArgumentList.Add('status')
+            $process = [System.Diagnostics.Process]::Start($startInfo)
+            $stderr = $process.StandardError.ReadToEnd()
+            $null = $process.StandardOutput.ReadToEnd()
+            $process.WaitForExit()
+            $boundedStderr = $stderr.Substring(0, [Math]::Min($stderr.Length, 500)).Trim()
+            if ($process.ExitCode -eq 0) {
+              $controlOutcome = 'accepted'
+              Write-Host 'NUL control outcome: accepted'
+              if ($expectNulRejection) { throw 'ARM64 NUL control unexpectedly succeeded' }
+            } else {
+              $controlOutcome = 'rejected'
+              Write-Host "NUL control outcome: rejected (stderr, bounded): $boundedStderr"
+              if ([string]::IsNullOrWhiteSpace($boundedStderr) -or $boundedStderr -notmatch '(?i)NUL|invalid argument|unable to access') { throw 'NUL control rejection stderr did not mention NUL, invalid argument, or unable to access' }
+            }
+            "NUL_CONTROL_OUTCOME=$controlOutcome" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          } finally {
+            foreach ($key in $saved.Keys) {
+              if ($saved[$key].Exists) { [Environment]::SetEnvironmentVariable($key, $saved[$key].Value, 'Process') }
+              else { Remove-Item -LiteralPath "Env:$key" -ErrorAction SilentlyContinue }
+            }
+          }
+
+      - name: Run candidate black-box Windows proof
+        id: black-box
+        shell: pwsh
+        env:
+          CANDIDATE_SHA: b96dfc39233fd59c2167046d427285172c41a725
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $env:PATH = "$env:PINNED_GIT_CMD;$env:PATH"
+          $proofScript = Join-Path $env:RUNNER_TEMP 'issue-203-candidate-proof.mjs'
+          @'
+          import assert from "node:assert/strict";
+          import { execFileSync } from "node:child_process";
+          import { existsSync, mkdtempSync, mkdirSync, rmSync, statSync, writeFileSync } from "node:fs";
+          import { tmpdir } from "node:os";
+          import { dirname, join, resolve } from "node:path";
+          import { pathToFileURL } from "node:url";
+
+          if (process.platform !== "win32") throw new Error(`expected win32, received ${process.platform}`);
+          const repositoryModuleUrl = pathToFileURL(resolve(process.env.GITHUB_WORKSPACE, "lib", "review-repository.ts")).href;
+          const { resolveRepositoryAuthorityV1, withReviewGitEnvironment } = await import(repositoryModuleUrl);
+          const git = process.env.PROOF_GIT;
+          if (!git) throw new Error("PROOF_GIT is required");
+          process.env.PATH = `${dirname(git)};${process.env.PATH ?? ""}`;
+
+          let globalConfig = "";
+          withReviewGitEnvironment((environment) => {
+            globalConfig = environment.GIT_CONFIG_GLOBAL ?? "";
+            assert.notEqual(globalConfig, "NUL");
+            assert.notEqual(globalConfig, "/dev/null");
+            assert.equal(environment.GIT_CONFIG_SYSTEM, undefined);
+            assert.equal(existsSync(globalConfig), true);
+            assert.equal(statSync(globalConfig).isFile(), true);
+            assert.equal(statSync(globalConfig).size, 0);
+          });
+          assert.equal(existsSync(globalConfig), false);
+          assert.equal(existsSync(dirname(globalConfig)), false);
+
+          const repositoryParent = mkdtempSync(join(process.env.RUNNER_TEMP ?? tmpdir(), "issue-203-authority-"));
+          const repository = join(repositoryParent, "repository");
+          const runGit = (...args) => execFileSync(git, args, { encoding: "utf8", shell: false, stdio: ["ignore", "pipe", "pipe"] });
+          try {
+            mkdirSync(repository);
+            runGit("init", "-b", "main", repository);
+            writeFileSync(join(repository, "README.md"), "Windows proof\n");
+            runGit("-C", repository, "add", "README.md");
+            runGit("-C", repository, "-c", "user.name=Windows Proof", "-c", "user.email=windows-proof@example.invalid", "commit", "-m", "initial");
+            const authority = resolveRepositoryAuthorityV1(repository);
+            assert.equal(typeof authority.repository_id, "string");
+            assert.equal(typeof authority.authority_id, "string");
+            assert.ok(authority.repository_id.length > 0);
+            assert.ok(authority.authority_id.length > 0);
+
+            const inheritedGlobal = process.env.GIT_CONFIG_GLOBAL;
+            let callbackCalled = false;
+            try {
+              process.env.GIT_CONFIG_GLOBAL = "unsafe";
+              assert.throws(() => withReviewGitEnvironment(() => {
+                callbackCalled = true;
+              }), /REVIEW_GIT_ENV_UNSAFE/);
+              assert.equal(callbackCalled, false);
+            } finally {
+              if (inheritedGlobal === undefined) delete process.env.GIT_CONFIG_GLOBAL;
+              else process.env.GIT_CONFIG_GLOBAL = inheritedGlobal;
+            }
+            console.log(JSON.stringify({
+              candidate: process.env.CANDIDATE_SHA,
+              platform: process.platform,
+              global_config_regular_zero_byte: true,
+              authority_id_length: authority.authority_id.length,
+              repository_id_length: authority.repository_id.length,
+              unsafe_environment_rejected: true,
+            }));
+          } finally {
+            rmSync(repositoryParent, { recursive: true, force: true });
+          }
+          '@ | Set-Content -LiteralPath $proofScript -Encoding utf8
+          $env:PROOF_GIT = $env:PINNED_GIT_EXE
+          node --experimental-strip-types $proofScript
+          if ($LASTEXITCODE -ne 0) { throw "candidate black-box proof failed with exit code $LASTEXITCODE" }
+
+      - name: Run strict PowerShell repository proof with no skipped Windows test
+        id: repository-pwsh
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $env:PATH = "$env:PINNED_GIT_CMD;$env:PATH"
+          $testOutput = @(node --experimental-strip-types --test tests/review-repository.test.ts 2>&1)
+          $testExitCode = $LASTEXITCODE
+          $testOutput | ForEach-Object { Write-Host $_ }
+          $testText = [string]::Join("`n", [string[]]$testOutput)
+          if ($testExitCode -ne 0) { throw "review repository suite failed with exit code $testExitCode" }
+          if ($testText -notmatch 'Windows review Git environment lease supports a real Git subprocess and removes its global config') { throw 'Windows-only literal repository probe did not execute' }
+          if ($testText -notmatch '(?m)(?:#|ℹ)\s*skipped\s+0\b') { throw 'review repository suite did not report zero skipped tests on Windows' }
+
+      - name: Run broader review diagnostics
+        id: review-diagnostics
+        continue-on-error: true
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $env:PATH = "$env:PINNED_GIT_CMD;$env:PATH"
+          $testOutput = @(node --experimental-strip-types --test tests/review-snapshot.test.ts tests/review-gate.test.ts tests/review-transaction.test.ts 2>&1)
+          $testExitCode = $LASTEXITCODE
+          $testOutput | ForEach-Object { Write-Host $_ }
+          if ($testExitCode -ne 0) { throw "broader review diagnostics failed with exit code $testExitCode" }
+
+      - name: Run strict cmd repository proof with no skipped Windows test
+        id: repository-cmd
+        shell: cmd
+        run: |
+          setlocal EnableExtensions
+          set "PATH=%PINNED_GIT_CMD%;%PATH%"
+          set "TEST_OUTPUT=%RUNNER_TEMP%\issue-203-repository-cmd.tap"
+          where git
+          node --experimental-strip-types --test tests/review-repository.test.ts > "%TEST_OUTPUT%" 2>&1
+          set "TEST_EXIT=%ERRORLEVEL%"
+          type "%TEST_OUTPUT%"
+          if not "%TEST_EXIT%"=="0" exit /b %TEST_EXIT%
+          findstr /C:"Windows review Git environment lease supports a real Git subprocess and removes its global config" "%TEST_OUTPUT%" >nul
+          if errorlevel 1 (
+            echo Windows-only literal repository probe did not execute
+            exit /b 1
+          )
+          findstr /R /C:"#[ ]*skipped[ ]*0" "%TEST_OUTPUT%" >nul
+          if errorlevel 1 (
+            echo Review repository suite did not report zero skipped tests on Windows
+            exit /b 1
+          )
+
+      - name: Run strict runner Git Bash repository proof with no skipped Windows test
+        id: repository-bash
+        shell: bash
+        run: |
+          export PATH="$(cygpath "$PINNED_GIT_CMD"):$PATH"
+          which git
+          test_output="$(node --experimental-strip-types --test tests/review-repository.test.ts 2>&1)"
+          test_exit=$?
+          printf '%s\n' "$test_output"
+          if [ "$test_exit" -ne 0 ]; then exit "$test_exit"; fi
+          if [[ "$test_output" != *"Windows review Git environment lease supports a real Git subprocess and removes its global config"* ]]; then
+            echo 'Windows-only literal repository probe did not execute'
+            exit 1
+          fi
+          if [[ ! "$test_output" =~ (^|$'\n')(#|ℹ)[[:space:]]*skipped[[:space:]]+0([[:space:]]|$) ]]; then
+            echo 'Review repository suite did not report zero skipped tests on Windows'
+            exit 1
+          fi
+
+      - name: Run strict pinned PortableGit MSYS Bash repository proof with no skipped Windows test
+        id: repository-pinned-msys
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $pinnedBash = Join-Path $env:PINNED_GIT_ROOT 'bin\bash.exe'
+          if (-not (Test-Path -LiteralPath $pinnedBash -PathType Leaf)) { throw 'PortableGit extraction did not produce bin\bash.exe' }
+          $bashCommand = @'
+          workspace="$(cygpath "$GITHUB_WORKSPACE")"
+          pinned_git_cmd="$(cygpath "$PINNED_GIT_CMD")"
+          cd "$workspace"
+          export PATH="$pinned_git_cmd:$PATH"
+          resolved_git="$(which git)"
+          resolved_git_windows="$(cygpath -aw "$resolved_git" | tr '\\' '/' | tr '[:upper:]' '[:lower:]')"
+          pinned_git_windows="$(cygpath -aw "$PINNED_GIT_EXE" | tr '\\' '/' | tr '[:upper:]' '[:lower:]')"
+          resolved_git_windows="${resolved_git_windows%.exe}"
+          pinned_git_windows="${pinned_git_windows%.exe}"
+          printf 'Pinned PortableGit executable: %s (%s)\n' "$resolved_git" "$resolved_git_windows"
+          if [ "$resolved_git_windows" != "$pinned_git_windows" ]; then
+            echo "Pinned PortableGit executable is not first on PATH: expected $pinned_git_windows"
+            exit 1
+          fi
+          test_output="$(node --experimental-strip-types --test tests/review-repository.test.ts 2>&1)"
+          test_exit=$?
+          printf '%s\n' "$test_output"
+          if [ "$test_exit" -ne 0 ]; then exit "$test_exit"; fi
+          if [[ "$test_output" != *"Windows review Git environment lease supports a real Git subprocess and removes its global config"* ]]; then
+            echo 'Windows-only literal repository probe did not execute'
+            exit 1
+          fi
+          if [[ ! "$test_output" =~ (^|$'\n')(#|ℹ)[[:space:]]*skipped[[:space:]]+0([[:space:]]|$) ]]; then
+            echo 'Review repository suite did not report zero skipped tests on Windows'
+            exit 1
+          fi
+          '@
+          & $pinnedBash '--noprofile' '--norc' '-lc' $bashCommand
+          if ($LASTEXITCODE -ne 0) { throw "pinned PortableGit MSYS Bash repository proof failed with exit code $LASTEXITCODE" }
+
+      - name: Run full test suite diagnostics
+        id: full-test-diagnostics
+        continue-on-error: true
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $env:PATH = "$env:PINNED_GIT_CMD;$env:PATH"
+          pnpm test
+          if ($LASTEXITCODE -ne 0) { throw "pnpm test diagnostics failed with exit code $LASTEXITCODE" }
+
+      - name: Verify generated runtime modules
+        id: runtime-modules
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $env:PATH = "$env:PINNED_GIT_CMD;$env:PATH"
+          pnpm run check:runtime-modules
+          if ($LASTEXITCODE -ne 0) { throw "check:runtime-modules failed with exit code $LASTEXITCODE" }
+
+      - name: Print final proof summary
+        if: always()
+        shell: pwsh
+        env:
+          CANDIDATE_SHA: b96dfc39233fd59c2167046d427285172c41a725
+          CANDIDATE_INTEGRITY_OUTCOME: ${{ steps.candidate-integrity.outcome }}
+          BLACK_BOX_OUTCOME: ${{ steps.black-box.outcome }}
+          REPOSITORY_PWSH_OUTCOME: ${{ steps.repository-pwsh.outcome }}
+          REVIEW_DIAGNOSTICS_OUTCOME: ${{ steps.review-diagnostics.outcome }}
+          REPOSITORY_CMD_OUTCOME: ${{ steps.repository-cmd.outcome }}
+          REPOSITORY_BASH_OUTCOME: ${{ steps.repository-bash.outcome }}
+          REPOSITORY_PINNED_MSYS_OUTCOME: ${{ steps.repository-pinned-msys.outcome }}
+          FULL_TEST_DIAGNOSTICS_OUTCOME: ${{ steps.full-test-diagnostics.outcome }}
+          RUNTIME_MODULES_OUTCOME: ${{ steps.runtime-modules.outcome }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $env:PATH = "$env:PINNED_GIT_CMD;$env:PATH"
+          $version = 'unavailable'
+          if (-not [string]::IsNullOrWhiteSpace($env:PINNED_GIT_EXE) -and (Test-Path -LiteralPath $env:PINNED_GIT_EXE -PathType Leaf)) {
+            $version = (& $env:PINNED_GIT_EXE --version).Trim()
+            if ($LASTEXITCODE -ne 0) { $version = "unavailable (git --version exit code $LASTEXITCODE)" }
+          }
+          Write-Host "Matrix architecture: ${{ matrix.architecture }}"
+          Write-Host "Runner architecture: $([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)"
+          Write-Host "Pinned Git asset: ${{ matrix.git_asset }}"
+          Write-Host "Pinned Git expected SHA-256: ${{ matrix.git_sha256 }}"
+          Write-Host "Pinned Git verified SHA-256: $env:PINNED_GIT_SHA256"
+          Write-Host "Pinned Git version: $version"
+          Write-Host "NUL control outcome: $env:NUL_CONTROL_OUTCOME"
+          Write-Host "Candidate SHA: $env:CANDIDATE_SHA"
+          Write-Host "Candidate integrity proof: $env:CANDIDATE_INTEGRITY_OUTCOME"
+          Write-Host "Black-box root proof: $env:BLACK_BOX_OUTCOME"
+          Write-Host "PowerShell repository root proof: $env:REPOSITORY_PWSH_OUTCOME"
+          Write-Host "cmd repository root proof: $env:REPOSITORY_CMD_OUTCOME"
+          Write-Host "Runner Git Bash repository root proof: $env:REPOSITORY_BASH_OUTCOME"
+          Write-Host "Pinned PortableGit MSYS Bash repository root proof: $env:REPOSITORY_PINNED_MSYS_OUTCOME"
+          Write-Host "Runtime modules root proof: $env:RUNTIME_MODULES_OUTCOME"
+          Write-Host "Broader review diagnostics: $env:REVIEW_DIAGNOSTICS_OUTCOME"
+          Write-Host "Full Windows suite diagnostics: $env:FULL_TEST_DIAGNOSTICS_OUTCOME"
+          $rootOutcomes = @{
+            'candidate integrity proof' = $env:CANDIDATE_INTEGRITY_OUTCOME
+            'black-box root proof' = $env:BLACK_BOX_OUTCOME
+            'PowerShell repository root proof' = $env:REPOSITORY_PWSH_OUTCOME
+            'cmd repository root proof' = $env:REPOSITORY_CMD_OUTCOME
+            'runner Git Bash repository root proof' = $env:REPOSITORY_BASH_OUTCOME
+            'pinned PortableGit MSYS Bash repository root proof' = $env:REPOSITORY_PINNED_MSYS_OUTCOME
+            'runtime modules root proof' = $env:RUNTIME_MODULES_OUTCOME
+          }
+          $failedRootProofs = @($rootOutcomes.GetEnumerator() | Where-Object { $_.Value -ne 'success' } | ForEach-Object { "$($_.Key)=$($_.Value)" })
+          if ($failedRootProofs.Count -gt 0) { throw "Required root proof failed: $($failedRootProofs -join ', ')" }
+          Write-Host 'Root-specific Windows proof: passed'
+          Write-Host 'Broader review and full-suite outcomes are diagnostic only.'
