@@ -5,12 +5,13 @@ import {
 	mkdir,
 	readFile,
 	readdir,
+	realpath,
 	rename,
 	stat,
 	writeFile,
 } from "node:fs/promises";
 import { homedir } from "node:os";
-import { basename, join, normalize, relative, sep } from "node:path";
+import { basename, dirname, join, normalize, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 
@@ -21,7 +22,8 @@ const EXCLUDE_NAMES = new Set(["_shared", "skill-registry"]);
 const EXCLUDE_PREFIXES = ["sdd-"];
 const ATL_IGNORE_ENTRY = ".atl/";
 const WATCH_DEBOUNCE_MS = 500;
-const REGISTRY_SCHEMA_VERSION = 7;
+const MAX_CATEGORY_DEPTH = 8;
+const REGISTRY_SCHEMA_VERSION = 8;
 const NO_SKILL_REGISTRY_FLAG = "no-skill-registry";
 const NO_SKILL_REGISTRY_ENV = "GENTLE_PI_NO_SKILL_REGISTRY";
 const LEGACY_PROJECT_REGISTRY_REL_PATH = ".pi/extensions/skill-registry.ts";
@@ -96,30 +98,51 @@ function projectSkillDirs(cwd: string): string[] {
 
 async function findSkillFiles(root: string): Promise<string[]> {
 	if (!(await pathExists(root))) return [];
-	let entries;
-	try {
-		entries = await readdir(root, { withFileTypes: true });
-	} catch {
-		return [];
-	}
 
 	const out: string[] = [];
-	for (const entry of entries) {
-		const skillDir = join(root, entry.name);
-		let dirInfo;
+	const visited = new Set<string>();
+	const pending = [{ path: root, depth: 0 }];
+	for (let index = 0; index < pending.length; index++) {
+		const { path: current, depth } = pending[index];
+		let resolved;
 		try {
-			dirInfo = await stat(skillDir);
+			resolved = await realpath(current);
 		} catch {
 			continue;
 		}
-		if (!dirInfo.isDirectory()) continue;
+		if (visited.has(resolved)) continue;
+		visited.add(resolved);
 
-		const candidate = join(skillDir, "SKILL.md");
+		let entries;
 		try {
-			const skillInfo = await stat(candidate);
-			if (skillInfo.isFile()) out.push(candidate);
+			entries = await readdir(current, { withFileTypes: true });
 		} catch {
-			// Missing or unreadable skill files are ignored; the registry is best-effort.
+			continue;
+		}
+		entries.sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
+
+		for (const entry of entries) {
+			if (isExcluded(entry.name)) continue;
+			const skillDir = join(current, entry.name);
+			let dirInfo;
+			try {
+				dirInfo = await stat(skillDir);
+			} catch {
+				continue;
+			}
+			if (!dirInfo.isDirectory()) continue;
+
+			const candidate = join(skillDir, "SKILL.md");
+			try {
+				const skillInfo = await stat(candidate);
+				if (skillInfo.isFile()) {
+					out.push(candidate);
+					continue;
+				}
+			} catch {
+				// Missing or unreadable skill files are ignored; the registry is best-effort.
+			}
+			if (depth < MAX_CATEGORY_DEPTH) pending.push({ path: skillDir, depth: depth + 1 });
 		}
 	}
 	return out.sort();
@@ -379,10 +402,15 @@ async function regenerateRegistry(
 		...projectSkillDirs(cwd),
 		...userSkillDirs(),
 	]);
-	const files: string[] = [];
+	const flatFiles: string[] = [];
+	const nestedFiles: string[] = [];
 	for (const dir of existingDirs) {
-		files.push(...(await findSkillFiles(dir)));
+		for (const file of await findSkillFiles(dir)) {
+			if (comparablePath(dirname(dirname(file))) === dir) flatFiles.push(file);
+			else nestedFiles.push(file);
+		}
 	}
+	const files = [...flatFiles, ...nestedFiles];
 	const cachePath = join(cwd, CACHE_REL_PATH);
 	const registryPath = join(cwd, REGISTRY_REL_PATH);
 	const fp = await fingerprint(files);

@@ -114,8 +114,8 @@ test("uniqueExistingDirs normalizes duplicates and ignores missing roots", async
 	);
 });
 
-test("findSkillFiles scans one skill directory level only", async () => {
-	const root = join(tmpdir(), `gentle-pi-shallow-${Date.now()}`);
+test("findSkillFiles discovers flat and category-nested skills", async () => {
+	const root = join(tmpdir(), `gentle-pi-nested-${Date.now()}`);
 	const skillPath = join(root, "docs", "SKILL.md");
 	const nestedSkillPath = join(root, "fixtures", "nested", "SKILL.md");
 	mkdirSync(dirname(skillPath), { recursive: true });
@@ -123,7 +123,121 @@ test("findSkillFiles scans one skill directory level only", async () => {
 	writeFileSync(skillPath, "---\nname: docs\ndescription: Docs.\n---\n");
 	writeFileSync(nestedSkillPath, "---\nname: nested\ndescription: Nested fixture.\n---\n");
 
+	assert.deepEqual(await __testing.findSkillFiles(root), [skillPath, nestedSkillPath]);
+});
+
+test("findSkillFiles limits category nesting to eight levels", async () => {
+	const root = join(tmpdir(), `gentle-pi-depth-${Date.now()}`);
+	const boundarySkillPath = join(
+		root,
+		"category-1",
+		"category-2",
+		"category-3",
+		"category-4",
+		"category-5",
+		"category-6",
+		"category-7",
+		"category-8",
+		"boundary-skill",
+		"SKILL.md",
+	);
+	const beyondLimitSkillPath = join(
+		root,
+		"category-1",
+		"category-2",
+		"category-3",
+		"category-4",
+		"category-5",
+		"category-6",
+		"category-7",
+		"category-8",
+		"category-9",
+		"beyond-limit-skill",
+		"SKILL.md",
+	);
+	for (const skillPath of [boundarySkillPath, beyondLimitSkillPath]) {
+		mkdirSync(dirname(skillPath), { recursive: true });
+		writeFileSync(skillPath, "---\nname: fixture\ndescription: Depth fixture.\n---\n");
+	}
+
+	assert.deepEqual(await __testing.findSkillFiles(root), [boundarySkillPath]);
+});
+
+test("findSkillFiles does not descend beneath a skill directory", async () => {
+	const root = join(tmpdir(), `gentle-pi-terminal-${Date.now()}`);
+	const skillPath = join(root, "docs", "SKILL.md");
+	const nestedSkillPath = join(root, "docs", "nested", "SKILL.md");
+	mkdirSync(dirname(nestedSkillPath), { recursive: true });
+	writeFileSync(skillPath, "---\nname: docs\ndescription: Docs.\n---\n");
+	writeFileSync(nestedSkillPath, "---\nname: nested\ndescription: Nested.\n---\n");
+
 	assert.deepEqual(await __testing.findSkillFiles(root), [skillPath]);
+});
+
+test("findSkillFiles excludes reserved names at every nesting level", async () => {
+	const root = join(tmpdir(), `gentle-pi-excluded-nested-${Date.now()}`);
+	const allowed = join(root, "docs", "SKILL.md");
+	const excluded = [
+		join(root, "category", "_shared", "SKILL.md"),
+		join(root, "category", "skill-registry", "SKILL.md"),
+		join(root, "category", "sdd-worker", "SKILL.md"),
+	];
+	for (const skillPath of [allowed, ...excluded]) {
+		mkdirSync(dirname(skillPath), { recursive: true });
+		writeFileSync(skillPath, "---\nname: allowed\ndescription: Fixture.\n---\n");
+	}
+
+	assert.deepEqual(await __testing.findSkillFiles(root), [allowed]);
+});
+
+test("findSkillFiles gives flat skills precedence over nested duplicates", async () => {
+	const cwd = join(tmpdir(), `gentle-pi-order-${Date.now()}`);
+	const nestedSkillPath = join(cwd, "skills", "a-category", "duplicate", "SKILL.md");
+	const directSkillPath = join(cwd, "skills", "z-direct", "SKILL.md");
+	mkdirSync(dirname(nestedSkillPath), { recursive: true });
+	mkdirSync(dirname(directSkillPath), { recursive: true });
+	writeFileSync(nestedSkillPath, "---\nname: duplicate\ndescription: Nested loses.\n---\n");
+	writeFileSync(directSkillPath, "---\nname: duplicate\ndescription: Direct wins.\n---\n");
+
+	const result = await __testing.regenerateRegistry(cwd, false);
+	const registry = readFileSync(join(cwd, ".atl", "skill-registry.md"), "utf8");
+	assert.ok(result.skillCount > 0);
+	assert.match(registry, new RegExp(directSkillPath.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+	assert.doesNotMatch(registry, new RegExp(nestedSkillPath.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+});
+
+test("flat skills take precedence over nested duplicates across project roots", async () => {
+	const cwd = join(tmpdir(), `gentle-pi-cross-root-order-${Date.now()}`);
+	const nestedSkillPath = join(cwd, "skills", "category", "nested", "SKILL.md");
+	const directSkillPath = join(cwd, ".opencode", "skills", "direct", "SKILL.md");
+	mkdirSync(dirname(nestedSkillPath), { recursive: true });
+	mkdirSync(dirname(directSkillPath), { recursive: true });
+	writeFileSync(nestedSkillPath, "---\nname: duplicate\ndescription: Nested loses.\n---\n");
+	writeFileSync(directSkillPath, "---\nname: duplicate\ndescription: Direct wins.\n---\n");
+
+	await __testing.regenerateRegistry(cwd, false);
+	const registry = readFileSync(join(cwd, ".atl", "skill-registry.md"), "utf8");
+	assert.match(registry, new RegExp(directSkillPath.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+	assert.doesNotMatch(registry, new RegExp(nestedSkillPath.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+});
+
+test("findSkillFiles follows symlinked directories without traversing loops", async (t) => {
+	const root = join(tmpdir(), `gentle-pi-loop-root-${Date.now()}`);
+	const skillPath = join(root, "docs", "SKILL.md");
+	mkdirSync(dirname(skillPath), { recursive: true });
+	writeFileSync(skillPath, "---\nname: docs\ndescription: Docs.\n---\n");
+	try {
+		symlinkSync(root, join(root, "loop"), "dir");
+	} catch (error) {
+		t.skip(`symlink creation unavailable: ${error instanceof Error ? error.message : String(error)}`);
+		return;
+	}
+
+	const files = await Promise.race([
+		__testing.findSkillFiles(root),
+		new Promise<never>((_, reject) => setTimeout(() => reject(new Error("directory traversal did not terminate")), 1_000)),
+	]);
+	assert.deepEqual(files, [skillPath]);
 });
 
 test("findSkillFiles follows symlinked skill directories", async (t) => {
@@ -142,6 +256,36 @@ test("findSkillFiles follows symlinked skill directories", async (t) => {
 	}
 
 	assert.deepEqual(await __testing.findSkillFiles(root), [skillPath]);
+});
+
+test("recursive watchers refresh the registry after nested skill changes", async (t) => {
+	const cwd = join(tmpdir(), `gentle-pi-nested-watcher-${Date.now()}`);
+	const skillPath = join(cwd, "skills", "category", "docs", "SKILL.md");
+	mkdirSync(dirname(skillPath), { recursive: true });
+	writeFileSync(skillPath, "---\nname: docs\ndescription: Before refresh.\n---\n");
+	await __testing.regenerateRegistry(cwd, false);
+
+	let refresh: () => void;
+	const refreshed = new Promise<void>((resolve) => {
+		refresh = resolve;
+	});
+	await __testing.startSkillRegistryWatcher(cwd, (message) => {
+		if (message.includes("Skill registry refreshed")) refresh();
+	});
+	if (__testing.activeWatcherCount() === 0) {
+		__testing.closeSkillRegistryWatchers();
+		t.skip("recursive filesystem watchers are unavailable");
+		return;
+	}
+	t.after(() => __testing.closeSkillRegistryWatchers());
+
+	writeFileSync(skillPath, "---\nname: docs\ndescription: After refresh.\n---\n");
+	const timeout = setTimeout(() => refresh(), 2_000);
+	await refreshed;
+	clearTimeout(timeout);
+
+	const registry = readFileSync(join(cwd, ".atl", "skill-registry.md"), "utf8");
+	assert.match(registry, /After refresh\./);
 });
 
 test("skill registry watchers close on shutdown", async () => {
@@ -268,9 +412,9 @@ test("orchestrator documents path injection protocol", () => {
 	assert.doesNotMatch(source, /Use matching compact rules based on code context and task intent/);
 });
 
-test("non-forced regeneration invalidates cache when skill bytes change but path, size, and mtime are restored", async () => {
+test("non-forced regeneration invalidates cache for nested skill byte changes", async () => {
 	const cwd = join(tmpdir(), `gentle-pi-fingerprint-${Date.now()}`);
-	const skillPath = join(cwd, "skills", "alpha", "SKILL.md");
+	const skillPath = join(cwd, "skills", "category", "alpha", "SKILL.md");
 	mkdirSync(dirname(skillPath), { recursive: true });
 
 	const contentV1 =
